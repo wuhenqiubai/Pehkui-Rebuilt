@@ -11,12 +11,12 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.TargetUtil;
 import net.minecraft.item.ItemStack;
 import virtuoel.pehkui.util.MixinConstants;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(LookTargetUtil.class)
+@Mixin(TargetUtil.class)
 public class LookTargetUtilMixin
 {
 	@Dynamic

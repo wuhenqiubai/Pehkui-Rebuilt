@@ -1,5 +1,5 @@
 plugins {
-	id "fabric-loom" version "1.6.+"
+	id "fabric-loom" version "1.14.10"
 	id "eclipse"
 	id "maven-publish"
 	id "com.github.johnrengelman.shadow" version "8.1.1" apply false
@@ -48,13 +48,31 @@ group = project.maven_group
 base.archivesName = project.archives_base_name
 version = project.mod_version + "+" + (ENV.BUILD_NUMBER ? "build.${ENV.BUILD_NUMBER}-" : "") + (project.hasProperty("metadata_minecraft_versions") ? project.metadata_minecraft_versions : project.minecraft_version)
 
-def minecraftVersionNumber = VersionNumber.parse(minecraft_version)
+class ParsedVersionNumber {
+	int major
+	int minor
+	int micro
+	int getMajor() { major }
+	int getMinor() { minor }
+	int getMicro() { micro }
+}
+
+def parseVersionNumber = { String value ->
+	def parts = value.tokenize("-+")[0].tokenize(".").collect { it.isInteger() ? it as int : 0 }
+	new ParsedVersionNumber(
+		major: parts.size() > 0 ? parts[0] : 0,
+		minor: parts.size() > 1 ? parts[1] : 0,
+		micro: parts.size() > 2 ? parts[2] : 0
+	)
+}
+
+def minecraftVersionNumber = parseVersionNumber(minecraft_version)
 if(minecraftVersionNumber.getMajor() == 0 && project.hasProperty("metadata_minecraft_versions")) {
 	if(metadata_minecraft_versions.contains("-")) {
-		minecraftVersionNumber = VersionNumber.parse(metadata_minecraft_versions.split("-")[1])
+		minecraftVersionNumber = parseVersionNumber(metadata_minecraft_versions.split("-")[1])
 	}
 	else {
-		minecraftVersionNumber = VersionNumber.parse(metadata_minecraft_versions)
+		minecraftVersionNumber = parseVersionNumber(metadata_minecraft_versions)
 	}
 }
 

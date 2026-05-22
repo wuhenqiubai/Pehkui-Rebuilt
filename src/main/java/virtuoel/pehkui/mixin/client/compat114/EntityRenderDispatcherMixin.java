@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -16,7 +16,7 @@ import virtuoel.pehkui.util.MixinConstants;
 import virtuoel.pehkui.util.ScaleRenderUtils;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(EntityRenderDispatcher.class)
+@Mixin(EntityRenderManager.class)
 public class EntityRenderDispatcherMixin
 {
 	@Dynamic
@@ -64,7 +64,7 @@ public class EntityRenderDispatcherMixin
 			final double scaledMarginWidth = margin * interactionWidth;
 			final double scaledMarginHeight = margin * interactionHeight;
 			
-			final Vec3d pos = entity.getPos();
+			final Vec3d pos = entity.getEntityPos();
 			bounds = bounds.expand(scaledXLength + scaledMarginWidth, scaledYLength + scaledMarginHeight, scaledZLength + scaledMarginWidth)
 				.offset(-pos.x + d, -pos.y + e, -pos.z + f);
 			

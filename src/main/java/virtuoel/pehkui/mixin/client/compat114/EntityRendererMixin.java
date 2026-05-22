@@ -33,7 +33,7 @@ public abstract class EntityRendererMixin
 	
 	@Dynamic
 	@WrapOperation(method = MixinConstants.POST_RENDER, at = @At(value = "INVOKE", target = MixinConstants.RENDER_SHADOW))
-	private void pehkui$postRender$renderShadow(EntityRenderer<Entity> obj, Entity entity, double x, double y, double z, float opacity, float tickDelta, Operation<Void> original)
+	private void pehkui$postRender$renderShadow(EntityRenderer<Entity, ?> obj, Entity entity, double x, double y, double z, float opacity, float tickDelta, Operation<Void> original)
 	{
 		final float scale = ScaleUtils.getModelWidthScale(entity, tickDelta);
 		

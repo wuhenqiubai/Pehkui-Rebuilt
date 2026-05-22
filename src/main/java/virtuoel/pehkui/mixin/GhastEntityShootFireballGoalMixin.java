@@ -23,7 +23,7 @@ public abstract class GhastEntityShootFireballGoalMixin
 		
 		if (scale != 1.0F)
 		{
-			final Vec3d pos = entity.getPos();
+			final Vec3d pos = entity.getEntityPos();
 			
 			entity.setPosition(pos.x, pos.y - ((1.0D - scale) * 0.5D), pos.z);
 		}

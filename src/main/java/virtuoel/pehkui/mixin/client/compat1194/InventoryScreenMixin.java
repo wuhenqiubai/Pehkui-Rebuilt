@@ -52,7 +52,7 @@ public abstract class InventoryScreenMixin
 		bounds.set(entity.getBoundingBox());
 		
 		final EntityDimensions dims = entity.getDimensions(entity.getPose());
-		final Vec3d pos = entity.getPos();
+		final Vec3d pos = entity.getEntityPos();
 		final double r = ReflectionUtils.getDimensionsWidth(dims) / 2.0D;
 		final double h = ReflectionUtils.getDimensionsHeight(dims);
 		final double xPos = pos.x;

@@ -12,9 +12,12 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin
 {
-	@Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/entity/ItemEntity;)V")
-	private void pehkui$construct(ItemEntity entity, CallbackInfo info)
+	@Inject(at = @At("RETURN"), method = "copyFrom")
+	private void pehkui$copyFrom(Entity entity, CallbackInfo info)
 	{
-		ScaleUtils.loadScale((Entity) (Object) this, entity);
+		if (entity instanceof ItemEntity)
+		{
+			ScaleUtils.loadScale((Entity) (Object) this, entity);
+		}
 	}
 }

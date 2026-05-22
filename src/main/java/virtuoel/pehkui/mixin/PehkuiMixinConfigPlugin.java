@@ -76,6 +76,42 @@ public class PehkuiMixinConfigPlugin implements IMixinConfigPlugin
 			
 			return DISABLE_THREAD_SAFETY;
 		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".compat116plus.NbtCompoundMixin"))
+		{
+			return VersionUtils.MINOR < 21 || (VersionUtils.MINOR == 21 && VersionUtils.PATCH < 11);
+		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".client.compat1194plus.ItemRendererMixin"))
+		{
+			return VersionUtils.MINOR < 21 || (VersionUtils.MINOR == 21 && VersionUtils.PATCH < 11);
+		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".client.compat115plus.EntityRenderDispatcherMixin"))
+		{
+			return VersionUtils.MINOR < 21 || (VersionUtils.MINOR == 21 && VersionUtils.PATCH < 11);
+		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".client.compat115plus.PlayerEntityRendererMixin"))
+		{
+			return VersionUtils.MINOR < 21 || (VersionUtils.MINOR == 21 && VersionUtils.PATCH < 11);
+		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".client.compat115plus.ItemFrameEntityRendererMixin"))
+		{
+			return VersionUtils.MINOR < 21 || (VersionUtils.MINOR == 21 && VersionUtils.PATCH < 11);
+		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".client.compat1202plus.InventoryScreenMixin"))
+		{
+			return VersionUtils.MINOR < 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH < 5);
+		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".client.compat1205plus.ShulkerEntityRendererMixin"))
+		{
+			return VersionUtils.MINOR < 21 || (VersionUtils.MINOR == 21 && VersionUtils.PATCH < 11);
+		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".client.compat121plus.EntityRenderDispatcherMixin"))
+		{
+			return VersionUtils.MINOR < 21 || (VersionUtils.MINOR == 21 && VersionUtils.PATCH < 11);
+		}
+		else if (mixinClassName.equals(MIXIN_PACKAGE + ".client.compat121plus.EntityRendererMixin"))
+		{
+			return VersionUtils.MINOR < 21 || (VersionUtils.MINOR == 21 && VersionUtils.PATCH < 11);
+		}
 		
 		if (mixinClassName.startsWith(MIXIN_PACKAGE + ".reach"))
 		{

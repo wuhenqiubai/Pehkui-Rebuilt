@@ -6,10 +6,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.BoatEntity;
+import net.minecraft.entity.vehicle.AbstractBoatEntity;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(BoatEntity.class)
+@Mixin(AbstractBoatEntity.class)
 public abstract class BoatEntityMixin
 {
 	@ModifyExpressionValue(method = "updateVelocity", at = @At(value = "CONSTANT", args = "doubleValue=0.65D"))

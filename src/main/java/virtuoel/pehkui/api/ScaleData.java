@@ -238,7 +238,7 @@ public class ScaleData
 	public float getScale(float delta)
 	{
 		final Entity e = getEntity();
-		final boolean canCache = delta == 1.0F && e != null && e.getEntityWorld() != null && !e.getEntityWorld().isClient && (e.getType() != EntityType.PLAYER || !getScaleType().getAffectsDimensions()) && !((PehkuiEntityExtensions) e).pehkui_isFirstUpdate();
+		final boolean canCache = delta == 1.0F && e != null && e.getEntityWorld() != null && !e.getEntityWorld().isClient() && (e.getType() != EntityType.PLAYER || !getScaleType().getAffectsDimensions()) && !((PehkuiEntityExtensions) e).pehkui_isFirstUpdate();
 		
 		if (canCache && !Float.isNaN(cachedScale))
 		{
@@ -411,7 +411,7 @@ public class ScaleData
 	{
 		final Entity e = getEntity();
 		
-		if (e != null && e.getEntityWorld() != null && !e.getEntityWorld().isClient)
+		if (e != null && e.getEntityWorld() != null && !e.getEntityWorld().isClient())
 		{
 			this.shouldSync = sync;
 			if (this.shouldSync)
@@ -488,17 +488,17 @@ public class ScaleData
 	{
 		final ScaleType type = getScaleType();
 		
-		this.baseScale = tag.contains("scale") ? tag.getFloat("scale") : type.getDefaultBaseScale();
-		this.prevBaseScale = tag.contains("previous") ? tag.getFloat("previous") : this.baseScale;
-		this.initialScale = tag.contains("initial") ? tag.getFloat("initial") : this.baseScale;
-		this.targetScale = tag.contains("target") ? tag.getFloat("target") : this.baseScale;
+		this.baseScale = tag.getFloat("scale", type.getDefaultBaseScale());
+		this.prevBaseScale = tag.getFloat("previous", this.baseScale);
+		this.initialScale = tag.getFloat("initial", this.baseScale);
+		this.targetScale = tag.getFloat("target", this.baseScale);
 		
-		this.scaleTicks = tag.contains("ticks") ? tag.getInt("ticks") : 0;
-		this.totalScaleTicks = tag.contains("total_ticks") ? tag.getInt("total_ticks") : type.getDefaultTickDelay();
+		this.scaleTicks = tag.getInt("ticks", 0);
+		this.totalScaleTicks = tag.getInt("total_ticks", type.getDefaultTickDelay());
 		
-		this.persistent = tag.contains("persistent") ? tag.getBoolean("persistent") : null;
+		this.persistent = tag.contains("persistent") ? tag.getBoolean("persistent", false) : null;
 		
-		this.easing = tag.contains("easing") ? ScaleRegistries.getEntry(ScaleRegistries.SCALE_EASINGS, Identifier.tryParse(tag.getString("easing"))) : null;
+		this.easing = tag.contains("easing") ? ScaleRegistries.getEntry(ScaleRegistries.SCALE_EASINGS, Identifier.tryParse(tag.getString("easing", ""))) : null;
 		
 		this.trackModifierChanges = false;
 		
@@ -508,10 +508,10 @@ public class ScaleData
 		
 		baseValueModifiers.addAll(type.getDefaultBaseValueModifiers());
 		
-		if (tag.contains("baseValueModifiers", NbtElement.LIST_TYPE))
+		if (tag.contains("baseValueModifiers"))
 		{
-			final NbtList modifiers = (NbtList) tag.get("baseValueModifiers");
-			final byte elementType = modifiers.getHeldType();
+			final NbtList modifiers = tag.getListOrEmpty("baseValueModifiers");
+			final byte elementType = modifiers.getType();
 			
 			Identifier id;
 			ScaleModifier modifier;
@@ -519,13 +519,13 @@ public class ScaleData
 			{
 				if (elementType == NbtElement.STRING_TYPE)
 				{
-					id = Identifier.tryParse(modifiers.getString(i));
+					id = Identifier.tryParse(modifiers.getString(i, ""));
 					modifier = ScaleRegistries.getEntry(ScaleRegistries.SCALE_MODIFIERS, id);
 				}
 				else if (elementType == NbtElement.COMPOUND_TYPE)
 				{
-					final NbtCompound compound = modifiers.getCompound(i);
-					id = Identifier.tryParse(compound.getString("id"));
+					final NbtCompound compound = modifiers.getCompoundOrEmpty(i);
+					id = Identifier.tryParse(compound.getString("id", ""));
 					modifier = ScaleRegistries.getEntry(ScaleRegistries.SCALE_MODIFIERS, id);
 				}
 				else

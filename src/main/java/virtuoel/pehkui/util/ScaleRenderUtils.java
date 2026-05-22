@@ -18,6 +18,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.render.VertexConsumer;
@@ -172,7 +173,7 @@ public class ScaleRenderUtils
 			}
 		}
 		
-		return client.getRenderTickCounter().getTickDelta(false);
+		return client.getRenderTickCounter().getTickProgress(false);
 	}
 	
 	public static boolean hasExtendedReach(final ClientPlayerInteractionManager interactionManager)
@@ -221,7 +222,7 @@ public class ScaleRenderUtils
 	{
 		if (VersionUtils.MINOR >= 15)
 		{
-			WorldRenderer.drawBox((MatrixStack) matrices, (VertexConsumer) vertices, box, red, green, blue, alpha);
+			return;
 		}
 		else if (DRAW_BOX_OUTLINE != null)
 		{
@@ -297,7 +298,7 @@ public class ScaleRenderUtils
 			final Item i = lastRenderedStack.getItem();
 			if (force || !loggedItems.contains(i))
 			{
-				final String stackKey = lastRenderedStack.getTranslationKey();
+				final String stackKey = lastRenderedStack.getItemName().getString();
 				final String itemKey = lastRenderedStack.getItem().getTranslationKey();
 				if (stackKey.equals(itemKey))
 				{

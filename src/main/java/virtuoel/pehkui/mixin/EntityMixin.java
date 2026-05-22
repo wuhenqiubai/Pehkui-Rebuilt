@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -22,7 +21,8 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -86,10 +86,15 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		pehkui_shouldIgnoreScaleNbt = ignore;
 	}
 	
-	@Inject(at = @At("HEAD"), method = "readNbt")
-	private void pehkui$readNbt(NbtCompound tag, CallbackInfo info)
+	@Inject(at = @At("HEAD"), method = "readData")
+	private void pehkui$readData(ReadView view, CallbackInfo info)
 	{
-		pehkui_readScaleNbt(tag);
+		view.read(Pehkui.MOD_ID + ":scale_data_types", NbtCompound.CODEC).ifPresent(typeData ->
+		{
+			final NbtCompound tag = new NbtCompound();
+			tag.put(Pehkui.MOD_ID + ":scale_data_types", typeData);
+			pehkui_readScaleNbt(tag);
+		});
 	}
 	
 	@Override
@@ -100,9 +105,9 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 			return;
 		}
 		
-		if (nbt.contains(Pehkui.MOD_ID + ":scale_data_types", NbtElement.COMPOUND_TYPE) && !DebugCommand.unmarkEntityForScaleReset((Entity) (Object) this, nbt))
+		if (nbt.contains(Pehkui.MOD_ID + ":scale_data_types") && !DebugCommand.unmarkEntityForScaleReset((Entity) (Object) this, nbt))
 		{
-			final NbtCompound typeData = nbt.getCompound(Pehkui.MOD_ID + ":scale_data_types");
+			final NbtCompound typeData = nbt.getCompoundOrEmpty(Pehkui.MOD_ID + ":scale_data_types");
 			
 			String key;
 			ScaleData scaleData;
@@ -110,19 +115,24 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 			{
 				key = entry.getKey().toString();
 				
-				if (typeData.contains(key, NbtElement.COMPOUND_TYPE))
+				if (typeData.contains(key))
 				{
 					scaleData = pehkui_getScaleData(entry.getValue());
-					scaleData.readNbt(typeData.getCompound(key));
+					scaleData.readNbt(typeData.getCompoundOrEmpty(key));
 				}
 			}
 		}
 	}
 	
-	@Inject(at = @At("HEAD"), method = "writeNbt")
-	private void pehkui$writeNbt(NbtCompound tag, CallbackInfoReturnable<NbtCompound> info)
+	@Inject(at = @At("RETURN"), method = "writeData")
+	private void pehkui$writeData(WriteView view, CallbackInfo info)
 	{
-		pehkui_writeScaleNbt(tag);
+		final NbtCompound tag = pehkui_writeScaleNbt(new NbtCompound());
+		
+		if (tag.contains(Pehkui.MOD_ID + ":scale_data_types"))
+		{
+			view.put(Pehkui.MOD_ID + ":scale_data_types", NbtCompound.CODEC, tag.getCompoundOrEmpty(Pehkui.MOD_ID + ":scale_data_types"));
+		}
 	}
 	
 	@Override
@@ -186,7 +196,7 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		ScaleUtils.syncScalesOnTrackingStart((Entity) (Object) this, player.networkHandler);
 	}
 	
-	@ModifyVariable(method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;", at = @At(value = "STORE"))
+	@ModifyReturnValue(method = "dropStack(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;", at = @At("RETURN"))
 	private ItemEntity pehkui$dropStack(ItemEntity entity)
 	{
 		ScaleUtils.setScaleOfDrop(entity, (Entity) (Object) this);

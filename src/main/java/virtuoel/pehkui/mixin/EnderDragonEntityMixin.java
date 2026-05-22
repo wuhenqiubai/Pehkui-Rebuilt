@@ -15,8 +15,8 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(EnderDragonEntity.class)
 public class EnderDragonEntityMixin
 {
-	@ModifyArg(method = "crystalDestroyed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/boss/dragon/EnderDragonEntity;damagePart(Lnet/minecraft/entity/boss/dragon/EnderDragonPart;Lnet/minecraft/entity/damage/DamageSource;F)Z"))
-	private float pehkui$crystalDestroyed$damagePart(EnderDragonPart part, DamageSource source, float amount, @Local PlayerEntity attacker)
+	@ModifyArg(method = "crystalDestroyed(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/decoration/EndCrystalEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/damage/DamageSource;)V", index = 3, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/boss/dragon/EnderDragonEntity;damagePart(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/boss/dragon/EnderDragonPart;Lnet/minecraft/entity/damage/DamageSource;F)Z"))
+	private float pehkui$crystalDestroyed$damagePart(float amount, @Local(ordinal = 0) PlayerEntity attacker)
 	{
 		if (attacker != null)
 		{

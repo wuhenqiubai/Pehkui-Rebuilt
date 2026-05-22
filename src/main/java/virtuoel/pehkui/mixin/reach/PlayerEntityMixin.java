@@ -12,7 +12,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin
 {
-	@ModifyExpressionValue(method = "attack", at = @At(value = "CONSTANT", args = "doubleValue=9.0F"))
+	@ModifyExpressionValue(method = "doSweepingAttack(Lnet/minecraft/entity/Entity;FLnet/minecraft/entity/damage/DamageSource;F)V", at = @At(value = "CONSTANT", args = "doubleValue=9.0D"))
 	private double pehkui$attack$distance(double value)
 	{
 		final float scale = ScaleUtils.getEntityReachScale((Entity) (Object) this);

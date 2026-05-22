@@ -7,6 +7,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.conversion.EntityConversionContext;
 import net.minecraft.entity.mob.MobEntity;
 import virtuoel.pehkui.util.ScaleUtils;
 
@@ -14,7 +16,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 public class MobEntityMixin
 {
 	@Inject(at = @At("RETURN"), method = "convertTo")
-	private <T extends MobEntity> void pehkui$convertTo(EntityType<T> entityType, boolean bl, CallbackInfoReturnable<T> info)
+	private <T extends MobEntity> void pehkui$convertTo(EntityType<T> entityType, EntityConversionContext context, SpawnReason reason, EntityConversionContext.Finalizer<T> finalizer, CallbackInfoReturnable<T> info)
 	{
 		final MobEntity e = info.getReturnValue();
 		

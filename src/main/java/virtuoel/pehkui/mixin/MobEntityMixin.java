@@ -15,7 +15,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin
 {
-	@ModifyExpressionValue(method = "tryAttack(Lnet/minecraft/entity/Entity;)Z", at = @At(value = "CONSTANT", args = "floatValue=0.5F"))
+	@ModifyExpressionValue(method = "tryAttack(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/Entity;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/MobEntity;getAttackKnockbackAgainst(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/damage/DamageSource;)F"))
 	private float pehkui$tryAttack$knockback(float value)
 	{
 		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
