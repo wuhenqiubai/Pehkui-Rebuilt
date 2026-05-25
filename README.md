@@ -1,206 +1,62 @@
+# Pehkui Continuation
 
-# Pehkui
-Library mod for the Quilt, NeoForge, Forge, and Fabric mod loaders that allows mod developers to modify the size of entities.  
+Pehkui Continuation is an unofficial continuation of Pehkui, a library mod that allows mods and commands to change the size of entities and scale-related behavior.
 
-# Information for Players
-<details open>
-<summary>Show/Hide Information for Players</summary><table width=100%><td>
+This branch currently targets Minecraft `1.21.11` for Fabric and Quilt. The project metadata also keeps the historical Fabric/Quilt range from `1.14.4` through `1.21.11` where supported by the build.
 
-## Required Mods to Run
-<details open>
-<summary>Show/Hide Required Mods</summary><table width=100%><td>
+## What It Does
 
-### Playing on Quilt
+Pehkui lets mods and commands modify entity scale data. That can affect entity size, movement, reach, hitboxes, camera behavior, explosions, and other properties that depend on scale.
 
-- Newest version of the [Quilt mod loader](https://quiltmc.org/en/install/)  
-- Newest version of the [Quilt Stan](https://www.curseforge.com/minecraft/mc-mods/qsl/files/all)[dard Libraries](https://modrinth.com/mod/qsl/versions) for whichever Minecraft version you're playing on
+Most players install Pehkui because another mod requires it. Mod developers can use it as an API for scale-related features.
 
-### Playing on NeoForge
+## Current Branch Status
 
-- Newest version of the [NeoForge mod loader](https://neoforged.net/) for whichever Minecraft version you're</br>playing on
+- Minecraft target: `1.21.11`
+- Fabric Loader: `0.19.2`
+- Fabric API: `0.141.4+1.21.11`
+- Mod version: `3.8.3`
+- Published loaders configured in this branch: Fabric and Quilt
 
-### Playing on Forge
+## Installation
 
-- Newest version of the [Forge mod loader](https://files.minecraftforge.net/net/minecraftforge/forge/) for whichever Minecraft version you're</br>playing on
+1. Install Fabric Loader or Quilt Loader for the supported Minecraft version.
+2. Install Fabric API or Quilt Standard Libraries as required by your loader and modpack.
+3. Put the Pehkui Continuation jar in your `mods` folder.
+4. Install any mods that depend on Pehkui.
+5. Launch the game.
 
-### Playing on Fabric
+## Downloads
 
-- Newest version of the [Fabric mod loader](https://fabricmc.net/use/installer/)  
-- Newest version of the [Fabric A](https://www.curseforge.com/minecraft/mc-mods/fabric-api/files/all)[PI mod](https://modrinth.com/mod/fabric-api/versions) for whichever Minecraft version you're</br>playing on
-</td></table></details>
+Use the approved Modrinth or CurseForge project page when available. Development builds may also be attached to GitHub releases for this repository.
 
-## Supported Minecraft Versions
-<details>
-<summary>Show/Hide Supported Minecraft Versions</summary><table width=100%><td>
+## For Developers
 
-### Fabric/Quilt Versions
-Supported Versions of `Pehkui-x.y.z+1.14.4-1.20.6`:  
-`1.20.6`, `1.20.4`, `1.20.2`, `1.20.1`, `1.19.4`, `1.19.2`, `1.18.2`, `1.17.1`,</br>`1.16.5`, `1.15.2`, `1.14.4`
+The original Pehkui API style is preserved where possible. Mods that already depend on Pehkui should continue to use their normal dependency declarations unless a continuation release note says otherwise.
 
-### NeoForge Versions
+When targeting this fork directly, depend on the released continuation jar that matches your Minecraft version and loader.
 
-Supported Versions of `Pehkui-x.y.z+1.20.6-neoforge`:  
-`1.20.6`
+## Reporting Issues
 
-Supported Versions of `Pehkui-x.y.z+1.20.4-neoforge`:  
-`1.20.4`
+Open issues on this continuation repository for bugs in this fork.
 
-Supported Versions of `Pehkui-x.y.z+1.20.2-neoforge`:  
-`1.20.2`
+Include:
 
-### Forge Versions
+- Minecraft version
+- loader and loader version
+- Pehkui Continuation version
+- the mod, command, or datapack that changes scale
+- steps to reproduce the scale issue
+- `latest.log` or the crash report
 
-Supported Versions of `Pehkui-x.y.z+1.20.1-forge`:  
-`1.20.1`
+## Building
 
-Supported Versions of `Pehkui-x.y.z+1.19.4-forge`:  
-`1.19.4`
-
-Supported Versions of `Pehkui-x.y.z+1.19.2-forge`:  
-`1.19.2`
-
-Supported Versions of `Pehkui-x.y.z+1.18.2-forge`:  
-`1.18.2`
-
-Supported Versions of `Pehkui-x.y.z+1.17.1-forge`:  
-`1.17.1`
-
-Supported Versions of `Pehkui-x.y.z+1.16.5-forge`:  
-`1.16.5`
-
-</td></table></details>
-
-## Mod Features
-<details>
-<summary>Show/Hide Mod Features</summary><table width=100%><td></br>
-
-Pehkui allows mod developers to:
-
-- Change the size of entities through modifying scale data
-- Affect other properties of an entity that are considered as dependant on the size</br>(e.g. movement speed, explosion size, reach distance)
-- Have the scalable properties of an entity be affected by other scale data types or by</br>external data through scale modifiers
-</td></table></details>
-</td></table></details>
-
-# Information for Developers
-<details>
-<summary>Show/Hide Information for Developers</summary><table width=100%><td>
-
-## Adding a Dependency
-<details open>
-<summary>Show/Hide Dependency Information</summary><table width=100%><td>
-
-### Maven
-
-<details open>
-<summary>Show/Hide Maven Information</summary><table width=100%><td>
-
-To make use of Pehkui in your own mod, you'll first need to go to the `repositories`</br>block of your `build.gradle`, typically found right before the `dependencies` block,</br>and add the JitPack Maven to the bottom of the block like below:
-
-```groovy
-// ...
-
-repositories {
-	// ... your other Maven repositories above, if any ...
-	maven {
-		url = "https://jitpack.io"
-	}
-}
-
-dependencies {
-	// ...
-}
-
-// ...
-```
-</td></table></details>
-
-### Mod Version and Dependency Configuration
-
-<details open>
-<summary>Show/Hide Dependency Configuration Information</summary><table width=100%><td>
-
-Now that a Maven repository is specified, add `pehkui_version=x.y.z-w` to your</br>`gradle.properties`, replacing `x.y.z-w` with one of the available version strings from</br>the [list of release tags](../../../tags).
-
-Lastly, in your `build.gradle`'s `dependencies` block, add the corresponding line from</br>below depending on your mod loader:
-
-#### Developing on Quilt/Fabric with Loom
-
-```groovy
-modApi("com.github.Virtuoel:Pehkui:${pehkui_version}", {
-	exclude group: "net.fabricmc.fabric-api"
-})
+```bash
+./gradlew build
 ```
 
-#### Developing on NeoForge with NeoGradle
+Built jars are written to `build/libs`.
 
-```groovy
-implementation "com.github.Virtuoel:Pehkui:${pehkui_version}"
-```
+## Credits
 
-#### Developing on Forge with ForgeGradle
-
-```groovy
-implementation fg.deobf("com.github.Virtuoel:Pehkui:${pehkui_version}")
-```
-
-#### Developing on NeoForge/Forge with Architectury Loom
-
-```groovy
-modApi("com.github.Virtuoel:Pehkui:${pehkui_version}")
-```
-</td></table></details>
-
-### Fixing Mixins of Dependencies If Using ForgeGradle
-
-<details>
-<summary>Show/Hide Fix on ForgeGradle</summary><table width=100%><td>
-
-If you're using Forge with ForgeGradle, make sure the `mixingradle` plugin is present and</br>applied:
-
-Make sure the following line is present in your `build.gradle`'s</br>`buildscript { repositories {} }` block.
-
-```groovy
-maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
-```
-
-Then make sure the following line is present in your `build.gradle`'s</br>`buildscript { dependencies {} }` block.
-
-```groovy
-classpath "org.spongepowered:mixingradle:0.7-SNAPSHOT"
-```
-
-Next, make sure the following line is present in your `build.gradle`.
-
-```groovy
-apply plugin: "org.spongepowered.mixin"
-```
-
-Then regenerate your run configurations with `genEclipseRuns`, `genIntellijRuns`, or</br>`genVSCodeRuns` depending on your IDE.
-</td></table></details>
-<details>
-
-<summary>Show/Hide Fix on Older ForgeGradle (4 and below)</summary><table width=100%><td>
-
-If you're using Forge with ForgeGradle 4 or older, make sure refmap remapping is enabled</br>in your `build.gradle`'s run configuration blocks.
-
-Make sure the following lines are present in the `client {}`, `server {}`, and `data {}`</br>run configuration blocks.
-
-```groovy
-property 'mixin.env.remapRefMap', 'true'
-property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-```
-
-Then regenerate your run configurations with `genEclipseRuns`, `genIntellijRuns`, or</br>`genVSCodeRuns` depending on your IDE.
-</td></table></details>
-</td></table></details>
-<!--
-## API Information
-<details>
-<summary>Show/Hide API Information</summary><table width=100%><td>
-
-### WIP
-
-</td></table></details>
--->
-</td></table></details>
+Pehkui was originally created by Virtuoel. This continuation keeps the project available for newer versions while preserving original credits and license terms.
