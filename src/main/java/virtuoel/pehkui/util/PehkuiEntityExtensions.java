@@ -3,6 +3,7 @@ package virtuoel.pehkui.util;
 import java.util.Map;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleType;
 
@@ -31,8 +32,10 @@ public interface PehkuiEntityExtensions
 	NbtCompound pehkui_writeScaleNbt(NbtCompound nbt);
 	
 	boolean pehkui_isFirstUpdate();
-	
+
 	boolean pehkui_getOnGround();
-	
+
 	void pehkui_setOnGround(boolean onGround);
+
+	void pehkui_setPosDirectly(BlockPos pos);
 }
