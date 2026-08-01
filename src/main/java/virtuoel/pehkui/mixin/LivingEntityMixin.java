@@ -1,7 +1,6 @@
 package virtuoel.pehkui.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
@@ -28,20 +27,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
+import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin
 {
-	@Shadow
-	private BlockPos blockPos;
-
-	@Unique
-	protected void setPosDirectly(final BlockPos pos)
-	{
-		blockPos = pos;
-	}
-
 	@Unique BlockPos pehkui$initialClimbingPos = null;
 
 	@Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V", shift = Shift.AFTER))
@@ -207,14 +198,14 @@ public abstract class LivingEntityMixin
 
 			for (final BlockPos pos : BlockPos.iterate(minX, minY, minZ, maxX, minY, maxZ))
 			{
-				setPosDirectly(pos);
+				((PehkuiEntityExtensions) self).pehkui_setPosDirectly(pos);
 				if (self.isClimbing())
 				{
 					return true;
 				}
 			}
 
-			setPosDirectly(pehkui$initialClimbingPos);
+			((PehkuiEntityExtensions) self).pehkui_setPosDirectly(pehkui$initialClimbingPos);
 			pehkui$initialClimbingPos = null;
 		}
 

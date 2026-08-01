@@ -51,6 +51,12 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		blockPos = pos;
 	}
 
+	@Override
+	public void pehkui_setPosDirectly(BlockPos pos)
+	{
+		setPosDirectly(pos);
+	}
+
 	private boolean pehkui_shouldSyncScales = false;
 	private boolean pehkui_shouldIgnoreScaleNbt = false;
 	private ScaleData[] pehkui_scaleCache = null;
