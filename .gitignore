@@ -41,3 +41,4 @@ bin
 libs
 *.kate-swp
 changelog*.txt
+/CLAUDE.md
