@@ -25,9 +25,7 @@ public class ScaleEasingArgumentType implements ArgumentType<Float2FloatFunction
 {
 	private static final Collection<String> EXAMPLES = Arrays.asList("linear", Pehkui.MOD_ID + ":linear");
 	public static final DynamicCommandExceptionType INVALID_ENTRY_EXCEPTION = new DynamicCommandExceptionType(arg ->
-	{
-		return I18nUtils.translate("argument.pehkui.easing.invalid", "Unknown easing '%s'", arg);
-	});
+		I18nUtils.translate("argument.pehkui.easing.invalid", "Unknown easing '%s'", arg));
 	
 	@Override
 	public Float2FloatFunction parse(StringReader stringReader) throws CommandSyntaxException

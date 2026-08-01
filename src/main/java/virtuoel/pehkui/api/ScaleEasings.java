@@ -12,9 +12,7 @@ public final class ScaleEasings
 	
 	public static final Float2FloatFunction QUADRATIC_IN = register("quadratic_in", x -> x * x);
 	public static final Float2FloatFunction QUADRATIC_OUT = register("quadratic_out", x ->
-	{
-		return -(x * (x - 2.0F));
-	});
+		-(x * (x - 2.0F)));
 	public static final Float2FloatFunction QUADRATIC_IN_OUT = register("quadratic_in_out", x ->
 	{
 		if (x < 0.5F)
@@ -85,26 +83,16 @@ public final class ScaleEasings
 	});
 	
 	public static final Float2FloatFunction SINE_IN = register("sine_in", x ->
-	{
-		return (float) Math.sin((x - 1.0F) * HALF_PI) + 1.0F;
-	});
+		(float) Math.sin((x - 1.0F) * HALF_PI) + 1.0F);
 	public static final Float2FloatFunction SINE_OUT = register("sine_out", x ->
-	{
-		return (float) Math.sin(x * HALF_PI);
-	});
+		(float) Math.sin(x * HALF_PI));
 	public static final Float2FloatFunction SINE_IN_OUT = register("sine_in_out", x ->
-	{
-		return (float) (0.5F * (1.0F - Math.cos(x * Math.PI)));
-	});
+		(float) (0.5F * (1.0F - Math.cos(x * Math.PI))));
 	
 	public static final Float2FloatFunction CIRCULAR_IN = register("circular_in", x ->
-	{
-		return (float) (1.0F - Math.sqrt(1.0F - (x * x)));
-	});
+		(float) (1.0F - Math.sqrt(1.0F - (x * x))));
 	public static final Float2FloatFunction CIRCULAR_OUT = register("circular_out", x ->
-	{
-		return (float) Math.sqrt((2.0F - x) * x);
-	});
+		(float) Math.sqrt((2.0F - x) * x));
 	public static final Float2FloatFunction CIRCULAR_IN_OUT = register("circular_in_out", x ->
 	{
 		if (x < 0.5F)
@@ -118,13 +106,9 @@ public final class ScaleEasings
 	});
 	
 	public static final Float2FloatFunction EXPONENTIAL_IN = register("exponential_in", x ->
-	{
-		return (float) (x == 0.0F ? x : Math.pow(2.0F, 10.0F * (x - 1.0F)));
-	});
+		(float) (x == 0.0F ? x : Math.pow(2.0F, 10.0F * (x - 1.0F))));
 	public static final Float2FloatFunction EXPONENTIAL_OUT = register("exponential_out", x ->
-	{
-		return (float) (x == 1.0F ? x : 1.0F - Math.pow(2.0F, -10.0F * x));
-	});
+		(float) (x == 1.0F ? x : 1.0F - Math.pow(2.0F, -10.0F * x)));
 	public static final Float2FloatFunction EXPONENTIAL_IN_OUT = register("exponential_in_out", x ->
 	{
 		if (x == 0.0F || x == 1.0F)
@@ -143,13 +127,9 @@ public final class ScaleEasings
 	});
 	
 	public static final Float2FloatFunction ELASTIC_IN = register("elastic_in", x ->
-	{
-		return (float) (Math.sin(13.0F * HALF_PI * x) * Math.pow(2.0F, 10.0F * (x - 1.0F)));
-	});
+		(float) (Math.sin(13.0F * HALF_PI * x) * Math.pow(2.0F, 10.0F * (x - 1.0F))));
 	public static final Float2FloatFunction ELASTIC_OUT = register("elastic_out", x ->
-	{
-		return (float) (Math.sin(-13.0F * HALF_PI * (x + 1.0F)) * Math.pow(2.0F, -10.0F * x) + 1.0F);
-	});
+		(float) (Math.sin(-13.0F * HALF_PI * (x + 1.0F)) * Math.pow(2.0F, -10.0F * x) + 1.0F));
 	public static final Float2FloatFunction ELASTIC_IN_OUT = register("elastic_in_out", x ->
 	{
 		if (x < 0.5F)
@@ -163,9 +143,7 @@ public final class ScaleEasings
 	});
 	
 	public static final Float2FloatFunction BACK_IN = register("back_in", x ->
-	{
-		return (float) (x * x * x - x * Math.sin(x * Math.PI));
-	});
+		(float) (x * x * x - x * Math.sin(x * Math.PI)));
 	public static final Float2FloatFunction BACK_OUT = register("back_out", x ->
 	{
 		float f = 1.0F - x;
@@ -186,9 +164,7 @@ public final class ScaleEasings
 	});
 	
 	public static final Float2FloatFunction BOUNCE_IN = register("bounce_in", x ->
-	{
-		return 1.0F - ScaleEasings.BOUNCE_OUT.apply(1.0F - x);
-	});
+		1.0F - ScaleEasings.BOUNCE_OUT.apply(1.0F - x));
 	public static final Float2FloatFunction BOUNCE_OUT = register("bounce_out", x ->
 	{
 		if (x < 4.0F / 11.0F)

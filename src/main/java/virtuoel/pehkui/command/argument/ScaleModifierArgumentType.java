@@ -25,9 +25,7 @@ public class ScaleModifierArgumentType implements ArgumentType<ScaleModifier>
 {
 	private static final Collection<String> EXAMPLES = Arrays.asList("identity", Pehkui.MOD_ID + ":identity");
 	public static final DynamicCommandExceptionType INVALID_ENTRY_EXCEPTION = new DynamicCommandExceptionType(arg ->
-	{
-		return I18nUtils.translate("argument.pehkui.modifier.invalid", "Unknown scale modifier '%s'", arg);
-	});
+		I18nUtils.translate("argument.pehkui.modifier.invalid", "Unknown scale modifier '%s'", arg));
 	
 	@Override
 	public ScaleModifier parse(StringReader stringReader) throws CommandSyntaxException

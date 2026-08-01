@@ -9,7 +9,7 @@ public class ScaleOperations
 {
 	public static final DoubleBinaryOperator NOOP = register("noop", (curr, arg) -> curr);
 	public static final DoubleBinaryOperator SET = register("set", (curr, arg) -> arg);
-	public static final DoubleBinaryOperator ADD = register("add", (curr, arg) -> curr + arg);
+	public static final DoubleBinaryOperator ADD = register("add", Double::sum);
 	public static final DoubleBinaryOperator SUBTRACT = register("subtract", (curr, arg) -> curr - arg);
 	public static final DoubleBinaryOperator MULTIPLY = register("multiply", (curr, arg) -> curr * arg);
 	public static final DoubleBinaryOperator DIVIDE = register("divide", (curr, arg) -> curr / arg);

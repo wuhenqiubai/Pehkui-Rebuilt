@@ -204,11 +204,10 @@ public class DebugCommand
 		return 1;
 	}
 	
-	public static enum PacketType
+	public enum PacketType
 	{
 		MIXIN_AUDIT,
 		GARBAGE_COLLECT
-		;
 	}
 	
 	private static int runMixinTests(CommandContext<ServerCommandSource> context) throws CommandSyntaxException

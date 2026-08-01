@@ -50,9 +50,9 @@ public class ScaleRenderUtils
 		final EnvType env = FabricLoader.getInstance().getEnvironmentType();
 		
 		final MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
-		final Int2ObjectMap<MethodHandle> handles = new Int2ObjectArrayMap<MethodHandle>();
-		final Int2ObjectMap<MethodType> types = new Int2ObjectArrayMap<MethodType>();
-		final Int2ObjectMap<Method> methods = new Int2ObjectArrayMap<Method>();
+		final Int2ObjectMap<MethodHandle> handles = new Int2ObjectArrayMap<>();
+		final Int2ObjectMap<MethodType> types = new Int2ObjectArrayMap<>();
+		final Int2ObjectMap<Method> methods = new Int2ObjectArrayMap<>();
 		final Class<?>[] classes = new Class<?>[1];
 		
 		final MethodHandles.Lookup lookup = LOOKUP = MethodHandles.lookup();

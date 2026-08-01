@@ -16,8 +16,10 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(TrackTargetGoal.class)
 public class TrackTargetGoalMixin
 {
-	@Shadow LivingEntity target;
-	@Shadow @Final @Mutable MobEntity mob;
+	@Shadow
+	protected LivingEntity target;
+	@Shadow @Final @Mutable
+	protected MobEntity mob;
 	
 	@ModifyReturnValue(method = "getFollowRange", at = @At("RETURN"))
 	private double pehkui$getFollowRange(double original)

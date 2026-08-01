@@ -14,7 +14,8 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(TargetPredicate.class)
 public class TargetPredicateMixin
 {
-	@Shadow boolean useDistanceScalingFactor;
+	@Shadow
+	private boolean useDistanceScalingFactor;
 	
 	@ModifyExpressionValue(method = "test", at = @At(value = "CONSTANT", args = "doubleValue=2.0D"))
 	private double pehkui$test$minDistance(double value, @Nullable LivingEntity baseEntity, LivingEntity targetEntity)

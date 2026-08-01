@@ -25,9 +25,7 @@ public class ScaleTypeArgumentType implements ArgumentType<ScaleType>
 {
 	private static final Collection<String> EXAMPLES = Arrays.asList("base", Pehkui.MOD_ID + ":base");
 	public static final DynamicCommandExceptionType INVALID_ENTRY_EXCEPTION = new DynamicCommandExceptionType(arg ->
-	{
-		return I18nUtils.translate("argument.pehkui.type.invalid", "Unknown scale type '%s'", arg);
-	});
+		I18nUtils.translate("argument.pehkui.type.invalid", "Unknown scale type '%s'", arg));
 	
 	@Override
 	public ScaleType parse(StringReader stringReader) throws CommandSyntaxException

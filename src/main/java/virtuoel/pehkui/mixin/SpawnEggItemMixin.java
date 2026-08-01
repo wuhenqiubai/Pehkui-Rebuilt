@@ -23,8 +23,6 @@ public class SpawnEggItemMixin
 	private void pehkui$spawnBaby(PlayerEntity user, MobEntity mobEntity, EntityType<? extends MobEntity> entityType, ServerWorld serverWorld, Vec3d vec3d, ItemStack itemStack, CallbackInfoReturnable<Optional<MobEntity>> info)
 	{
 		info.getReturnValue().ifPresent(e ->
-		{
-			ScaleUtils.loadScale(e, mobEntity);
-		});
+			ScaleUtils.loadScale(e, mobEntity));
 	}
 }

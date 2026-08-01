@@ -17,10 +17,10 @@ import virtuoel.pehkui.util.ScaleUtils;
 public abstract class InGameHudMixin
 {
 	@Shadow
-	abstract PlayerEntity getCameraPlayer();
+	protected abstract PlayerEntity getCameraPlayer();
 	
 	@Shadow @Final @Mutable
-	MinecraftClient client;
+	private MinecraftClient client;
 	
 	@ModifyArg(method = "renderStatusBars", index = 0, at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(FF)F"))
 	private float pehkui$renderStatusBars(float value)

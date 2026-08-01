@@ -14,7 +14,8 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(targets = "net.minecraft.entity.mob.GhastEntity$ShootFireballGoal")
 public abstract class GhastEntityShootFireballGoalMixin
 {
-	@Shadow @Final GhastEntity ghast;
+	@Shadow @Final
+	private GhastEntity ghast;
 	
 	@ModifyArg(method = "tick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
 	private Entity pehkui$tick$spawnEntity(Entity entity)

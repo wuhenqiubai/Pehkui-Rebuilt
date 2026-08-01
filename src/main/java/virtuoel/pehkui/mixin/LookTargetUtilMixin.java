@@ -18,7 +18,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(LookTargetUtil.class)
 public class LookTargetUtilMixin
 {
-	@ModifyVariable(method = "give(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;F)V", at = @At("HEAD"))
+	@ModifyVariable(method = "give(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;F)V", at = @At("HEAD"), argsOnly = true)
 	private static float pehkui$give$offset(float value, LivingEntity entity, ItemStack stack, Vec3d targetLocation, Vec3d velocityFactor, float yOffset)
 	{
 		final float scale = ScaleUtils.getEyeHeightScale(entity);

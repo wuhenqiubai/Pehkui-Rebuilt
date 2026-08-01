@@ -49,23 +49,23 @@ public class ConfigSyncUtils
 	
 	static
 	{
-		CODECS.put("double", new ConfigEntryCodec<Double>(
+		CODECS.put("double", new ConfigEntryCodec<>(
 			(b, e) -> ((ByteBuf) b).writeDouble(e.getValue()),
 			(b, e) ->
 			{
 				final double v = b.readDouble();
-				
+
 				return () -> e.setSyncedValue(v);
 			},
 			DoubleArgumentType::doubleArg,
 			DoubleArgumentType::getDouble
 		));
-		CODECS.put("boolean", new ConfigEntryCodec<Boolean>(
+		CODECS.put("boolean", new ConfigEntryCodec<>(
 			(b, e) -> ((ByteBuf) b).writeBoolean(e.getValue()),
 			(b, e) ->
 			{
 				final boolean v = b.readBoolean();
-				
+
 				return () -> e.setSyncedValue(v);
 			},
 			BoolArgumentType::bool,
@@ -100,9 +100,7 @@ public class ConfigSyncUtils
 	public static void resetSyncedConfigs()
 	{
 		SYNCED_CONFIGS.values().forEach((entry) ->
-		{
-			entry.setSyncedValue(null);
-		});
+			entry.setSyncedValue(null));
 	}
 	
 	public static void syncConfigs(final Collection<ServerPlayerEntity> players)
@@ -206,19 +204,19 @@ public class ConfigSyncUtils
 		
 		return () -> tasks.forEach(Runnable::run);
 	}
-	
+
 	private static class ConfigEntryCodec<T>
 	{
 		final BiConsumer<PacketByteBuf, SyncableConfigEntry<T>> writer;
 		final BiFunction<PacketByteBuf, SyncableConfigEntry<T>, Runnable> reader;
 		final Supplier<ArgumentType<T>> argumentGetter;
 		final BiFunction<CommandContext<?>, String, T> argumentFunction;
-		
+
 		public ConfigEntryCodec(final BiConsumer<PacketByteBuf, SyncableConfigEntry<T>> writer, final BiFunction<PacketByteBuf, SyncableConfigEntry<T>, Runnable> reader)
 		{
 			this(writer, reader, () -> null, (c, n) -> null);
 		}
-		
+
 		public ConfigEntryCodec(final BiConsumer<PacketByteBuf, SyncableConfigEntry<T>> writer, final BiFunction<PacketByteBuf, SyncableConfigEntry<T>, Runnable> reader, final Supplier<ArgumentType<T>> argumentGetter, final BiFunction<CommandContext<?>, String, T> argumentFunction)
 		{
 			this.writer = writer;
@@ -226,22 +224,22 @@ public class ConfigSyncUtils
 			this.argumentGetter = argumentGetter;
 			this.argumentFunction = argumentFunction;
 		}
-		
+
 		public void write(final PacketByteBuf buffer, final SyncableConfigEntry<T> entry)
 		{
 			writer.accept(buffer, entry);
 		}
-		
+
 		public Runnable read(final PacketByteBuf buffer, final SyncableConfigEntry<T> entry)
 		{
 			return reader.apply(buffer, entry);
 		}
-		
+
 		public @Nullable ArgumentType<T> getArgumentType()
 		{
 			return argumentGetter.get();
 		}
-		
+
 		public T getArgument(final CommandContext<?> context, final String name)
 		{
 			return argumentFunction.apply(context, name);
@@ -256,14 +254,14 @@ public class ConfigSyncUtils
 			SyncableConfigEntry<T> entry = (SyncableConfigEntry<T>) SYNCED_CONFIGS.get(name);
 			if (entry == null)
 			{
-				SYNCED_CONFIGS.put(name, entry = new SyncableConfigEntry<T>(name, defaultValue, supplier, consumer));
+				SYNCED_CONFIGS.put(name, entry = new SyncableConfigEntry<>(name, defaultValue, supplier, consumer));
 				CONFIGS.put(name, entry);
 			}
 			
 			return entry;
 		}
 		
-		final MutableConfigEntry<T> entry = new NamedConfigEntry<T>(name, defaultValue, supplier, consumer);
+		final MutableConfigEntry<T> entry = new NamedConfigEntry<>(name, defaultValue, supplier, consumer);
 		
 		CONFIGS.put(name, entry);
 		

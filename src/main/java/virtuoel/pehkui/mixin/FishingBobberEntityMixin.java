@@ -14,7 +14,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 public abstract class FishingBobberEntityMixin
 {
 	@Shadow
-	abstract PlayerEntity getPlayerOwner();
+	public abstract PlayerEntity getPlayerOwner();
 	
 	@ModifyExpressionValue(method = "removeIfInvalid", at = @At(value = "CONSTANT", args = "doubleValue=1024.0D"))
 	private double pehkui$removeIfInvalid$distance(double value)

@@ -37,7 +37,7 @@ public final class ReflectionUtils
 	static
 	{
 		final MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
-		final Int2ObjectMap<MethodHandle> h = new Int2ObjectArrayMap<MethodHandle>();
+		final Int2ObjectMap<MethodHandle> h = new Int2ObjectArrayMap<>();
 		
 		final MethodHandles.Lookup lookup = MethodHandles.lookup();
 		String mapped = "unset";

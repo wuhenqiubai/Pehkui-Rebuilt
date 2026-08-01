@@ -40,8 +40,10 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(Entity.class)
 public abstract class EntityMixin implements PehkuiEntityExtensions
 {
-	@Shadow boolean onGround;
-	@Shadow boolean firstUpdate;
+	@Shadow
+	private boolean onGround;
+	@Shadow
+	protected boolean firstUpdate;
 	@Shadow
 	private BlockPos blockPos;
 
@@ -57,8 +59,11 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		setPosDirectly(pos);
 	}
 
+	@Unique
 	private boolean pehkui_shouldSyncScales = false;
+	@Unique
 	private boolean pehkui_shouldIgnoreScaleNbt = false;
+	@Unique
 	private ScaleData[] pehkui_scaleCache = null;
 	
 	@Override

@@ -60,8 +60,7 @@ public class GravityChangerCompatibility
 				}
 			})
 			.orElseGet(() ->
-			{
-				return oldGetterMethod.map(m ->
+				oldGetterMethod.map(m ->
 				{
 					try
 					{
@@ -73,8 +72,7 @@ public class GravityChangerCompatibility
 					}
 				})
 				.orElseGet(() ->
-				{
-					return accessorGetterMethod.map(m ->
+					accessorGetterMethod.map(m ->
 					{
 						try
 						{
@@ -85,9 +83,7 @@ public class GravityChangerCompatibility
 							return Direction.DOWN;
 						}
 					})
-					.orElse(Direction.DOWN);
-				});
-			});
+					.orElse(Direction.DOWN)));
 		}
 		
 		return Direction.DOWN;

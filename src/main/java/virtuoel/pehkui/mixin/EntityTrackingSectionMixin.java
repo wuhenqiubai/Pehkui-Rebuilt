@@ -20,10 +20,9 @@ public class EntityTrackingSectionMixin
 	{
 		final Box bounds = original.call(obj);
 		
-		if (obj instanceof Entity)
+		if (obj instanceof Entity entity)
 		{
-			final Entity entity = (Entity) obj;
-			
+
 			final float interactionWidth = ScaleUtils.getInteractionBoxWidthScale(entity);
 			final float interactionHeight = ScaleUtils.getInteractionBoxHeightScale(entity);
 			
@@ -45,10 +44,9 @@ public class EntityTrackingSectionMixin
 	{
 		final Box bounds = original.call(obj);
 		
-		if (obj instanceof Entity)
+		if (obj instanceof Entity entity)
 		{
-			final Entity entity = (Entity) obj;
-			
+
 			final float interactionWidth = ScaleUtils.getInteractionBoxWidthScale(entity);
 			final float interactionHeight = ScaleUtils.getInteractionBoxHeightScale(entity);
 			

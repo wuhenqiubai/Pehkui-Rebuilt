@@ -66,43 +66,36 @@ public class ScaleData
 		
 		this.shouldSync = false;
 		
-		this.baseValueModifiers = new ObjectAVLTreeSet<ScaleModifier>()
-		{
+		this.baseValueModifiers = new ObjectAVLTreeSet<>() {
 			@Override
-			public boolean add(ScaleModifier arg0)
-			{
-				if (super.add(arg0))
-				{
+			public boolean add(ScaleModifier arg0) {
+				if (super.add(arg0)) {
 					invalidateCachedScales();
-					
-					if (ScaleData.this.trackModifierChanges)
-					{
+
+					if (ScaleData.this.trackModifierChanges) {
 						invalidateCachedModifiers();
 						onUpdate();
 					}
-					
+
 					return true;
 				}
-				
+
 				return false;
 			}
-			
+
 			@Override
-			public boolean remove(Object arg0)
-			{
-				if (super.remove(arg0))
-				{
+			public boolean remove(Object arg0) {
+				if (super.remove(arg0)) {
 					invalidateCachedScales();
-					
-					if (ScaleData.this.trackModifierChanges)
-					{
+
+					if (ScaleData.this.trackModifierChanges) {
 						invalidateCachedModifiers();
 						onUpdate();
 					}
-					
+
 					return true;
 				}
-				
+
 				return false;
 			}
 		};

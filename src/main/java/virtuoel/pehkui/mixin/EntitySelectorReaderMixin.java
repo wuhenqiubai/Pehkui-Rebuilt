@@ -21,7 +21,7 @@ import virtuoel.pehkui.util.PehkuiEntitySelectorReaderExtensions;
 public abstract class EntitySelectorReaderMixin implements PehkuiEntitySelectorReaderExtensions
 {
 	@Shadow
-	abstract void addPredicate(Predicate<Entity> predicate);
+	public abstract void addPredicate(Predicate<Entity> predicate);
 	
 	@Unique
 	NumberRange.DoubleRange pehkui$scaleRange = (NumberRange.DoubleRange) (Object) NumberRange.DoubleRange.ANY;

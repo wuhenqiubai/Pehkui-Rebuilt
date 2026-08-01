@@ -42,19 +42,17 @@ public class MulticonnectCompatibility
 		if (this.enabled)
 		{
 			return instanceMethod.flatMap(m ->
-			{
-				return protocolVersion.map(f ->
-				{
-					try
+					protocolVersion.map(f ->
 					{
-						return protocolPredicate.test((int) f.invoke(m.invoke(null))) ? trueValue : defaultValue;
-					}
-					catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-					{
-						return defaultValue;
-					}
-				});
-			})
+						try
+						{
+							return protocolPredicate.test((int) f.invoke(m.invoke(null))) ? trueValue : defaultValue;
+						}
+						catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+						{
+							return defaultValue;
+						}
+					}))
 			.orElse(defaultValue);
 		}
 		

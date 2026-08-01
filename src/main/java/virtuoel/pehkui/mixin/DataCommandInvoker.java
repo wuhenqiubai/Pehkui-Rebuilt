@@ -11,30 +11,30 @@ import net.minecraft.server.command.ServerCommandSource;
 public interface DataCommandInvoker
 {
 	@Mixin(DataCommand.class)
-	public interface Get
+	interface Get
 	{
 		@Invoker
-		public static int callExecuteGet(ServerCommandSource source, DataCommandObject object)
+		static int callExecuteGet(ServerCommandSource source, DataCommandObject object)
 		{
 			throw new NoSuchMethodError();
 		}
 	}
 	
 	@Mixin(DataCommand.class)
-	public interface Path
+	interface Path
 	{
 		@Invoker
-		public static int callExecuteGet(ServerCommandSource source, DataCommandObject object, NbtPathArgumentType.NbtPath path)
+		static int callExecuteGet(ServerCommandSource source, DataCommandObject object, NbtPathArgumentType.NbtPath path)
 		{
 			throw new NoSuchMethodError();
 		}
 	}
 	
 	@Mixin(DataCommand.class)
-	public interface Scaled
+	interface Scaled
 	{
 		@Invoker
-		public static int callExecuteGet(ServerCommandSource source, DataCommandObject object, NbtPathArgumentType.NbtPath path, double scale)
+		static int callExecuteGet(ServerCommandSource source, DataCommandObject object, NbtPathArgumentType.NbtPath path, double scale)
 		{
 			throw new NoSuchMethodError();
 		}

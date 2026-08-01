@@ -17,7 +17,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 public abstract class ExplosiveProjectileEntityMixin
 {
 	@Shadow
-	abstract void setVelocityWithAcceleration(Vec3d velocity, double accelerationPower);
+	protected abstract void setVelocityWithAcceleration(Vec3d velocity, double accelerationPower);
 	
 	@Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/world/World;)V")
 	private void pehkui$construct(EntityType<? extends ExplosiveProjectileEntity> type, LivingEntity owner, Vec3d velocity, World world, CallbackInfo info)

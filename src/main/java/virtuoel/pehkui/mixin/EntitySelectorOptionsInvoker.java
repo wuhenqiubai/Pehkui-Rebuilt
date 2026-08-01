@@ -13,7 +13,7 @@ import net.minecraft.text.Text;
 public interface EntitySelectorOptionsInvoker
 {
 	@Invoker
-	public static void callPutOption(String id, EntitySelectorOptions.SelectorHandler handler, Predicate<EntitySelectorReader> condition, Text description)
+	static void callPutOption(String id, EntitySelectorOptions.SelectorHandler handler, Predicate<EntitySelectorReader> condition, Text description)
 	{
 		throw new NoSuchMethodError();
 	}

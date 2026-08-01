@@ -14,7 +14,8 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(ServerPlayNetworkHandler.class)
 public class ServerPlayNetworkHandlerMixin
 {
-	@Shadow ServerPlayerEntity player;
+	@Shadow
+	public ServerPlayerEntity player;
 	
 	@ModifyArg(method = "onVehicleMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;contract(D)Lnet/minecraft/util/math/Box;"))
 	private double pehkui$onVehicleMove$contract(double value)

@@ -46,17 +46,10 @@ public class CommandUtils
 	{
 		if (ModLoaderUtils.isModLoaded("fabric-command-api-v2"))
 		{
-			new Runnable()
+			((Runnable) () -> CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) ->
 			{
-				@Override
-				public void run()
-				{
-					CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) ->
-					{
-						registerCommands(dispatcher);
-					});
-				}
-			}.run();
+				registerCommands(dispatcher);
+			})).run();
 		}
 		else if (ModLoaderUtils.isModLoaded("fabric-command-api-v1"))
 		{
@@ -68,21 +61,12 @@ public class CommandUtils
 	{
 		if (ModLoaderUtils.isModLoaded("fabric-command-api-v2") && ModLoaderUtils.isModLoaded("fabric-registry-sync-v0"))
 		{
-			new Runnable()
-			{
+			((Runnable) () -> CommandUtils.registerArgumentTypes(new ArgumentTypeConsumer() {
 				@Override
-				public void run()
-				{
-					CommandUtils.registerArgumentTypes(new ArgumentTypeConsumer()
-					{
-						@Override
-						public <T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier)
-						{
-							ArgumentTypeRegistry.registerArgumentType(id, argClass, ConstantArgumentSerializer.of(supplier));
-						}
-					});
+				public <T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier) {
+					ArgumentTypeRegistry.registerArgumentType(id, argClass, ConstantArgumentSerializer.of(supplier));
 				}
-			}.run();
+			})).run();
 		}
 		else if (VersionUtils.MINOR <= 18)
 		{
@@ -153,7 +137,7 @@ public class CommandUtils
 	static
 	{
 		final MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
-		final Int2ObjectMap<MethodHandle> h = new Int2ObjectArrayMap<MethodHandle>();
+		final Int2ObjectMap<MethodHandle> h = new Int2ObjectArrayMap<>();
 		
 		final MethodHandles.Lookup lookup = MethodHandles.lookup();
 		String mapped = "unset";

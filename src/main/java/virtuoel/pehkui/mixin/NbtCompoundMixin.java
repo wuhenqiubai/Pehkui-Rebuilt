@@ -12,9 +12,9 @@ import virtuoel.pehkui.util.NbtCompoundExtensions;
 public abstract class NbtCompoundMixin implements NbtCompoundExtensions
 {
 	@Shadow
-	abstract boolean containsUuid(String key);
+	public abstract boolean containsUuid(String key);
 	@Shadow
-	abstract UUID getUuid(String key);
+	public abstract UUID getUuid(String key);
 	
 	@Override
 	public boolean pehkui_containsUuid(String key)

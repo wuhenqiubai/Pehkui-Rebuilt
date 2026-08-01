@@ -14,7 +14,7 @@ import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
 public abstract class AbstractBlockStateMixin implements PehkuiBlockStateExtensions
 {
 	@Shadow
-	abstract VoxelShape getOutlineShape(BlockView world, BlockPos pos);
+	public abstract VoxelShape getOutlineShape(BlockView world, BlockPos pos);
 	
 	@Override
 	public VoxelShape pehkui_getOutlineShape(BlockView world, BlockPos pos)
@@ -23,7 +23,7 @@ public abstract class AbstractBlockStateMixin implements PehkuiBlockStateExtensi
 	}
 	
 	@Shadow
-	abstract Block getBlock();
+	public abstract Block getBlock();
 	
 	@Override
 	public Block pehkui_getBlock()

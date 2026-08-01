@@ -21,7 +21,7 @@ import virtuoel.pehkui.api.ScaleType;
 public class ServerWorldMixin
 {
 	@Shadow @Final @Mutable
-	ServerEntityManager<Entity> entityManager;
+	private ServerEntityManager<Entity> entityManager;
 	
 	@ModifyReturnValue(method = "getDebugString", at = @At("RETURN"))
 	private String pehkui$getDebugString(String value)

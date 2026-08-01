@@ -63,13 +63,9 @@ public class ScaleOperationArgumentType implements ArgumentType<ScaleOperationAr
 	{
 		return CommandSource.suggestMatching(
 			ScaleRegistries.SCALE_OPERATIONS.keySet().stream().filter(id ->
-			{
-				return !id.equals(ScaleRegistries.getDefaultId(ScaleRegistries.SCALE_OPERATIONS));
-			})
+					!id.equals(ScaleRegistries.getDefaultId(ScaleRegistries.SCALE_OPERATIONS)))
 			.map(id ->
-			{
-				return id.getNamespace().equals(Pehkui.MOD_ID) ? id.getPath() : id.toString();
-			}),
+				id.getNamespace().equals(Pehkui.MOD_ID) ? id.getPath() : id.toString()),
 			builder);
 	}
 	

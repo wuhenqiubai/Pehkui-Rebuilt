@@ -11,13 +11,13 @@ import net.minecraft.command.argument.OperationArgumentType;
 public interface OperationArgumentTypeAccessor
 {
 	@Accessor("INVALID_OPERATION")
-	public static SimpleCommandExceptionType getInvalidOperationException()
+	static SimpleCommandExceptionType getInvalidOperationException()
 	{
 		throw new UnsupportedOperationException();
 	}
 	
 	@Accessor("DIVISION_ZERO_EXCEPTION")
-	public static SimpleCommandExceptionType getDivisionZeroException()
+	static SimpleCommandExceptionType getDivisionZeroException()
 	{
 		throw new UnsupportedOperationException();
 	}
