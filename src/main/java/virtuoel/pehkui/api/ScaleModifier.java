@@ -1,8 +1,7 @@
 package virtuoel.pehkui.api;
 
 import java.util.Comparator;
-
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class ScaleModifier implements Comparable<ScaleModifier>
 {

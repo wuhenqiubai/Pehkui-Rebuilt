@@ -1,36 +1,35 @@
 package virtuoel.pehkui.network;
 
 import java.util.Collection;
-
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.util.ConfigSyncUtils.SyncableConfigEntry;
 
-public class ConfigSyncPayload extends ConfigSyncPacket implements CustomPayload
+public class ConfigSyncPayload extends ConfigSyncPacket implements CustomPacketPayload
 {
-	public static final CustomPayload.Id<ConfigSyncPayload> ID = new CustomPayload.Id<>(Pehkui.CONFIG_SYNC_PACKET);
-	public static final PacketCodec<PacketByteBuf, ConfigSyncPayload> CODEC = codec(ID);
+	public static final CustomPacketPayload.Type<ConfigSyncPayload> ID = new CustomPacketPayload.Type<>(Pehkui.CONFIG_SYNC_PACKET);
+	public static final StreamCodec<FriendlyByteBuf, ConfigSyncPayload> CODEC = codec(ID);
 	
 	public ConfigSyncPayload(final Collection<SyncableConfigEntry<?>> configEntries)
 	{
 		super(configEntries);
 	}
 	
-	public ConfigSyncPayload(final PacketByteBuf buf)
+	public ConfigSyncPayload(final FriendlyByteBuf buf)
 	{
 		super(buf);
 	}
 	
 	@Override
-	public CustomPayload.Id<? extends CustomPayload> getId()
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type()
 	{
 		return ID;
 	}
 	
-	private static PacketCodec<PacketByteBuf, ConfigSyncPayload> codec(final CustomPayload.Id<ConfigSyncPayload> id)
+	private static StreamCodec<FriendlyByteBuf, ConfigSyncPayload> codec(final CustomPacketPayload.Type<ConfigSyncPayload> id)
 	{
-		return CustomPayload.codecOf(ConfigSyncPayload::write, ConfigSyncPayload::new);
+		return CustomPacketPayload.codec(ConfigSyncPayload::write, ConfigSyncPayload::new);
 	}
 }

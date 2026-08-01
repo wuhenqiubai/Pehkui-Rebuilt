@@ -1,47 +1,45 @@
 package virtuoel.pehkui.mixin;
 
 import java.util.function.Predicate;
-
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.commands.arguments.selector.EntitySelectorParser;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.command.EntitySelectorReader;
-import net.minecraft.entity.Entity;
-import net.minecraft.predicate.NumberRange;
 import virtuoel.pehkui.api.ScaleType;
 import virtuoel.pehkui.api.ScaleTypes;
 import virtuoel.pehkui.util.CommandUtils;
 import virtuoel.pehkui.util.PehkuiEntitySelectorReaderExtensions;
 
-@Mixin(EntitySelectorReader.class)
+@Mixin(EntitySelectorParser.class)
 public abstract class EntitySelectorReaderMixin implements PehkuiEntitySelectorReaderExtensions
 {
 	@Shadow
 	abstract void addPredicate(Predicate<Entity> predicate);
 	
 	@Unique
-	NumberRange.DoubleRange pehkui$scaleRange = (NumberRange.DoubleRange) (Object) NumberRange.DoubleRange.ANY;
+	MinMaxBounds.Doubles pehkui$scaleRange = (MinMaxBounds.Doubles) (Object) MinMaxBounds.Doubles.ANY;
 	@Unique
-	NumberRange.DoubleRange pehkui$computedScaleRange = (NumberRange.DoubleRange) (Object) NumberRange.DoubleRange.ANY;
+	MinMaxBounds.Doubles pehkui$computedScaleRange = (MinMaxBounds.Doubles) (Object) MinMaxBounds.Doubles.ANY;
 	@Unique
 	ScaleType pehkui$scaleType = ScaleTypes.INVALID;
 	@Unique
 	ScaleType pehkui$computedScaleType = ScaleTypes.INVALID;
 	
-	@Inject(method = "buildPredicate", at = @At("HEAD"))
+	@Inject(method = "finalizePredicates", at = @At("HEAD"))
 	private void pehkui$buildPredicate(CallbackInfo info)
 	{
-		if (!this.pehkui$scaleRange.isDummy())
+		if (!this.pehkui$scaleRange.isAny())
 		{
 			final ScaleType scaleType = this.pehkui$scaleType == ScaleTypes.INVALID ? ScaleTypes.BASE : this.pehkui$scaleType;
 			addPredicate(e -> CommandUtils.testFloatRange(this.pehkui$scaleRange, scaleType.getScaleData(e).getBaseScale()));
 		}
 		
-		if (!this.pehkui$computedScaleRange.isDummy())
+		if (!this.pehkui$computedScaleRange.isAny())
 		{
 			final ScaleType scaleType = this.pehkui$computedScaleType == ScaleTypes.INVALID ? ScaleTypes.BASE : this.pehkui$computedScaleType;
 			addPredicate(e -> CommandUtils.testFloatRange(this.pehkui$computedScaleRange, scaleType.getScaleData(e).getScale()));
@@ -61,13 +59,13 @@ public abstract class EntitySelectorReaderMixin implements PehkuiEntitySelectorR
 	}
 	
 	@Override
-	public NumberRange<? extends Number> pehkui_getScaleRange()
+	public MinMaxBounds<? extends Number> pehkui_getScaleRange()
 	{
 		return this.pehkui$scaleRange;
 	}
 	
 	@Override
-	public void pehkui_setScaleRange(final NumberRange.DoubleRange baseScaleRange)
+	public void pehkui_setScaleRange(final MinMaxBounds.Doubles baseScaleRange)
 	{
 		this.pehkui$scaleRange = baseScaleRange;
 	}
@@ -85,13 +83,13 @@ public abstract class EntitySelectorReaderMixin implements PehkuiEntitySelectorR
 	}
 	
 	@Override
-	public NumberRange<? extends Number> pehkui_getComputedScaleRange()
+	public MinMaxBounds<? extends Number> pehkui_getComputedScaleRange()
 	{
 		return this.pehkui$computedScaleRange;
 	}
 	
 	@Override
-	public void pehkui_setComputedScaleRange(final NumberRange.DoubleRange computedScaleRange)
+	public void pehkui_setComputedScaleRange(final MinMaxBounds.Doubles computedScaleRange)
 	{
 		this.pehkui$computedScaleRange = computedScaleRange;
 	}

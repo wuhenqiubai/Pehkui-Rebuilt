@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -18,7 +17,7 @@ public class ScalePacket
 {
 	public final int entityId;
 	public final Collection<ScaleData> scales = new ArrayList<>();
-	public final Map<Identifier, NbtCompound> syncedScales = new HashMap<>();
+	public final Map<Identifier, CompoundTag> syncedScales = new HashMap<>();
 	
 	public ScalePacket(final Entity entity, final Collection<ScaleData> scales)
 	{
@@ -26,7 +25,7 @@ public class ScalePacket
 		this.scales.addAll(scales);
 	}
 	
-	public ScalePacket(final PacketByteBuf buf)
+	public ScalePacket(final FriendlyByteBuf buf)
 	{
 		entityId = buf.readVarInt();
 		
@@ -34,13 +33,13 @@ public class ScalePacket
 		{
 			final Identifier typeId = buf.readIdentifier();
 			
-			final NbtCompound scaleData = ScaleUtils.buildScaleNbtFromPacketByteBuf(buf);
+			final CompoundTag scaleData = ScaleUtils.buildScaleNbtFromPacketByteBuf(buf);
 			
 			syncedScales.put(typeId, scaleData);
 		}
 	}
 	
-	public void write(final PacketByteBuf buf)
+	public void write(final FriendlyByteBuf buf)
 	{
 		buf.writeVarInt(entityId);
 		((ByteBuf) buf).writeInt(scales.size());

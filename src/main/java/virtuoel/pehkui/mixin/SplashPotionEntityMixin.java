@@ -6,17 +6,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.thrown.SplashPotionEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
+import net.minecraft.world.phys.AABB;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(SplashPotionEntity.class)
+@Mixin(ThrownSplashPotion.class)
 public class SplashPotionEntityMixin
 {
-	@WrapOperation(method = "spawnAreaEffectCloud(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/hit/HitResult;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;expand(DDD)Lnet/minecraft/util/math/Box;"))
-	private Box pehkui$applySplashPotion$expand(Box obj, double x, double y, double z, Operation<Box> original)
+	@WrapOperation(method = "onHitAsPotion(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/HitResult;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$applySplashPotion$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
@@ -35,7 +34,7 @@ public class SplashPotionEntityMixin
 		return original.call(obj, x, y, z);
 	}
 	
-	@ModifyExpressionValue(method = "spawnAreaEffectCloud(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/hit/HitResult;)V", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
+	@ModifyExpressionValue(method = "onHitAsPotion(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/HitResult;)V", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
 	private double pehkui$applySplashPotion$maxSquaredDist(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
@@ -43,7 +42,7 @@ public class SplashPotionEntityMixin
 		return scale != 1.0F ? scale * scale * value : value;
 	}
 	
-	@ModifyExpressionValue(method = "spawnAreaEffectCloud(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/hit/HitResult;)V", at = @At(value = "CONSTANT", args = "doubleValue=4.0D", ordinal = 2))
+	@ModifyExpressionValue(method = "onHitAsPotion(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/phys/HitResult;)V", at = @At(value = "CONSTANT", args = "doubleValue=4.0D", ordinal = 2))
 	private double pehkui$applySplashPotion$maxDist(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);

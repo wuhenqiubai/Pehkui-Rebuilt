@@ -10,14 +10,14 @@ import org.jetbrains.annotations.Nullable;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.objects.ObjectAVLTreeSet;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 
 public class ScaleData
@@ -238,7 +238,7 @@ public class ScaleData
 	public float getScale(float delta)
 	{
 		final Entity e = getEntity();
-		final boolean canCache = delta == 1.0F && e != null && e.getEntityWorld() != null && !e.getEntityWorld().isClient() && (e.getType() != EntityType.PLAYER || !getScaleType().getAffectsDimensions()) && !((PehkuiEntityExtensions) e).pehkui_isFirstUpdate();
+		final boolean canCache = delta == 1.0F && e != null && e.level() != null && !e.level().isClientSide() && (e.getType() != EntityType.PLAYER || !getScaleType().getAffectsDimensions()) && !((PehkuiEntityExtensions) e).pehkui_isFirstUpdate();
 		
 		if (canCache && !Float.isNaN(cachedScale))
 		{
@@ -411,7 +411,7 @@ public class ScaleData
 	{
 		final Entity e = getEntity();
 		
-		if (e != null && e.getEntityWorld() != null && !e.getEntityWorld().isClient())
+		if (e != null && e.level() != null && !e.level().isClientSide())
 		{
 			this.shouldSync = sync;
 			if (this.shouldSync)
@@ -452,7 +452,7 @@ public class ScaleData
 		this.cachedPrevScale = Float.NaN;
 	}
 	
-	public PacketByteBuf toPacket(PacketByteBuf buffer)
+	public FriendlyByteBuf toPacket(FriendlyByteBuf buffer)
 	{
 		final ByteBuf buf = ((ByteBuf) buffer);
 		
@@ -484,21 +484,21 @@ public class ScaleData
 		return buffer;
 	}
 	
-	public void readNbt(NbtCompound tag)
+	public void readNbt(CompoundTag tag)
 	{
 		final ScaleType type = getScaleType();
 		
-		this.baseScale = tag.getFloat("scale", type.getDefaultBaseScale());
-		this.prevBaseScale = tag.getFloat("previous", this.baseScale);
-		this.initialScale = tag.getFloat("initial", this.baseScale);
-		this.targetScale = tag.getFloat("target", this.baseScale);
+		this.baseScale = tag.getFloatOr("scale", type.getDefaultBaseScale());
+		this.prevBaseScale = tag.getFloatOr("previous", this.baseScale);
+		this.initialScale = tag.getFloatOr("initial", this.baseScale);
+		this.targetScale = tag.getFloatOr("target", this.baseScale);
 		
-		this.scaleTicks = tag.getInt("ticks", 0);
-		this.totalScaleTicks = tag.getInt("total_ticks", type.getDefaultTickDelay());
+		this.scaleTicks = tag.getIntOr("ticks", 0);
+		this.totalScaleTicks = tag.getIntOr("total_ticks", type.getDefaultTickDelay());
 		
-		this.persistent = tag.contains("persistent") ? tag.getBoolean("persistent", false) : null;
+		this.persistent = tag.contains("persistent") ? tag.getBooleanOr("persistent", false) : null;
 		
-		this.easing = tag.contains("easing") ? ScaleRegistries.getEntry(ScaleRegistries.SCALE_EASINGS, Identifier.tryParse(tag.getString("easing", ""))) : null;
+		this.easing = tag.contains("easing") ? ScaleRegistries.getEntry(ScaleRegistries.SCALE_EASINGS, Identifier.tryParse(tag.getStringOr("easing", ""))) : null;
 		
 		this.trackModifierChanges = false;
 		
@@ -510,22 +510,22 @@ public class ScaleData
 		
 		if (tag.contains("baseValueModifiers"))
 		{
-			final NbtList modifiers = tag.getListOrEmpty("baseValueModifiers");
-			final byte elementType = modifiers.getType();
+			final ListTag modifiers = tag.getListOrEmpty("baseValueModifiers");
+			final byte elementType = modifiers.getId();
 			
 			Identifier id;
 			ScaleModifier modifier;
 			for (int i = 0; i < modifiers.size(); i++)
 			{
-				if (elementType == NbtElement.STRING_TYPE)
+				if (elementType == Tag.TAG_STRING)
 				{
-					id = Identifier.tryParse(modifiers.getString(i, ""));
+					id = Identifier.tryParse(modifiers.getStringOr(i, ""));
 					modifier = ScaleRegistries.getEntry(ScaleRegistries.SCALE_MODIFIERS, id);
 				}
-				else if (elementType == NbtElement.COMPOUND_TYPE)
+				else if (elementType == Tag.TAG_COMPOUND)
 				{
-					final NbtCompound compound = modifiers.getCompoundOrEmpty(i);
-					id = Identifier.tryParse(compound.getString("id", ""));
+					final CompoundTag compound = modifiers.getCompoundOrEmpty(i);
+					id = Identifier.tryParse(compound.getStringOr("id", ""));
 					modifier = ScaleRegistries.getEntry(ScaleRegistries.SCALE_MODIFIERS, id);
 				}
 				else
@@ -551,7 +551,7 @@ public class ScaleData
 		onUpdate();
 	}
 	
-	public NbtCompound writeNbt(NbtCompound tag)
+	public CompoundTag writeNbt(CompoundTag tag)
 	{
 		final ScaleType type = getScaleType();
 		final float defaultBaseScale = type.getDefaultBaseScale();
@@ -598,7 +598,7 @@ public class ScaleData
 		
 		if (!this.differingModifierCache.isEmpty())
 		{
-			final NbtList modifiers = new NbtList();
+			final ListTag modifiers = new ListTag();
 			
 			for (final ScaleModifier modifier : this.differingModifierCache)
 			{

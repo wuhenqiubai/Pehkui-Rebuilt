@@ -1,6 +1,6 @@
 package virtuoel.pehkui.api;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
 
 public class ScaleTypes

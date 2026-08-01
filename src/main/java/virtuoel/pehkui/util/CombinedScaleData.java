@@ -2,10 +2,8 @@ package virtuoel.pehkui.util;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
-
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.entity.Entity;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleType;
 

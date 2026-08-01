@@ -11,20 +11,20 @@ import java.util.function.Supplier;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleData;
@@ -165,9 +165,9 @@ public class ScaleUtils
 		return scale;
 	}
 	
-	public static NbtCompound buildScaleNbtFromPacketByteBuf(PacketByteBuf buffer)
+	public static CompoundTag buildScaleNbtFromPacketByteBuf(FriendlyByteBuf buffer)
 	{
-		final NbtCompound scaleData = new NbtCompound();
+		final CompoundTag scaleData = new CompoundTag();
 		
 		final float scale = buffer.readFloat();
 		final float prevScale = buffer.readFloat();
@@ -187,11 +187,11 @@ public class ScaleUtils
 		
 		if (baseModifierCount != 0)
 		{
-			final NbtList modifiers = new NbtList();
+			final ListTag modifiers = new ListTag();
 			
 			for (int i = 0; i < baseModifierCount; i++)
 			{
-				modifiers.add(NbtOps.INSTANCE.createString(buffer.readString(32767)));
+				modifiers.add(NbtOps.INSTANCE.createString(buffer.readUtf(32767)));
 			}
 			
 			scaleData.put("baseValueModifiers", modifiers);
@@ -206,7 +206,7 @@ public class ScaleUtils
 		
 		if (buffer.readBoolean())
 		{
-			scaleData.put("easing", NbtOps.INSTANCE.createString(buffer.readString(32767)));
+			scaleData.put("easing", NbtOps.INSTANCE.createString(buffer.readUtf(32767)));
 		}
 		
 		return scaleData;
@@ -221,7 +221,7 @@ public class ScaleUtils
 		}
 	}
 	
-	public static void syncScalesOnTrackingStart(Entity entity, ServerPlayNetworkHandler handler)
+	public static void syncScalesOnTrackingStart(Entity entity, ServerGamePacketListenerImpl handler)
 	{
 		syncScales(entity, p -> ReflectionUtils.sendPacket(handler, p), ScaleUtils::hasScaleDataChanged, false);
 	}
@@ -258,11 +258,11 @@ public class ScaleUtils
 			{
 				if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
 				{
-					packetSender.accept(ServerPlayNetworking.createS2CPacket((CustomPayload) (Object) new ScalePayload(entity, syncedScales)));
+					packetSender.accept(ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new ScalePayload(entity, syncedScales)));
 				}
 				else
 				{
-					final PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
+					final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
 					
 					new ScalePacket(entity, syncedScales).write(buffer);
 					
@@ -274,39 +274,39 @@ public class ScaleUtils
 		}
 	}
 	
-	public static Vec3d getEyePos(final Entity entity)
+	public static Vec3 getEyePos(final Entity entity)
 	{
 		return getEyePos(entity, Direction.DOWN);
 	}
 	
-	public static Vec3d getEyePos(final PlayerEntity entity)
+	public static Vec3 getEyePos(final Player entity)
 	{
 		return getEyePos(entity, GravityChangerCompatibility.INSTANCE.getGravityDirection(entity));
 	}
 	
-	public static Vec3d getEyePos(final Entity entity, final Direction gravity)
+	public static Vec3 getEyePos(final Entity entity, final Direction gravity)
 	{
-		final double offsetX = entity.getStandingEyeHeight() * -gravity.getOffsetX();
-		final double offsetY = entity.getStandingEyeHeight() * -gravity.getOffsetY();
-		final double offsetZ = entity.getStandingEyeHeight() * -gravity.getOffsetZ();
-		final double footXCoord = entity.getEntityPos().getX();
-		final double footYCoord = entity.getEntityPos().getY();
-		final double footZCoord = entity.getEntityPos().getZ();
+		final double offsetX = entity.getEyeHeight() * -gravity.getStepX();
+		final double offsetY = entity.getEyeHeight() * -gravity.getStepY();
+		final double offsetZ = entity.getEyeHeight() * -gravity.getStepZ();
+		final double footXCoord = entity.position().x();
+		final double footYCoord = entity.position().y();
+		final double footZCoord = entity.position().z();
 		final double headXCoord = footXCoord + offsetX;
 		final double headYCoord = footYCoord + offsetY;
 		final double headZCoord = footZCoord + offsetZ;
 		
-		return new Vec3d(headXCoord, headYCoord, headZCoord);
+		return new Vec3(headXCoord, headYCoord, headZCoord);
 	}
 	
-	public static double getBlockXOffset(BlockPos pos, PlayerEntity player)
+	public static double getBlockXOffset(BlockPos pos, Player player)
 	{
 		final int blockCoord = pos.getX();
 		final Direction gravity = GravityChangerCompatibility.INSTANCE.getGravityDirection(player);
-		final double offset = player.getStandingEyeHeight() * -gravity.getOffsetX();
-		final double footCoord = player.getEntityPos().getX();
+		final double offset = player.getEyeHeight() * -gravity.getStepX();
+		final double footCoord = player.position().x();
 		final double headCoord = footCoord + offset;
-		final int headCoordFloored = MathHelper.floor(headCoord);
+		final int headCoordFloored = Mth.floor(headCoord);
 		
 		if (headCoordFloored == blockCoord)
 		{
@@ -320,14 +320,14 @@ public class ScaleUtils
 		return -offset;
 	}
 	
-	public static double getBlockYOffset(BlockPos pos, PlayerEntity player)
+	public static double getBlockYOffset(BlockPos pos, Player player)
 	{
 		final int blockCoord = pos.getY();
 		final Direction gravity = GravityChangerCompatibility.INSTANCE.getGravityDirection(player);
-		final double offset = player.getStandingEyeHeight() * -gravity.getOffsetY();
-		final double footCoord = player.getEntityPos().getY();
+		final double offset = player.getEyeHeight() * -gravity.getStepY();
+		final double footCoord = player.position().y();
 		final double headCoord = footCoord + offset;
-		final int headCoordFloored = MathHelper.floor(headCoord);
+		final int headCoordFloored = Mth.floor(headCoord);
 		
 		if (headCoordFloored == blockCoord)
 		{
@@ -341,14 +341,14 @@ public class ScaleUtils
 		return -offset;
 	}
 	
-	public static double getBlockZOffset(BlockPos pos, PlayerEntity player)
+	public static double getBlockZOffset(BlockPos pos, Player player)
 	{
 		final int blockCoord = pos.getZ();
 		final Direction gravity = GravityChangerCompatibility.INSTANCE.getGravityDirection(player);
-		final double offset = player.getStandingEyeHeight() * -gravity.getOffsetZ();
-		final double footCoord = player.getEntityPos().getZ();
+		final double offset = player.getEyeHeight() * -gravity.getStepZ();
+		final double footCoord = player.position().z();
 		final double headCoord = footCoord + offset;
-		final int headCoordFloored = MathHelper.floor(headCoord);
+		final int headCoordFloored = Mth.floor(headCoord);
 		
 		if (headCoordFloored == blockCoord)
 		{

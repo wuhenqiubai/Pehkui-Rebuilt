@@ -7,28 +7,27 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.server.world.ServerEntityManager;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.entity.PersistentEntitySectionManager;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
 
-@Mixin(ServerWorld.class)
+@Mixin(ServerLevel.class)
 public class ServerWorldMixin
 {
 	@Shadow @Final @Mutable
-	ServerEntityManager<Entity> entityManager;
+	PersistentEntitySectionManager<Entity> entityManager;
 	
-	@ModifyReturnValue(method = "getDebugString", at = @At("RETURN"))
+	@ModifyReturnValue(method = "getWatchdogStats", at = @At("RETURN"))
 	private String pehkui$getDebugString(String value)
 	{
 		String additional = "";
 		
-		for (final Entity entity : entityManager.getLookup().iterate())
+		for (final Entity entity : entityManager.getEntityGetter().getAll())
 		{
 			float maxScale = 1.0F;
 			ScaleType maxType = null;
@@ -52,7 +51,7 @@ public class ServerWorldMixin
 				
 				final String idString = Pehkui.MOD_ID.equals(id.getNamespace()) ? id.getPath() : id.toString();
 				
-				additional += "\"" + entity.getUuidAsString() + "\":\"" + EntityType.getId(entity.getType()) + "\",\"" + idString + "\":" + maxScale;
+				additional += "\"" + entity.getStringUUID() + "\":\"" + EntityType.getKey(entity.getType()) + "\",\"" + idString + "\":" + maxScale;
 			}
 		}
 		

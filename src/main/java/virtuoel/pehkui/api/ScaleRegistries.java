@@ -5,13 +5,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.Supplier;
-
+import net.minecraft.resources.Identifier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
-import net.minecraft.util.Identifier;
 import virtuoel.pehkui.Pehkui;
 
 public class ScaleRegistries

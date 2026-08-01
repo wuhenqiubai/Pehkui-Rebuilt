@@ -3,10 +3,9 @@ package virtuoel.pehkui.util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public class GravityChangerCompatibility
 {
@@ -31,7 +30,7 @@ public class GravityChangerCompatibility
 			this.getterMethod = ReflectionUtils.getMethod(apiClass, "getGravityDirection", Entity.class);
 			
 			final Optional<Class<?>> oldApiClass = ReflectionUtils.getClass("me.andrew.gravitychanger.api.GravityChangerAPI");
-			this.oldGetterMethod = ReflectionUtils.getMethod(oldApiClass, "getAppliedGravityDirection", PlayerEntity.class);
+			this.oldGetterMethod = ReflectionUtils.getMethod(oldApiClass, "getAppliedGravityDirection", Player.class);
 			
 			final Optional<Class<?>> accessorClass = ReflectionUtils.getClass("me.andrew.gravitychanger.accessor.EntityAccessor");
 			this.accessorGetterMethod = ReflectionUtils.getMethod(accessorClass, "gravitychanger$getAppliedGravityDirection");
@@ -44,7 +43,7 @@ public class GravityChangerCompatibility
 		}
 	}
 	
-	public Direction getGravityDirection(PlayerEntity entity)
+	public Direction getGravityDirection(Player entity)
 	{
 		if (this.enabled)
 		{
@@ -93,7 +92,7 @@ public class GravityChangerCompatibility
 		return Direction.DOWN;
 	}
 	
-	public float getXCorrection(PlayerEntity player)
+	public float getXCorrection(Player player)
 	{
 		if (this.enabled)
 		{
@@ -113,7 +112,7 @@ public class GravityChangerCompatibility
 		return 0.0F;
 	}
 	
-	public float getYCorrection(PlayerEntity player)
+	public float getYCorrection(Player player)
 	{
 		if (this.enabled)
 		{
@@ -133,7 +132,7 @@ public class GravityChangerCompatibility
 		return 0.0F;
 	}
 	
-	public float getZCorrection(PlayerEntity player)
+	public float getZCorrection(Player player)
 	{
 		if (this.enabled)
 		{

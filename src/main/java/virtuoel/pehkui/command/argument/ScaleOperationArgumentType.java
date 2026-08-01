@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Collectors;
-
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.resources.Identifier;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -12,10 +14,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Identifier;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.ScaleOperations;
 import virtuoel.pehkui.api.ScaleRegistries;
@@ -33,7 +31,7 @@ public class ScaleOperationArgumentType implements ArgumentType<ScaleOperationAr
 		return new ScaleOperationArgumentType();
 	}
 	
-	public static Operation getOperation(CommandContext<ServerCommandSource> commandContext, String string) throws CommandSyntaxException
+	public static Operation getOperation(CommandContext<CommandSourceStack> commandContext, String string) throws CommandSyntaxException
 	{
 		return commandContext.getArgument(string, ScaleOperationArgumentType.Operation.class);
 	}
@@ -61,7 +59,7 @@ public class ScaleOperationArgumentType implements ArgumentType<ScaleOperationAr
 	@Override
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
 	{
-		return CommandSource.suggestMatching(
+		return SharedSuggestionProvider.suggest(
 			ScaleRegistries.SCALE_OPERATIONS.keySet().stream().filter(id ->
 			{
 				return !id.equals(ScaleRegistries.getDefaultId(ScaleRegistries.SCALE_OPERATIONS));

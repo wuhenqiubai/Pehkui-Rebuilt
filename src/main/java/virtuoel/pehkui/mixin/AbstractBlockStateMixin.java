@@ -1,25 +1,24 @@
 package virtuoel.pehkui.mixin;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
 import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
 
-@Mixin(AbstractBlock.AbstractBlockState.class)
+@Mixin(BlockBehaviour.BlockStateBase.class)
 public abstract class AbstractBlockStateMixin implements PehkuiBlockStateExtensions
 {
 	@Shadow
-	abstract VoxelShape getOutlineShape(BlockView world, BlockPos pos);
+	abstract VoxelShape getShape(BlockGetter world, BlockPos pos);
 	
 	@Override
-	public VoxelShape pehkui_getOutlineShape(BlockView world, BlockPos pos)
+	public VoxelShape pehkui_getOutlineShape(BlockGetter world, BlockPos pos)
 	{
-		return getOutlineShape(world, pos);
+		return getShape(world, pos);
 	}
 	
 	@Shadow

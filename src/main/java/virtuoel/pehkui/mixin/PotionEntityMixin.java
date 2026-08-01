@@ -6,17 +6,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.thrown.PotionEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.AbstractThrownPotion;
+import net.minecraft.world.phys.AABB;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(PotionEntity.class)
+@Mixin(AbstractThrownPotion.class)
 public class PotionEntityMixin
 {
-	@WrapOperation(method = "explodeWaterPotion(Lnet/minecraft/server/world/ServerWorld;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;expand(DDD)Lnet/minecraft/util/math/Box;"))
-	private Box pehkui$applyWater$expand(Box obj, double x, double y, double z, Operation<Box> original)
+	@WrapOperation(method = "onHitAsWater(Lnet/minecraft/server/level/ServerLevel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$applyWater$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
@@ -35,7 +34,7 @@ public class PotionEntityMixin
 		return original.call(obj, x, y, z);
 	}
 	
-	@ModifyExpressionValue(method = "explodeWaterPotion(Lnet/minecraft/server/world/ServerWorld;)V", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
+	@ModifyExpressionValue(method = "onHitAsWater(Lnet/minecraft/server/level/ServerLevel;)V", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
 	private double pehkui$applyWater$maxDist(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);

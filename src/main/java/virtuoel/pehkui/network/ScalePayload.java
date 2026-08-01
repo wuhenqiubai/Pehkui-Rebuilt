@@ -1,37 +1,36 @@
 package virtuoel.pehkui.network;
 
 import java.util.Collection;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.ScaleData;
 
-public class ScalePayload extends ScalePacket implements CustomPayload
+public class ScalePayload extends ScalePacket implements CustomPacketPayload
 {
-	public static final CustomPayload.Id<ScalePayload> ID = new CustomPayload.Id<>(Pehkui.SCALE_PACKET);
-	public static final PacketCodec<PacketByteBuf, ScalePayload> CODEC = codec(ID);
+	public static final CustomPacketPayload.Type<ScalePayload> ID = new CustomPacketPayload.Type<>(Pehkui.SCALE_PACKET);
+	public static final StreamCodec<FriendlyByteBuf, ScalePayload> CODEC = codec(ID);
 	
 	public ScalePayload(final Entity entity, final Collection<ScaleData> scales)
 	{
 		super(entity, scales);
 	}
 	
-	public ScalePayload(final PacketByteBuf buf)
+	public ScalePayload(final FriendlyByteBuf buf)
 	{
 		super(buf);
 	}
 	
 	@Override
-	public CustomPayload.Id<? extends CustomPayload> getId()
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type()
 	{
 		return ID;
 	}
 	
-	private static PacketCodec<PacketByteBuf, ScalePayload> codec(final CustomPayload.Id<ScalePayload> id)
+	private static StreamCodec<FriendlyByteBuf, ScalePayload> codec(final CustomPacketPayload.Type<ScalePayload> id)
 	{
-		return CustomPayload.codecOf(ScalePayload::write, ScalePayload::new);
+		return CustomPacketPayload.codec(ScalePayload::write, ScalePayload::new);
 	}
 }

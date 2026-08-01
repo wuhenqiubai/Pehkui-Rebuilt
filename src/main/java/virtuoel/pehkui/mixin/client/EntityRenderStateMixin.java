@@ -1,9 +1,8 @@
 package virtuoel.pehkui.mixin.client;
 
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-
-import net.minecraft.client.render.entity.state.EntityRenderState;
 import virtuoel.pehkui.util.PehkuiEntityRenderStateExtensions;
 
 @Mixin(EntityRenderState.class)

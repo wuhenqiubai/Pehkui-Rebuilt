@@ -1,23 +1,22 @@
 package virtuoel.pehkui.mixin.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.ItemFrameRenderer;
+import net.minecraft.client.renderer.entity.state.ItemFrameRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.ItemFrameEntityRenderer;
-import net.minecraft.client.render.entity.state.ItemFrameEntityRenderState;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 import virtuoel.pehkui.util.PehkuiEntityRenderStateExtensions;
 
-@Mixin(ItemFrameEntityRenderer.class)
+@Mixin(ItemFrameRenderer.class)
 public class ItemFrameEntityRendererMixin
 {
-	@ModifyVariable(method = "render", at = @At(value = "STORE"))
-	private Vec3d pehkui$render(Vec3d value, ItemFrameEntityRenderState state, MatrixStack matrixStack, OrderedRenderCommandQueue queue, CameraRenderState cameraRenderState)
+	@ModifyVariable(method = "submit", at = @At(value = "STORE"))
+	private Vec3 pehkui$render(Vec3 value, ItemFrameRenderState state, PoseStack matrixStack, SubmitNodeCollector queue, CameraRenderState cameraRenderState)
 	{
 		final PehkuiEntityRenderStateExtensions pehkuiState = (PehkuiEntityRenderStateExtensions) state;
 
@@ -28,12 +27,12 @@ public class ItemFrameEntityRendererMixin
 		{
 			value = value.multiply(1.0F / widthScale, 1.0F / heightScale, 1.0F / widthScale);
 
-			final Direction facing = state.facing;
+			final Direction facing = state.direction;
 
 			final double widthOffset = ((0.0625D - (0.03125D * widthScale)) - 0.03125D) / widthScale;
 			final double heightOffset = ((0.0625D - (0.03125D * heightScale)) - 0.03125D) / heightScale;
 
-			value = value.add(widthOffset * facing.getOffsetX(), heightOffset * facing.getOffsetY(), widthOffset * facing.getOffsetZ());
+			value = value.add(widthOffset * facing.getStepX(), heightOffset * facing.getStepY(), widthOffset * facing.getStepZ());
 		}
 
 		return value;

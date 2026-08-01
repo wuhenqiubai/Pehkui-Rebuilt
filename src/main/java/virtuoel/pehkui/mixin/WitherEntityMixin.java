@@ -4,12 +4,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(WitherEntity.class)
+@Mixin(WitherBoss.class)
 public class WitherEntityMixin
 {
 	@ModifyExpressionValue(method = "getHeadX", at = @At(value = "CONSTANT", args = "doubleValue=1.3D"))

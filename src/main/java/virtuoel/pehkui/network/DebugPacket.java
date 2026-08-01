@@ -1,6 +1,6 @@
 package virtuoel.pehkui.network;
 
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import virtuoel.pehkui.server.command.DebugCommand;
 
 public class DebugPacket
@@ -12,13 +12,13 @@ public class DebugPacket
 		this.type = type;
 	}
 	
-	public DebugPacket(final PacketByteBuf buf)
+	public DebugPacket(final FriendlyByteBuf buf)
 	{
 		DebugCommand.PacketType read;
 		
 		try
 		{
-			read = buf.readEnumConstant(DebugCommand.PacketType.class);
+			read = buf.readEnum(DebugCommand.PacketType.class);
 		}
 		catch (Exception e)
 		{
@@ -28,8 +28,8 @@ public class DebugPacket
 		this.type = read;
 	}
 	
-	public void write(final PacketByteBuf buf)
+	public void write(final FriendlyByteBuf buf)
 	{
-		buf.writeEnumConstant(this.type);
+		buf.writeEnum(this.type);
 	}
 }

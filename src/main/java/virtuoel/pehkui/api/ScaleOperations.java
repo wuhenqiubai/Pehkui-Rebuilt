@@ -1,8 +1,7 @@
 package virtuoel.pehkui.api;
 
 import java.util.function.DoubleBinaryOperator;
-
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
 
 public class ScaleOperations

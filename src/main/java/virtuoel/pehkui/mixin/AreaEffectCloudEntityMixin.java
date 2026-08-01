@@ -4,12 +4,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import net.minecraft.entity.AreaEffectCloudEntity;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(AreaEffectCloudEntity.class)
+@Mixin(AreaEffectCloud.class)
 public class AreaEffectCloudEntityMixin
 {
 	@ModifyExpressionValue(method = "serverTick", at = @At(value = "CONSTANT", args = "floatValue=0.5F"))

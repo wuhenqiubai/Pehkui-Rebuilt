@@ -1,7 +1,7 @@
 package virtuoel.pehkui.api;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
 
 public final class ScaleEasings

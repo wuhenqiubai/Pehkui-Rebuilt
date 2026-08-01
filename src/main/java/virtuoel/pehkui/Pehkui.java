@@ -7,7 +7,7 @@ import org.spongepowered.asm.service.MixinService;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleOperations;
 import virtuoel.pehkui.api.ScaleTypes;
@@ -51,7 +51,7 @@ public class Pehkui implements ModInitializer
 		{
 			ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
 			{
-				if (!handler.player.getGameProfile().equals(server.getHostProfile()))
+				if (!handler.player.getGameProfile().equals(server.getSingleplayerProfile()))
 				{
 					ConfigSyncUtils.syncConfigs(handler);
 				}

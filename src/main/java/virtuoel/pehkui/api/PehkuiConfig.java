@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import virtuoel.kanos_config.api.JsonConfigBuilder;
 import virtuoel.kanos_config.api.MutableConfigEntry;
 import virtuoel.pehkui.Pehkui;

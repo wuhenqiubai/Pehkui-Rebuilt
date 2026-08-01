@@ -1,25 +1,24 @@
 package virtuoel.pehkui.mixin.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.entity.ShulkerRenderer;
+import net.minecraft.client.renderer.entity.state.ShulkerRenderState;
+import net.minecraft.core.Direction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.client.render.entity.ShulkerEntityRenderer;
-import net.minecraft.client.render.entity.state.ShulkerEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Direction;
 import virtuoel.pehkui.util.PehkuiEntityRenderStateExtensions;
 
-@Mixin(ShulkerEntityRenderer.class)
+@Mixin(ShulkerRenderer.class)
 public class ShulkerEntityRendererMixin
 {
-	@Inject(at = @At("RETURN"), method = "setupTransforms")
-	private void pehkui$setupTransforms(ShulkerEntityRenderState state, MatrixStack matrices, float bodyYaw, float tickDelta, CallbackInfo info)
+	@Inject(at = @At("RETURN"), method = "setupRotations")
+	private void pehkui$setupTransforms(ShulkerRenderState state, PoseStack matrices, float bodyYaw, float tickDelta, CallbackInfo info)
 	{
 		final PehkuiEntityRenderStateExtensions pehkuiState = (PehkuiEntityRenderStateExtensions) state;
 
-		final Direction face = state.facing;
+		final Direction face = state.attachFace;
 		if (face != Direction.DOWN)
 		{
 			final float h = pehkuiState.pehkui$getModelHeightScale();

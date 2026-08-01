@@ -4,22 +4,21 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LightningEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.ZombifiedPiglinEntity;
-import net.minecraft.entity.passive.PigEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(PigEntity.class)
+@Mixin(Pig.class)
 public class PigEntityMixin
 {
-	@ModifyExpressionValue(method = "onStruckByLightning(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/LightningEntity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/PigEntity;convertTo(Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/conversion/EntityConversionContext;Lnet/minecraft/entity/conversion/EntityConversionContext$Finalizer;)Lnet/minecraft/entity/mob/MobEntity;"))
-	private MobEntity pehkui$onStruckByLightning(MobEntity converted, ServerWorld world, LightningEntity lightning)
+	@ModifyExpressionValue(method = "thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/pig/Pig;convertTo(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/ConversionParams;Lnet/minecraft/world/entity/ConversionParams$AfterConversion;)Lnet/minecraft/world/entity/Mob;"))
+	private Mob pehkui$onStruckByLightning(Mob converted, ServerLevel world, LightningBolt lightning)
 	{
-		if (converted instanceof ZombifiedPiglinEntity)
+		if (converted instanceof ZombifiedPiglin)
 		{
 			ScaleUtils.loadScale(converted, (Entity) (Object) this);
 		}

@@ -1,28 +1,27 @@
 package virtuoel.pehkui.mixin;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.NetherPortalBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.NetherPortalBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCollisionHandler;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
 
 @Mixin(NetherPortalBlock.class)
 public abstract class PortalBlockMixin
 {
-	@Inject(at = @At("HEAD"), method = "onEntityCollision", cancellable = true)
-	private void pehkui$onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean tick, CallbackInfo info)
+	@Inject(at = @At("HEAD"), method = "entityInside", cancellable = true)
+	private void pehkui$onEntityCollision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier handler, boolean tick, CallbackInfo info)
 	{
 		if (PehkuiConfig.COMMON.accurateNetherPortals.get())
 		{
-			if (!entity.getBoundingBox().intersects(((PehkuiBlockStateExtensions) state).pehkui_getOutlineShape(world, pos).getBoundingBox().offset(pos)))
+			if (!entity.getBoundingBox().intersects(((PehkuiBlockStateExtensions) state).pehkui_getOutlineShape(world, pos).bounds().move(pos)))
 			{
 				info.cancel();
 			}
