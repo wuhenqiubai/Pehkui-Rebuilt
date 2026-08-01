@@ -1,12 +1,6 @@
 plugins {
-	id "fabric-loom" version "1.14.10"
-	id "eclipse"
+	id "fabric-loom" version "1.17-SNAPSHOT"
 	id "maven-publish"
-	id "com.github.johnrengelman.shadow" version "8.1.1" apply false
-	id "com.github.breadmoirai.github-release" version "2.5.2"
-	id "org.ajoberstar.grgit.service" version "5.2.2"
-	id "io.github.CDAGaming.cursegradle" version "1.6.1"
-	id "com.modrinth.minotaur" version "2.+"
 }
 
 repositories {
@@ -20,621 +14,101 @@ repositories {
 		url = "https://maven.terraformersmc.com/"
 	}
 	maven {
-		name = "NeoForge"
-		url = "https://maven.neoforged.net/releases/"
-	}
-	maven {
-		name = "CurseForge"
-		url = "https://minecraft.curseforge.com/api/maven"
-	}
-	maven {
 		name = "JitPack"
 		url = "https://jitpack.io"
 		content {
 			includeGroup "com.github.Virtuoel"
 		}
 	}
-	maven {
-		name = "GitHub"
-		url = "https://maven.pkg.github.com"
-	}
 }
 
 def ENV = System.getenv()
-
 TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-
 group = project.maven_group
 base.archivesName = project.archives_base_name
-version = project.mod_version + "+" + (ENV.BUILD_NUMBER ? "build.${ENV.BUILD_NUMBER}-" : "") + (project.hasProperty("metadata_minecraft_versions") ? project.metadata_minecraft_versions : project.minecraft_version)
-
-class ParsedVersionNumber {
-	int major
-	int minor
-	int micro
-	int getMajor() { major }
-	int getMinor() { minor }
-	int getMicro() { micro }
-}
-
-def parseVersionNumber = { String value ->
-	def parts = value.tokenize("-+")[0].tokenize(".").collect { it.isInteger() ? it as int : 0 }
-	new ParsedVersionNumber(
-		major: parts.size() > 0 ? parts[0] : 0,
-		minor: parts.size() > 1 ? parts[1] : 0,
-		micro: parts.size() > 2 ? parts[2] : 0
-	)
-}
-
-def minecraftVersionNumber = parseVersionNumber(minecraft_version)
-if(minecraftVersionNumber.getMajor() == 0 && project.hasProperty("metadata_minecraft_versions")) {
-	if(metadata_minecraft_versions.contains("-")) {
-		minecraftVersionNumber = parseVersionNumber(metadata_minecraft_versions.split("-")[1])
-	}
-	else {
-		minecraftVersionNumber = parseVersionNumber(metadata_minecraft_versions)
-	}
-}
-
-if(project.hasProperty("neoforge_version") && !project.hasProperty("forge_version")) {
-	version += "-neoforge"
-}
-else if(project.hasProperty("forge_version")) {
-	version += "-forge"
-	
-	loom {
-		forge {
-			mixinConfig "${archives_base_name.replaceAll(/([a-z])([A-Z])/, /$1_$2/).replaceAll(/([A-Z])([A-Z][a-z])/, /$1_$2/).toLowerCase()}.mixins.json"
-		}
-	}
-	
-	if(project.hasProperty("mixin_extras_version")) {
-		def minor = minecraftVersionNumber.getMinor()
-		if(minor < 18) {
-			apply plugin: "com.github.johnrengelman.shadow"
-			
-			configurations {
-				implementation.extendsFrom shadow
-			}
-			
-			shadowJar {
-				configurations = [ project.configurations.shadow ]
-				relocate("com.llamalad7.mixinextras", "${project.group}.mixinextras")
-				mergeServiceFiles()
-				from "LICENSE"
-			}
-			
-			remapJar {
-				input.set shadowJar.archiveFile
-				dependsOn shadowJar
-			}
-		}
-	}
-}
+version = project.mod_version + "+" + (ENV.BUILD_NUMBER ? "build.${ENV.BUILD_NUMBER}-" : "") + project.minecraft_version
 
 loom {
-	def access_widener_file = file("src/main/resources/${archives_base_name.replaceAll(/([a-z])([A-Z])/, /$1_$2/).replaceAll(/([A-Z])([A-Z][a-z])/, /$1_$2/).toLowerCase()}.accesswidener")
-	if(access_widener_file.exists()) {
-		accessWidenerPath = access_widener_file
-	}
-	if(!project.hasProperty("neoforge_version") || project.hasProperty("forge_version")) {
-		mixin.defaultRefmapName = "${archives_base_name}-refmap.json"
-	}
-	if(!project.hasProperty("neoforge_version") && !project.hasProperty("forge_version")) {
-		mixin.useLegacyMixinAp = false
-	}
-}
-
-if(project.hasProperty("loader_version")) {
-	ext.fabric_loader_version = project.loader_version
-}
-
-if(project.hasProperty("fabric_version")) {
-	ext.fabric_api_version = project.fabric_version
+	// 自动匹配驼峰转下划线的access widener
+	def awFile = file("src/main/resources/${archives_base_name.replaceAll(/([a-z])([A-Z])/, /$1_$2/).replaceAll(/([A-Z])([A-Z][a-z])/, /$1_$2/).toLowerCase()}.accesswidener")
+	if (awFile.exists()) accessWidenerPath = awFile
+	mixin.useLegacyMixinAp = false
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${minecraft_version}"
-	
-	def minor = minecraftVersionNumber.getMinor()
-	def patch = minecraftVersionNumber.getMicro()
-	
-	if(project.yarn_mappings.contains(", ") || (project.hasProperty("neoforge_version") && (minor > 20 || (minor == 20 && patch >= 5)))) {
-		mappings loom.layered {
-			project.yarn_mappings.split(", ").each { String mapping ->
-				mappings "net.fabricmc:yarn:${mapping}:v2"
-			}
-			if(project.hasProperty("neoforge_version") && (minor > 20 || (minor == 20 && patch >= 5))) {
-				mappings "dev.architectury:yarn-mappings-patch-neoforge:1.20.5+build.3"
-			}
-		}
-	}
-	else {
-		mappings "net.fabricmc:yarn:${yarn_mappings}:v2"
-	}
-	
-	if(project.hasProperty("neoforge_version") && !project.hasProperty("forge_version")) {
-		neoForge "net.neoforged:neoforge:${neoforge_version}"
-	}
-	else if(project.hasProperty("forge_version")) {
-		if(project.hasProperty("neoforge_version")) {
-			forge "net.neoforged:forge:${neoforge_version}"
-		}
-		else {
-			forge "net.minecraftforge:forge:${forge_version}"
-		}
-		
-		if(project.hasProperty("mixin_extras_version")) {
-			if(minor >= 18) {
-				compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
-				implementation(include("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}"))
-			}
-			else {
-				shadow(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
-				forgeRuntimeLibrary("io.github.llamalad7:mixinextras-common:${mixin_extras_version}")
-			}
-		}
-	}
-	else if(project.hasProperty("fabric_loader_version")) {
-		modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-		
-		def excludeLoader = { exclude group: "net.fabricmc", module: "fabric-loader" }
-		def excludeApi = { exclude group: "net.fabricmc.fabric-api" }
-		def excludeFabric = {
-			exclude group: "net.fabricmc", module: "fabric-loader"
-			exclude group: "net.fabricmc.fabric-api"
-		}
-		
-		if(project.hasProperty("fabric_api_version")) {
-			if(!project.hasProperty("fabric_modules") && !project.hasProperty("api_fabric_modules") && !project.hasProperty("impl_fabric_modules")) {
-				modCompileOnly "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}", excludeLoader
-				modLocalRuntime "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}", excludeLoader
-			}
-			
-			if(project.hasProperty("fabric_modules")) {
-				project.fabric_modules.split(", ").each { String module ->
-					modCompileOnly fabricApi.module(module, project.fabric_api_version), excludeLoader
-					modLocalRuntime fabricApi.module(module, project.fabric_api_version), excludeLoader
-				}
-			}
-			
-			if(project.hasProperty("api_fabric_modules")) {
-				project.api_fabric_modules.split(", ").each { String module ->
-					modApi fabricApi.module(module, project.fabric_api_version), excludeLoader
-				}
-			}
-			
-			if(project.hasProperty("impl_fabric_modules")) {
-				project.impl_fabric_modules.split(", ").each { String module ->
-					modImplementation fabricApi.module(module, project.fabric_api_version), excludeLoader
-				}
-			}
-			
-			if(project.hasProperty("included_fabric_modules")) {
-				project.included_fabric_modules.split(", ").each { String module ->
-					include fabricApi.module(module, project.fabric_api_version)
-				}
-			}
-		}
-		
-		if(project.hasProperty("modmenu_version")) {
-			modCompileOnly "com.terraformersmc:modmenu:${modmenu_version}", excludeFabric
-			modLocalRuntime "com.terraformersmc:modmenu:${modmenu_version}", excludeFabric
-		}
-		
-		if(project.hasProperty("kanos_config_tag")) {
-			include modApi("com.github.Virtuoel:KanosConfig:${kanos_config_tag}", excludeFabric)
-		}
-	}
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+	include modApi("com.github.Virtuoel:KanosConfig:${project.kanos_config_tag}")
+
 }
 
 processResources {
 	inputs.property "version", project.version
-	
-	filesMatching("*.mod.json") {
+	filteringCharset "UTF-8"
+
+	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
-	
-	filesMatching("META-INF/*mods.toml") {
-		expand "file": [ jarVersion: project.version ]
-	}
 }
 
-def proj = project
-eclipse {
-	project {
-		name = archives_base_name
-		buildCommand "org.eclipse.buildship.core.gradleprojectbuilder"
-		natures "org.eclipse.buildship.core.gradleprojectnature"
+def targetJavaVersion = 21
+tasks.withType(JavaCompile).configureEach {
+	// ensure that the encoding is set to UTF-8, no matter what the system default is
+	// this fixes some edge cases with special characters not displaying correctly
+	// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+	// If Javadoc is generated, this must be specified in that task too.
+	it.options.encoding = "UTF-8"
+	if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+		it.options.release.set(targetJavaVersion)
 	}
-	if(!proj.hasProperty("neoforge_version") && !proj.hasProperty("forge_version")) {
-		jdt {
-			javaRuntimeName = "JavaSE-21"
-		}
-	}
-	else {
-		def minor = minecraftVersionNumber.getMinor()
-		def patch = minecraftVersionNumber.getMicro()
-		jdt {
-			javaRuntimeName = "JavaSE-${minor > 20 || (minor == 20 && patch >= 5) ? 21 : minor >= 18 ? 17 : minor >= 17 ? 16 : 1.8}"
-		}
-	}
+	options.deprecation = false
+	options.compilerArgs = ["-Xlint:-deprecation", "-Xlint:-removal"]
 }
 
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
-	options.compilerArgs += [ "-Xmaxwarns", "0" ]
-	
-	javaCompiler = javaToolchains.compilerFor {
-		if(!proj.hasProperty("neoforge_version") && !proj.hasProperty("forge_version")) {
-			languageVersion = JavaLanguageVersion.of(21)
-		}
-		else {
-			def minor = minecraftVersionNumber.getMinor()
-			def patch = minecraftVersionNumber.getMicro()
-			languageVersion = JavaLanguageVersion.of(minor > 20 || (minor == 20 && patch >= 5) ? 21 : minor >= 18 ? 17 : minor >= 17 ? 16 : 8)
-		}
-		vendor = JvmVendorSpec.ADOPTIUM
+java {
+	def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+	if (JavaVersion.current() < javaVersion) {
+		toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
 	}
-}
-
-tasks.withType(AbstractArchiveTask) {
-	preserveFileTimestamps = false
-	reproducibleFileOrder = true
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
 }
 
 java {
 	withSourcesJar()
-	
-	if(!proj.hasProperty("neoforge_version") && !proj.hasProperty("forge_version")) {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
-	}
-	else {
-		def minor = minecraftVersionNumber.getMinor()
-		def patch = minecraftVersionNumber.getMicro()
-		if(minor > 20 || (minor == 20 && patch >= 5)) {
-			sourceCompatibility = JavaVersion.VERSION_21
-			targetCompatibility = JavaVersion.VERSION_21
-		}
-		else if(minor >= 18) {
-			sourceCompatibility = JavaVersion.VERSION_17
-			targetCompatibility = JavaVersion.VERSION_17
-		}
-		else if(minor >= 17) {
-			sourceCompatibility = JavaVersion.VERSION_16
-			targetCompatibility = JavaVersion.VERSION_16
-		}
-		else {
-			sourceCompatibility = JavaVersion.VERSION_1_8
-			targetCompatibility = JavaVersion.VERSION_1_8
-		}
-	}
-	
-	toolchain {
-		vendor = JvmVendorSpec.ADOPTIUM
-	}
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
-	from "LICENSE"
-}
-
-tasks.named("sourcesJar") {
-	exclude "*.mod.json"
-	exclude "META-INF/*mods.toml"
-}
-
-tasks.named({ it in [ "runClient", "runServer" ] }).configureEach {
-	javaLauncher = javaToolchains.launcherFor {
-		if(!proj.hasProperty("neoforge_version") && !proj.hasProperty("forge_version")) {
-			languageVersion = JavaLanguageVersion.of(21)
-		}
-		else {
-			def minor = minecraftVersionNumber.getMinor()
-			def patch = minecraftVersionNumber.getMicro()
-			languageVersion = JavaLanguageVersion.of(minor > 20 || (minor == 20 && patch >= 5) ? 21 : minor >= 18 ? 17 : minor >= 17 ? 16 : 8)
-		}
-		vendor = JvmVendorSpec.ADOPTIUM
+	from("LICENSE") {
+		rename { "${it}_${project.archives_base_name}" }
 	}
 }
 
 publishing {
 	publications {
-		mavenJava(MavenPublication) {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.archives_base_name
 			from components.java
 		}
 	}
-	
+
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
-		mavenLocal()
-		if(project.hasProperty("maven_repo") && project.hasProperty("maven_username") && project.hasProperty("maven_password")) {
-			maven {
-				url = project.maven_repo
-				
-				credentials {
-					username project.maven_username
-					password project.maven_password
-				}
-			}
-		}
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
 	}
-}
-
-if(project.hasProperty("fabric_api_version")) {
-	ext.changelog_fabric_api_version = project.fabric_api_version
-}
-
-String generateHtmlChangelog() {
-	String changelog_text = ""
-	
-	File changelog_file = file("changelog_${project.version.substring(project.mod_version.length() + 1)}.txt")
-	if(!changelog_file.exists()) {
-		changelog_file = file("changelog.txt")
-	}
-	if(changelog_file.exists()) {
-		changelog_file.eachLine { String line ->
-			if(!line.isAllWhitespace())
-			{
-				changelog_text += "<p>${line.stripIndent()}</p>\n"
-			}
-		}
-		changelog_text += "<p>&nbsp;</p>\n"
-	}
-	
-	changelog_text += "<p>Last successfully tested on:</p>\n"
-	changelog_text += "<p>Minecraft version <code>${minecraft_version}</code></p>\n"
-	
-	if(project.hasProperty("neoforge_version")) {
-		changelog_text += "<p>NeoForge <code>${neoforge_version}</code></p>\n"
-	}
-	
-	if(project.hasProperty("forge_version")) {
-		changelog_text += "<p>Forge <code>${forge_version}</code></p>\n"
-	}
-	
-	if(project.hasProperty("fabric_loader_version")) {
-		changelog_text += "<p>Fabric Loader <code>${fabric_loader_version}</code></p>\n"
-	}
-	
-	changelog_text += "<p>Yarn mappings <code>${yarn_mappings}</code></p>\n"
-	
-	if(project.hasProperty("changelog_fabric_api_version")) {
-		changelog_text += "<p><a href=\"https://www.curseforge.com/minecraft/mc-mods/fabric-api/files/all\" rel=\"nofollow\">Fabric API <code>${changelog_fabric_api_version}</code></a></p>\n"
-	}
-	
-	return changelog_text
-}
-
-String generateMarkdownChangelog() {
-	String changelog_text = ""
-	
-	File changelog_file = file("changelog_${project.version.substring(project.mod_version.length() + 1)}.txt")
-	if(!changelog_file.exists()) {
-		changelog_file = file("changelog.txt")
-	}
-	if(changelog_file.exists()) {
-		changelog_file.eachLine { String line ->
-			if(!line.isAllWhitespace())
-			{
-				changelog_text += "${line.stripIndent()}  \n"
-			}
-		}
-		changelog_text += "&nbsp;  \n"
-	}
-	
-	changelog_text += "Last successfully tested on:  \n"
-	changelog_text += "Minecraft version " + '`' + "${minecraft_version}" + '`' + "  \n"
-	
-	if(project.hasProperty("neoforge_version")) {
-		changelog_text += "NeoForge " + '`' + "${neoforge_version}" + '`' + "  \n"
-	}
-	
-	if(project.hasProperty("forge_version")) {
-		changelog_text += "Forge " + '`' + "${forge_version}" + '`' + "  \n"
-	}
-	
-	if(project.hasProperty("fabric_loader_version")) {
-		changelog_text += "Fabric Loader " + '`' + "${fabric_loader_version}" + '`' + "  \n"
-	}
-	
-	changelog_text += "Yarn mappings " + '`' + "${yarn_mappings}" + '`' + "  \n"
-	
-	if(project.hasProperty("changelog_fabric_api_version")) {
-		changelog_text += "[Fabric API " + '`' + "${changelog_fabric_api_version}" + '`' + "](https://modrinth.com/mod/fabric-api/versions)  \n"
-	}
-	
-	return changelog_text
-}
-
-githubRelease {
-	token = project.hasProperty("github_releases_token") ? project.github_releases_token : ""
-	
-	if(project.hasProperty("github_repository_owner")) {
-		owner = project.github_repository_owner
-	}
-	
-	if(project.hasProperty("github_repository")) {
-		repo = project.github_repository
-	}
-	
-	if(project.hasProperty("forge_version")) {
-		tagName = "${project.mod_version}-${project.minecraft_version}-forge"
-	}
-	else if(project.hasProperty("neoforge_version")) {
-		tagName = "${project.mod_version}-${project.minecraft_version}-neoforge"
-	}
-	
-	if(project.hasProperty("fabric_loader_version")) {
-		tagName = project.mod_version
-	}
-	
-	targetCommitish = grgitService.service.get().grgit.branch.current().name
-	
-	body = generateMarkdownChangelog()
-	
-	overwrite = true
-	
-	releaseName = project.version
-	
-	releaseAssets = files("${project.buildDir}/libs/${base.archivesName.get()}-${version}.jar", "${project.buildDir}/libs/${base.archivesName.get()}-${version}-sources.jar").files
-}
-
-tasks.named("githubRelease") {
-	dependsOn remapJar
-	dependsOn sourcesJar
-	dependsOn remapSourcesJar
-}
-
-curseforge {
-	if(project.hasProperty("curseforge_api_key")) {
-		apiKey = project.properties.curseforge_api_key
-	}
-	
-	if(project.hasProperty("curseforge_id")) {
-		project {
-			id = project.curseforge_id
-			
-			releaseType = project.curseforge_release_type
-			
-			if(project.hasProperty("curseforge_mod_loaders")) {
-				project.curseforge_mod_loaders.split(", ").each { String loader ->
-					addGameVersion loader
-				}
-			}
-			
-			def display_name_prefix = ""
-			if(project.hasProperty("curseforge_release_versions")) {
-				def game_versions = project.curseforge_release_versions.split(", ")
-				display_name_prefix = "[${game_versions[0]} - ${game_versions[-1].split("-")[0]}] "
-				if(game_versions[0] == game_versions[-1].split("-")[0]) {
-					display_name_prefix = "[${game_versions[0]}] "
-				}
-				game_versions.each { String gameVersion ->
-					addGameVersion gameVersion
-				}
-			}
-			
-			if(project.hasProperty("forge_version")) {
-				display_name_prefix += "[Forge] "
-			}
-			else if(project.hasProperty("neoforge_version")) {
-				display_name_prefix += "[NeoForge] "
-			}
-			
-			mainArtifact(remapJar) {
-				it.displayName = "${display_name_prefix}${archives_base_name} ${project.mod_version}"
-				
-				if(project.hasProperty("curseforge_required_dep_slugs") || project.hasProperty("curseforge_embedded_lib_slugs") || project.hasProperty("curseforge_optional_dep_slugs") || project.hasProperty("curseforge_compatible_tool_slugs") || project.hasProperty("curseforge_incompatible_slugs")) {
-					relations {
-						if(project.hasProperty("curseforge_required_dep_slugs")) {
-							project.curseforge_required_dep_slugs.split(", ").each { String slug ->
-								it.requiredDependency slug
-							}
-						}
-						
-						if(project.hasProperty("curseforge_embedded_lib_slugs")) {
-							project.curseforge_embedded_lib_slugs.split(", ").each { String slug ->
-								it.embeddedLibrary slug
-							}
-						}
-						
-						if(project.hasProperty("curseforge_optional_dep_slugs")) {
-							project.curseforge_optional_dep_slugs.split(", ").each { String slug ->
-								it.optionalDependency slug
-							}
-						}
-						
-						if(project.hasProperty("curseforge_compatible_tool_slugs")) {
-							project.curseforge_compatible_tool_slugs.split(", ").each { String slug ->
-								it.tool slug
-							}
-						}
-						
-						if(project.hasProperty("curseforge_incompatible_slugs")) {
-							project.curseforge_incompatible_slugs.split(", ").each { String slug ->
-								it.incompatible slug
-							}
-						}
-					}
-				}
-				
-				changelogType = "html"
-				changelog = project.generateHtmlChangelog()
-			}
-			
-			addArtifact(sourcesJar) {
-				it.displayName = "${archives_base_name} ${project.mod_version} Source Code"
-			}
-		}
-		options {
-			forgeGradleIntegration = false
-		}
-	}
-}
-
-if(project.hasProperty("curseforge_id")) {
-	afterEvaluate {
-		tasks.named("curseforge${project.curseforge_id}") {
-			dependsOn remapJar
-			dependsOn remapSourcesJar
-		}
-	}
-}
-
-import com.modrinth.minotaur.dependencies.ModDependency
-
-modrinth {
-	if(project.hasProperty("modrinth_token")) {
-		token = project.properties.modrinth_token
-	}
-	
-	if(project.hasProperty("modrinth_id")) {
-		projectId = project.modrinth_id
-		
-		versionType = project.modrinth_version_type
-		
-		if(project.hasProperty("modrinth_mod_loaders")) {
-			loaders = project.modrinth_mod_loaders.split(", ") as List
-		}
-		
-		if(project.hasProperty("modrinth_release_versions")) {
-			gameVersions = project.modrinth_release_versions.split(", ") as List
-		}
-		
-		def deps = []
-		
-		if(project.hasProperty("modrinth_required_dep_ids")) {
-			project.modrinth_required_dep_ids.split(", ").each { String slug ->
-				deps << new ModDependency(slug, "required")
-			}
-		}
-		
-		if(project.hasProperty("modrinth_optional_dep_ids")) {
-			project.modrinth_optional_dep_ids.split(", ").each { String slug ->
-				deps << new ModDependency(slug, "optional")
-			}
-		}
-		
-		if(project.hasProperty("modrinth_incompatible_dep_ids")) {
-			project.modrinth_incompatible_dep_ids.split(", ").each { String slug ->
-				deps << new ModDependency(slug, "incompatible")
-			}
-		}
-		
-		dependencies = deps
-		
-		versionName = "${archives_base_name} ${project.mod_version}"
-		
-		versionNumber = project.version
-		
-		changelog = generateMarkdownChangelog()
-		
-		uploadFile = remapJar
-	}
-}
-
-tasks.named("modrinth") {
-	dependsOn remapJar
-	dependsOn remapSourcesJar
 }
