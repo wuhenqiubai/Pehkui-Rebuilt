@@ -18,11 +18,9 @@ import virtuoel.pehkui.network.ScalePayload;
 import virtuoel.pehkui.util.CommandUtils;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.GravityChangerCompatibility;
-import virtuoel.pehkui.util.IdentityCompatibility;
 import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
 import virtuoel.pehkui.util.ModLoaderUtils;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
-import virtuoel.pehkui.util.ReachEntityAttributesCompatibility;
 import virtuoel.pehkui.util.ReflectionUtils;
 import virtuoel.pehkui.util.VersionUtils;
 
@@ -72,10 +70,8 @@ public class Pehkui implements ModInitializer
 		}
 		
 		GravityChangerCompatibility.INSTANCE.getClass();
-		IdentityCompatibility.INSTANCE.getClass();
 		ImmersivePortalsCompatibility.INSTANCE.getClass();
 		MulticonnectCompatibility.INSTANCE.getClass();
-		ReachEntityAttributesCompatibility.INSTANCE.getClass();
 	}
 	
 	public static Identifier id(String path)
