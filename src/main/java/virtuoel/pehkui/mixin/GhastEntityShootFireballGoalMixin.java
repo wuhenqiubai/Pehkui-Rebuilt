@@ -1,32 +1,31 @@
 package virtuoel.pehkui.mixin;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.mob.GhastEntity;
-import net.minecraft.util.math.Vec3d;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(targets = "net.minecraft.entity.mob.GhastEntity$ShootFireballGoal")
+@Mixin(targets = "net.minecraft.world.entity.monster.Ghast$GhastShootFireballGoal")
 public abstract class GhastEntityShootFireballGoalMixin
 {
 	@Shadow @Final
-	private GhastEntity ghast;
+	private Ghast ghast;
 	
-	@ModifyArg(method = "tick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
+	@ModifyArg(method = "tick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
 	private Entity pehkui$tick$spawnEntity(Entity entity)
 	{
 		final float scale = ScaleUtils.getBoundingBoxHeightScale(ghast);
 		
 		if (scale != 1.0F)
 		{
-			final Vec3d pos = entity.getPos();
+			final Vec3 pos = entity.position();
 			
-			entity.setPosition(pos.x, pos.y - ((1.0D - scale) * 0.5D), pos.z);
+			entity.setPos(pos.x, pos.y - ((1.0D - scale) * 0.5D), pos.z);
 		}
 		
 		return entity;

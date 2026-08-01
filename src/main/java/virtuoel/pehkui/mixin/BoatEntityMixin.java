@@ -8,17 +8,16 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.phys.AABB;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(BoatEntity.class)
+@Mixin(Boat.class)
 public abstract class BoatEntityMixin
 {
-	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;expand(DDD)Lnet/minecraft/util/math/Box;"))
-	private Box pehkui$tick$expand(Box obj, double x, double y, double z, Operation<Box> original)
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$tick$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
@@ -37,7 +36,7 @@ public abstract class BoatEntityMixin
 		return original.call(obj, x, y, z);
 	}
 	
-	@ModifyArg(method = "checkBoatInWater", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/util/math/MathHelper;ceil(D)I"))
+	@ModifyArg(method = "checkInWater", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/util/Mth;ceil(D)I"))
 	private double pehkui$checkBoatInWater$offset(double value)
 	{
 		final Entity self = (Entity) (Object) this;
@@ -53,7 +52,7 @@ public abstract class BoatEntityMixin
 		return value;
 	}
 	
-	@ModifyVariable(method = "getUnderWaterLocation", at = @At(value = "STORE"))
+	@ModifyVariable(method = "isUnderwater", at = @At(value = "STORE"))
 	private double pehkui$getUnderWaterLocation$offset(double value)
 	{
 		final Entity self = (Entity) (Object) this;
@@ -69,7 +68,7 @@ public abstract class BoatEntityMixin
 		return value;
 	}
 	
-	@ModifyExpressionValue(method = "updateVelocity", at = @At(value = "CONSTANT", args = "doubleValue=-7.0E-4D"))
+	@ModifyExpressionValue(method = "floatBoat", at = @At(value = "CONSTANT", args = "doubleValue=-7.0E-4D"))
 	private double pehkui$updateVelocity$sinking(double value)
 	{
 		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
@@ -77,7 +76,7 @@ public abstract class BoatEntityMixin
 		return scale != 1.0F ? scale * value : value;
 	}
 
-	@ModifyExpressionValue(method = "updateVelocity", at = @At(value = "CONSTANT", args = "doubleValue=0.65D"))
+	@ModifyExpressionValue(method = "floatBoat", at = @At(value = "CONSTANT", args = "doubleValue=0.65D"))
 	private double pehkui$updateVelocity$multiplier(double value)
 	{
 		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);

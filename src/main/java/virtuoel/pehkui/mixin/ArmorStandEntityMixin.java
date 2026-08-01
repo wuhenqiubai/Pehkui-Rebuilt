@@ -1,17 +1,16 @@
 package virtuoel.pehkui.mixin;
 
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(ArmorStandEntity.class)
+@Mixin(ArmorStand.class)
 public abstract class ArmorStandEntityMixin
 {
-	@ModifyVariable(method = "getSlotFromPosition", at = @At(value = "STORE"))
+	@ModifyVariable(method = "getClickedSlot", at = @At(value = "STORE"))
 	private double pehkui$getSlotFromPosition(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);

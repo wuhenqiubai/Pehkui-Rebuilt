@@ -7,17 +7,16 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.thrown.PotionEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.phys.AABB;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(PotionEntity.class)
+@Mixin(ThrownPotion.class)
 public class PotionEntityMixin
 {
-	@WrapOperation(method = "applyWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;expand(DDD)Lnet/minecraft/util/math/Box;"))
-	private Box pehkui$applyWater$expand(Box obj, double x, double y, double z, Operation<Box> original)
+	@WrapOperation(method = "applyWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$applyWater$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
@@ -44,8 +43,8 @@ public class PotionEntityMixin
 		return scale != 1.0F ? scale * scale * value : value;
 	}
 
-	@WrapOperation(method = "applySplashPotion", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;expand(DDD)Lnet/minecraft/util/math/Box;"))
-	private Box pehkui$applySplashPotion$expand(Box obj, double x, double y, double z, Operation<Box> original)
+	@WrapOperation(method = "applySplash", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$applySplashPotion$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
@@ -64,7 +63,7 @@ public class PotionEntityMixin
 		return original.call(obj, x, y, z);
 	}
 
-	@ModifyExpressionValue(method = "applySplashPotion", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
+	@ModifyExpressionValue(method = "applySplash", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
 	private double pehkui$applySplashPotion$maxSquaredDist(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
@@ -72,7 +71,7 @@ public class PotionEntityMixin
 		return scale != 1.0F ? scale * scale * value : value;
 	}
 
-	@ModifyExpressionValue(method = "applySplashPotion", at = @At(value = "CONSTANT", args = "doubleValue=4.0F", ordinal = 2))
+	@ModifyExpressionValue(method = "applySplash", at = @At(value = "CONSTANT", args = "doubleValue=4.0F", ordinal = 2))
 	private double pehkui$applySplashPotion$maxDist(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
@@ -80,19 +79,19 @@ public class PotionEntityMixin
 		return scale != 1.0F ? scale * value : value;
 	}
 
-	@ModifyArg(method = "applyLingeringPotion", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/AreaEffectCloudEntity;setRadius(F)V"))
+	@ModifyArg(method = "makeAreaOfEffectCloud", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/AreaEffectCloud;setRadius(F)V"))
 	private float pehkui$applyLingeringPotion$setRadius(float value)
 	{
 		return value * ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 	}
 
-	@ModifyArg(method = "applyLingeringPotion", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/AreaEffectCloudEntity;setRadiusOnUse(F)V"))
+	@ModifyArg(method = "makeAreaOfEffectCloud", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/AreaEffectCloud;setRadiusOnUse(F)V"))
 	private float pehkui$applyLingeringPotion$setRadiusOnUse(float value)
 	{
 		return value * ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 	}
 
-	@ModifyArg(method = "applyLingeringPotion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
+	@ModifyArg(method = "makeAreaOfEffectCloud", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
 	private Entity pehkui$applyLingeringPotion$entity(Entity entity)
 	{
 		ScaleUtils.loadScale(entity, (Entity) (Object) this);

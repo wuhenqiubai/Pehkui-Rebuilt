@@ -1,8 +1,7 @@
 package virtuoel.pehkui.api;
 
 import java.util.Comparator;
-
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class ScaleModifier implements Comparable<ScaleModifier>
 {
@@ -23,7 +22,7 @@ public class ScaleModifier implements Comparable<ScaleModifier>
 	{
 		final int c = Float.compare(o.getPriority(), getPriority());
 		
-		return c != 0 ? c : Comparator.nullsLast(Identifier::compareTo).compare(
+		return c != 0 ? c : Comparator.nullsLast(ResourceLocation::compareTo).compare(
 				ScaleRegistries.getId(ScaleRegistries.SCALE_MODIFIERS, this),
 				ScaleRegistries.getId(ScaleRegistries.SCALE_MODIFIERS, o)
 			);

@@ -11,7 +11,7 @@ import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ReflectionUtils;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -274,7 +274,7 @@ public class ScaleType
 						final PehkuiEntityExtensions en = (PehkuiEntityExtensions) e;
 						final boolean onGround = en.pehkui_getOnGround();
 						
-						e.calculateDimensions();
+						e.refreshDimensions();
 						
 						ReflectionUtils.setOnGround(e, onGround);
 					}

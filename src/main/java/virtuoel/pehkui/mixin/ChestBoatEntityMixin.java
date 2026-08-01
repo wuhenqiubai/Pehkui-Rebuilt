@@ -4,15 +4,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.ChestBoatEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.vehicle.ChestBoat;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(ChestBoatEntity.class)
+@Mixin(ChestBoat.class)
 public abstract class ChestBoatEntityMixin
 {
-	@ModifyReturnValue(method = "getPassengerHorizontalOffset", at = @At("RETURN"))
+	@ModifyReturnValue(method = "getSinglePassengerXOffset", at = @At("RETURN"))
 	private float pehkui$getPassengerHorizontalOffset(float original)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);

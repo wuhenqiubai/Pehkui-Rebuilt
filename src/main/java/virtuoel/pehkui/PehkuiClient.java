@@ -5,10 +5,10 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.network.ConfigSyncPacket;
 import virtuoel.pehkui.network.ConfigSyncPayload;
@@ -62,16 +62,16 @@ public class PehkuiClient implements ClientModInitializer
 		}
 	}
 	
-	public static void handleScalePacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, Object responseSender)
+	public static void handleScalePacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
 	{
 		handleScalePacket(client, new ScalePacket(buf));
 	}
 	
-	protected static void handleScalePacket(MinecraftClient client, ScalePacket packet)
+	protected static void handleScalePacket(Minecraft client, ScalePacket packet)
 	{
 		client.execute(() ->
 		{
-			final Entity e = client.world.getEntityById(packet.entityId);
+			final Entity e = client.level.getEntity(packet.entityId);
 			
 			if (e != null)
 			{
@@ -86,26 +86,26 @@ public class PehkuiClient implements ClientModInitializer
 		});
 	}
 	
-	public static void handleConfigSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, Object responseSender)
+	public static void handleConfigSyncPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
 	{
 		client.execute(new ConfigSyncPacket(buf).action);
 	}
 	
-	public static void handleDebugPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, Object responseSender)
+	public static void handleDebugPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
 	{
 		handleDebugPacket(client, new DebugPacket(buf).type);
 	}
 	
-	protected static void handleDebugPacket(MinecraftClient client, DebugCommand.PacketType type)
+	protected static void handleDebugPacket(Minecraft client, DebugCommand.PacketType type)
 	{
 		client.execute(() ->
 		{
 			switch (type)
 			{
 				case MIXIN_AUDIT:
-					client.player.sendMessage(I18nUtils.translate("commands.pehkui.debug.audit.start.client", "Starting Mixin environment audit (client)..."), false);
+					client.player.displayClientMessage(I18nUtils.translate("commands.pehkui.debug.audit.start.client", "Starting Mixin environment audit (client)..."), false);
 					MixinEnvironment.getCurrentEnvironment().audit();
-					client.player.sendMessage(I18nUtils.translate("commands.pehkui.debug.audit.end.client", "Mixin environment audit (client) complete!"), false);
+					client.player.displayClientMessage(I18nUtils.translate("commands.pehkui.debug.audit.end.client", "Mixin environment audit (client) complete!"), false);
 					
 					break;
 				case GARBAGE_COLLECT:

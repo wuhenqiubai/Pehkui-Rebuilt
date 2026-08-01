@@ -14,19 +14,19 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.Leashable;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientCommonPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.predicate.NumberRange;
-import net.minecraft.server.network.PlayerAssociatedNetworkHandler;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
+import net.minecraft.ResourceLocationException;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.ClientCommonPacketListener;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.network.ServerPlayerConnection;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Leashable;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import virtuoel.pehkui.Pehkui;
 
 public final class ReflectionUtils
@@ -76,11 +76,11 @@ public final class ReflectionUtils
 				h.put(2, lookup.unreflect(m));
 				
 				mapped = mappingResolver.mapMethodName("intermediary", is117Plus ? "net.minecraft.class_5629" : "net.minecraft.class_3244", "method_14364", "(Lnet/minecraft/class_2596;)V");
-				m = (is117Plus ? PlayerAssociatedNetworkHandler.class : ServerPlayNetworkHandler.class).getMethod(mapped, Packet.class);
+				m = (is117Plus ? ServerPlayerConnection.class : ServerGamePacketListenerImpl.class).getMethod(mapped, Packet.class);
 				h.put(3, lookup.unreflect(m));
 				
 				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2096", "method_9041", "()Z");
-				m = NumberRange.class.getMethod(mapped);
+				m = MinMaxBounds.class.getMethod(mapped);
 				h.put(4, lookup.unreflect(m));
 			}
 			
@@ -99,19 +99,19 @@ public final class ReflectionUtils
 			
 			if (is1204Minus && ModLoaderUtils.isModLoaded("fabric-networking-api-v1"))
 			{
-				m = ServerPlayNetworking.class.getMethod("createS2CPacket", Identifier.class, PacketByteBuf.class);
+				m = ServerPlayNetworking.class.getMethod("createS2CPacket", ResourceLocation.class, FriendlyByteBuf.class);
 				h.put(7, lookup.unreflect(m));
 			}
 			
 			if (is1206Minus)
 			{
 				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_1308", "method_5933", "()Lnet/minecraft/class_1297;");
-				m = MobEntity.class.getMethod(mapped);
+				m = Mob.class.getMethod(mapped);
 				h.put(8, lookup.unreflect(m));
 				
-				h.put(9, lookup.unreflectConstructor(Identifier.class.getDeclaredConstructor(String.class)));
+				h.put(9, lookup.unreflectConstructor(ResourceLocation.class.getDeclaredConstructor(String.class)));
 				
-				h.put(10, lookup.unreflectConstructor(Identifier.class.getDeclaredConstructor(String.class, String.class)));
+				h.put(10, lookup.unreflectConstructor(ResourceLocation.class.getDeclaredConstructor(String.class, String.class)));
 			}
 		}
 		catch (NoSuchMethodException | SecurityException | ClassNotFoundException | IllegalAccessException | NoSuchFieldException e)
@@ -134,7 +134,7 @@ public final class ReflectionUtils
 		CONSTRUCT_ID_FROM_STRINGS = h.get(10);
 	}
 	
-	public static Packet<ClientCommonPacketListener> createS2CPacket(Identifier channelName, PacketByteBuf buf)
+	public static Packet<ClientCommonPacketListener> createS2CPacket(ResourceLocation channelName, FriendlyByteBuf buf)
 	{
 		try
 		{
@@ -146,15 +146,15 @@ public final class ReflectionUtils
 		}
 	}
 	
-	public static Identifier constructIdentifier(final String id)
+	public static ResourceLocation constructIdentifier(final String id)
 	{
 		if (CONSTRUCT_ID_FROM_STRING != null)
 		{
 			try
 			{
-				return (Identifier) CONSTRUCT_ID_FROM_STRING.invoke(id);
+				return (ResourceLocation) CONSTRUCT_ID_FROM_STRING.invoke(id);
 			}
-			catch (final InvalidIdentifierException e)
+			catch (final ResourceLocationException e)
 			{
 				throw e;
 			}
@@ -164,18 +164,18 @@ public final class ReflectionUtils
 			}
 		}
 		
-		return Identifier.of(id);
+		return ResourceLocation.parse(id);
 	}
 	
-	public static Identifier constructIdentifier(final String namespace, final String path)
+	public static ResourceLocation constructIdentifier(final String namespace, final String path)
 	{
 		if (CONSTRUCT_ID_FROM_STRINGS != null)
 		{
 			try
 			{
-				return (Identifier) CONSTRUCT_ID_FROM_STRINGS.invoke(namespace, path);
+				return (ResourceLocation) CONSTRUCT_ID_FROM_STRINGS.invoke(namespace, path);
 			}
-			catch (final InvalidIdentifierException e)
+			catch (final ResourceLocationException e)
 			{
 				throw e;
 			}
@@ -185,18 +185,18 @@ public final class ReflectionUtils
 			}
 		}
 		
-		return Identifier.of(namespace, path);
+		return ResourceLocation.fromNamespaceAndPath(namespace, path);
 	}
 	
 	public static @Nullable Entity getHoldingEntity(final Entity leashed)
 	{
 		if (GET_HOLDING_ENTITY != null)
 		{
-			if (leashed instanceof MobEntity)
+			if (leashed instanceof Mob)
 			{
 				try
 				{
-					return (Entity) GET_HOLDING_ENTITY.invoke((MobEntity) leashed);
+					return (Entity) GET_HOLDING_ENTITY.invoke((Mob) leashed);
 				}
 				catch (final Throwable e)
 				{
@@ -303,7 +303,7 @@ public final class ReflectionUtils
 		}
 	}
 	
-	public static void sendPacket(final ServerPlayNetworkHandler handler, final Packet<?> packet)
+	public static void sendPacket(final ServerGamePacketListenerImpl handler, final Packet<?> packet)
 	{
 		if (SEND_PACKET != null)
 		{
@@ -315,7 +315,7 @@ public final class ReflectionUtils
 				}
 				else
 				{
-					SEND_PACKET.invoke((PlayerAssociatedNetworkHandler) (Object) handler, packet);
+					SEND_PACKET.invoke((ServerPlayerConnection) (Object) handler, packet);
 				}
 			}
 			catch (final Throwable e)
@@ -326,10 +326,10 @@ public final class ReflectionUtils
 			return;
 		}
 		
-		handler.sendPacket(packet);
+		handler.send(packet);
 	}
 	
-	public static boolean isDummy(final NumberRange<?> range)
+	public static boolean isDummy(final MinMaxBounds<?> range)
 	{
 		if (IS_DUMMY != null)
 		{
@@ -343,7 +343,7 @@ public final class ReflectionUtils
 			}
 		}
 		
-		return range.isDummy();
+		return range.isAny();
 	}
 	
 	public static Optional<Field> getField(final Optional<Class<?>> classObj, final String fieldName)

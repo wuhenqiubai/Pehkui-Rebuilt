@@ -6,21 +6,20 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(TargetPredicate.class)
+@Mixin(TargetingConditions.class)
 public class TargetPredicateMixin
 {
 	@Shadow
-	private boolean useDistanceScalingFactor;
+	private boolean testInvisible;
 	
 	@ModifyExpressionValue(method = "test", at = @At(value = "CONSTANT", args = "doubleValue=2.0D"))
 	private double pehkui$test$minDistance(double value, @Nullable LivingEntity baseEntity, LivingEntity targetEntity)
 	{
-		if (useDistanceScalingFactor)
+		if (testInvisible)
 		{
 			final float scale = ScaleUtils.getVisibilityScale(targetEntity);
 			

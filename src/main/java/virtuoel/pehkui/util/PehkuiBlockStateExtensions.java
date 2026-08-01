@@ -1,13 +1,13 @@
 package virtuoel.pehkui.util;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public interface PehkuiBlockStateExtensions
 {
-	VoxelShape pehkui_getOutlineShape(BlockView world, BlockPos pos);
+	VoxelShape pehkui_getOutlineShape(BlockGetter world, BlockPos pos);
 	
 	Block pehkui_getBlock();
 }

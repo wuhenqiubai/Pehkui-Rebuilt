@@ -11,29 +11,28 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.crash.CrashReportSection;
-import net.minecraft.util.math.Box;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.PehkuiConfig;
 
@@ -71,14 +70,14 @@ public class ScaleRenderUtils
 			if (is114Minus && env == EnvType.CLIENT)
 			{
 				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_761", "method_3260", "(Lnet/minecraft/class_238;FFFF)V");
-				m = WorldRenderer.class.getMethod(mapped, Box.class, float.class, float.class, float.class, float.class);
+				m = LevelRenderer.class.getMethod(mapped, AABB.class, float.class, float.class, float.class, float.class);
 				handles.put(0, lookup.unreflect(m));
 			}
 			
 			if (is116Plus && is1192Minus)
 			{
 				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2724", "method_27904", "()Z");
-				m = PlayerRespawnS2CPacket.class.getMethod(mapped);
+				m = ClientboundRespawnPacket.class.getMethod(mapped);
 				handles.put(1, lookup.unreflect(m));
 			}
 			
@@ -95,10 +94,10 @@ public class ScaleRenderUtils
 					mapped = "net.fabricmc.fabric.api.networking.v1.PacketSender";
 					classes[0] = Class.forName(mapped);
 					
-					m = networkingClass.getMethod("registerGlobalReceiver", Identifier.class, handlerClass);
+					m = networkingClass.getMethod("registerGlobalReceiver", ResourceLocation.class, handlerClass);
 					methods.put(2, m);
 					
-					m = handlerClass.getDeclaredMethod("receive", MinecraftClient.class, ClientPlayNetworkHandler.class, PacketByteBuf.class, classes[0]);
+					m = handlerClass.getDeclaredMethod("receive", Minecraft.class, ClientPacketListener.class, FriendlyByteBuf.class, classes[0]);
 					t = MethodType.methodType(m.getReturnType(), m.getParameterTypes());
 					types.put(3, t);
 					
@@ -107,14 +106,14 @@ public class ScaleRenderUtils
 				}
 				
 				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_636", "method_2926", "()Z");
-				m = ClientPlayerInteractionManager.class.getMethod(mapped);
+				m = MultiPlayerGameMode.class.getMethod(mapped);
 				handles.put(5, lookup.unreflect(m));
 			}
 			
 			if (is1206Minus && env == EnvType.CLIENT)
 			{
 				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_310", "method_1488", "()F");
-				m = MinecraftClient.class.getMethod(mapped);
+				m = Minecraft.class.getMethod(mapped);
 				handles.put(6, lookup.unreflect(m));
 			}
 		}
@@ -134,13 +133,13 @@ public class ScaleRenderUtils
 		GET_TICK_DELTA = handles.get(6);
 	}
 	
-	public static void registerPacketHandler(Identifier id, Class<?> clazz, String methodName)
+	public static void registerPacketHandler(ResourceLocation id, Class<?> clazz, String methodName)
 	{
 		if (REGISTER_GLOBAL_RECEIVER != null && RECEIVE_TYPE != null && FACTORY_METHOD_TYPE != null && PACKET_SENDER != null)
 		{
 			try
 			{
-				final Method staticRegister = clazz.getDeclaredMethod(methodName, MinecraftClient.class, ClientPlayNetworkHandler.class, PacketByteBuf.class, Object.class);
+				final Method staticRegister = clazz.getDeclaredMethod(methodName, Minecraft.class, ClientPacketListener.class, FriendlyByteBuf.class, Object.class);
 				final MethodHandle staticRegisterHandle = LOOKUP.unreflect(staticRegister);
 				final MethodType staticRegisterType = staticRegisterHandle.type().changeParameterType(3, PACKET_SENDER);
 				
@@ -158,7 +157,7 @@ public class ScaleRenderUtils
 		}
 	}
 	
-	public static float getTickDelta(final MinecraftClient client)
+	public static float getTickDelta(final Minecraft client)
 	{
 		if (GET_TICK_DELTA != null)
 		{
@@ -172,10 +171,10 @@ public class ScaleRenderUtils
 			}
 		}
 		
-		return client.getRenderTickCounter().getTickDelta(false);
+		return client.getTimer().getGameTimeDeltaPartialTick(false);
 	}
 	
-	public static boolean hasExtendedReach(final ClientPlayerInteractionManager interactionManager)
+	public static boolean hasExtendedReach(final MultiPlayerGameMode interactionManager)
 	{
 		if (HAS_EXTENDED_REACH != null)
 		{
@@ -189,10 +188,10 @@ public class ScaleRenderUtils
 			}
 		}
 		
-		return interactionManager.getCurrentGameMode().isCreative();
+		return interactionManager.getPlayerMode().isCreative();
 	}
 	
-	public static boolean wasPlayerAlive(final PlayerRespawnS2CPacket packet)
+	public static boolean wasPlayerAlive(final ClientboundRespawnPacket packet)
 	{
 		if (VersionUtils.MINOR < 19 || (VersionUtils.MINOR == 19 && VersionUtils.PATCH <= 2))
 		{
@@ -209,19 +208,19 @@ public class ScaleRenderUtils
 			}
 		}
 		
-		return packet.hasFlag((byte) 1);
+		return packet.shouldKeep((byte) 1);
 	}
 	
-	public static void renderInteractionBox(@Nullable final Object matrices, @Nullable final Object vertices, final Box box)
+	public static void renderInteractionBox(@Nullable final Object matrices, @Nullable final Object vertices, final AABB box)
 	{
 		renderInteractionBox(matrices, vertices, box, 0.25F, 1.0F, 0.0F, 1.0F);
 	}
 	
-	public static void renderInteractionBox(@Nullable final Object matrices, @Nullable final Object vertices, final Box box, final float red, final float green, final float blue, final float alpha)
+	public static void renderInteractionBox(@Nullable final Object matrices, @Nullable final Object vertices, final AABB box, final float red, final float green, final float blue, final float alpha)
 	{
 		if (VersionUtils.MINOR >= 15)
 		{
-			WorldRenderer.drawBox((MatrixStack) matrices, (VertexConsumer) vertices, box, red, green, blue, alpha);
+			LevelRenderer.renderLineBox((PoseStack) matrices, (VertexConsumer) vertices, box, red, green, blue, alpha);
 		}
 		else if (DRAW_BOX_OUTLINE != null)
 		{
@@ -265,7 +264,7 @@ public class ScaleRenderUtils
 	{
 		if ("HEAD".equals(((Enum<?>) renderMode).name()))
 		{
-			if (entity == null || (entity.getEquippedStack(EquipmentSlot.MAINHAND) != item && entity.getEquippedStack(EquipmentSlot.OFFHAND) != item))
+			if (entity == null || (entity.getItemBySlot(EquipmentSlot.MAINHAND) != item && entity.getItemBySlot(EquipmentSlot.OFFHAND) != item))
 			{
 				return true;
 			}
@@ -297,8 +296,8 @@ public class ScaleRenderUtils
 			final Item i = lastRenderedStack.getItem();
 			if (force || !loggedItems.contains(i))
 			{
-				final String stackKey = lastRenderedStack.getTranslationKey();
-				final String itemKey = lastRenderedStack.getItem().getTranslationKey();
+				final String stackKey = lastRenderedStack.getDescriptionId();
+				final String itemKey = lastRenderedStack.getItem().getDescriptionId();
 				if (stackKey.equals(itemKey))
 				{
 					Pehkui.LOGGER.error("[{}]: Did something cancel item rendering early? Matrix stack was not popped after rendering item {} ({}).", Pehkui.MOD_ID, stackKey, lastRenderedStack.getItem());
@@ -345,7 +344,7 @@ public class ScaleRenderUtils
 		{
 			if (force || !loggedEntityTypes.contains(lastRenderedEntity))
 			{
-				final Identifier id = EntityType.getId(lastRenderedEntity);
+				final ResourceLocation id = EntityType.getKey(lastRenderedEntity);
 				
 				Pehkui.LOGGER.error("[{}]: Did something cancel entity rendering early? Matrix stack was not popped after rendering entity {}.", Pehkui.MOD_ID, id);
 				
@@ -370,18 +369,18 @@ public class ScaleRenderUtils
 		entityRecursionDepth = 0;
 	}
 	
-	public static void addDetailsToCrashReport(CrashReportSection section)
+	public static void addDetailsToCrashReport(CrashReportCategory section)
 	{
 		if (lastRenderedStack != null)
 		{
-			section.add("pehkui:debug/render/item", lastRenderedStack.getItem().getTranslationKey());
+			section.setDetail("pehkui:debug/render/item", lastRenderedStack.getItem().getDescriptionId());
 		}
 		
 		if (lastRenderedEntity != null)
 		{
-			final Identifier id = EntityType.getId(lastRenderedEntity);
+			final ResourceLocation id = EntityType.getKey(lastRenderedEntity);
 			
-			section.add("pehkui:debug/render/entity", id);
+			section.setDetail("pehkui:debug/render/entity", id);
 		}
 	}
 }

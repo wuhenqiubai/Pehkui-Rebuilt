@@ -1,19 +1,18 @@
 package virtuoel.pehkui.mixin;
 
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.server.network.ServerPlayerEntity;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(ServerPlayer.class)
 public abstract class ServerPlayerEntityMixin
 {
-	@Inject(at = @At("HEAD"), method = "copyFrom")
-	private void pehkui$copyFrom(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo info)
+	@Inject(at = @At("HEAD"), method = "restoreFrom")
+	private void pehkui$copyFrom(ServerPlayer oldPlayer, boolean alive, CallbackInfo info)
 	{
-		ScaleUtils.loadScaleOnRespawn((ServerPlayerEntity) (Object) this, oldPlayer, alive);
+		ScaleUtils.loadScaleOnRespawn((ServerPlayer) (Object) this, oldPlayer, alive);
 	}
 }

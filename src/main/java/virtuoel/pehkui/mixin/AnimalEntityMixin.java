@@ -7,18 +7,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.sugar.Local;
-
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.animal.Animal;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(AnimalEntity.class)
+@Mixin(Animal.class)
 public class AnimalEntityMixin
 {
-	@Inject(method = "breed(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/passive/AnimalEntity;)V", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/server/world/ServerWorld;spawnEntityAndPassengers(Lnet/minecraft/entity/Entity;)V"))
-	private void pehkui$breed(ServerWorld serverWorld, AnimalEntity other, CallbackInfo info, @Local PassiveEntity passiveEntity)
+	@Inject(method = "spawnChildFromBreeding(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/animal/Animal;)V", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/server/level/ServerLevel;addFreshEntityWithPassengers(Lnet/minecraft/world/entity/Entity;)V"))
+	private void pehkui$breed(ServerLevel serverWorld, Animal other, CallbackInfo info, @Local AgeableMob passiveEntity)
 	{
-		ScaleUtils.loadAverageScales(passiveEntity, (AnimalEntity) (Object) this, other);
+		ScaleUtils.loadAverageScales(passiveEntity, (Animal) (Object) this, other);
 	}
 }

@@ -25,13 +25,13 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
-import net.minecraft.command.argument.ArgumentTypes;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
-import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
-import net.minecraft.predicate.NumberRange;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.command.argument.ScaleEasingArgumentType;
 import virtuoel.pehkui.command.argument.ScaleModifierArgumentType;
@@ -63,8 +63,8 @@ public class CommandUtils
 		{
 			((Runnable) () -> CommandUtils.registerArgumentTypes(new ArgumentTypeConsumer() {
 				@Override
-				public <T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier) {
-					ArgumentTypeRegistry.registerArgumentType(id, argClass, ConstantArgumentSerializer.of(supplier));
+				public <T extends ArgumentType<?>> void register(ResourceLocation id, Class<T> argClass, Supplier<T> supplier) {
+					ArgumentTypeRegistry.registerArgumentType(id, argClass, SingletonArgumentInfo.contextFree(supplier));
 				}
 			})).run();
 		}
@@ -74,7 +74,7 @@ public class CommandUtils
 		}
 	}
 	
-	public static void registerCommands(final CommandDispatcher<ServerCommandSource> dispatcher)
+	public static void registerCommands(final CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		ScaleCommand.register(dispatcher);
 		DebugCommand.register(dispatcher);
@@ -113,7 +113,7 @@ public class CommandUtils
 		}
 	}
 	
-	protected static void registerV1ApiCommands(final CommandDispatcher<ServerCommandSource> dispatcher, final boolean dedicated)
+	protected static void registerV1ApiCommands(final CommandDispatcher<CommandSourceStack> dispatcher, final boolean dedicated)
 	{
 		registerCommands(dispatcher);
 	}
@@ -129,7 +129,7 @@ public class CommandUtils
 	@FunctionalInterface
 	public interface ArgumentTypeConsumer
 	{
-		<T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier);
+		<T extends ArgumentType<?>> void register(ResourceLocation id, Class<T> argClass, Supplier<T> supplier);
 	}
 	
 	public static final MethodHandle REGISTER_ARGUMENT_TYPE, TEST_FLOAT_RANGE, SEND_FEEDBACK;
@@ -152,18 +152,18 @@ public class CommandUtils
 			if (is118Minus)
 			{
 				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2316", "method_10017", "(Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/class_2314;)V");
-				m = ArgumentTypes.class.getMethod(mapped, String.class, Class.class, ArgumentSerializer.class);
+				m = ArgumentTypeInfos.class.getMethod(mapped, String.class, Class.class, ArgumentTypeInfo.class);
 				h.put(0, lookup.unreflect(m));
 			}
 			
 			mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2096$class_2099", "method_9047", is116Minus ? "(F)Z" : "(D)Z");
-			m = NumberRange.DoubleRange.class.getMethod(mapped, is116Minus ? float.class : double.class);
+			m = MinMaxBounds.Doubles.class.getMethod(mapped, is116Minus ? float.class : double.class);
 			h.put(1, lookup.unreflect(m));
 			
 			if (is119Minus)
 			{
 				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2168", "method_9226", "(Lnet/minecraft/class_2561;Z)V");
-				m = ServerCommandSource.class.getMethod(mapped, Text.class, boolean.class);
+				m = CommandSourceStack.class.getMethod(mapped, Component.class, boolean.class);
 				h.put(2, lookup.unreflect(m));
 			}
 		}
@@ -178,7 +178,7 @@ public class CommandUtils
 		SEND_FEEDBACK = h.get(2);
 	}
 	
-	public static void sendFeedback(ServerCommandSource source, Supplier<Text> text, boolean broadcastToOps)
+	public static void sendFeedback(CommandSourceStack source, Supplier<Component> text, boolean broadcastToOps)
 	{
 		if (SEND_FEEDBACK != null)
 		{
@@ -194,10 +194,10 @@ public class CommandUtils
 			}
 		}
 		
-		source.sendFeedback(text, broadcastToOps);
+		source.sendSuccess(text, broadcastToOps);
 	}
 	
-	public static boolean testFloatRange(NumberRange.DoubleRange range, float value)
+	public static boolean testFloatRange(MinMaxBounds.Doubles range, float value)
 	{
 		if (TEST_FLOAT_RANGE != null)
 		{
@@ -222,13 +222,13 @@ public class CommandUtils
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends ArgumentType<?>> void registerConstantArgumentType(Identifier id, Class<? extends T> argClass, Supplier<T> supplier)
+	public static <T extends ArgumentType<?>> void registerConstantArgumentType(ResourceLocation id, Class<? extends T> argClass, Supplier<T> supplier)
 	{
 		if (REGISTER_ARGUMENT_TYPE != null)
 		{
 			try
 			{
-				REGISTER_ARGUMENT_TYPE.invoke(id.toString(), argClass, ConstantArgumentSerializer.class.getConstructor(Supplier.class).newInstance(supplier));
+				REGISTER_ARGUMENT_TYPE.invoke(id.toString(), argClass, SingletonArgumentInfo.class.getConstructor(Supplier.class).newInstance(supplier));
 			}
 			catch (Throwable e)
 			{
@@ -237,7 +237,7 @@ public class CommandUtils
 		}
 	}
 	
-	public static CompletableFuture<Suggestions> suggestIdentifiersIgnoringNamespace(String namespace, Iterable<Identifier> candidates, SuggestionsBuilder builder)
+	public static CompletableFuture<Suggestions> suggestIdentifiersIgnoringNamespace(String namespace, Iterable<ResourceLocation> candidates, SuggestionsBuilder builder)
 	{
 		forEachMatchingIgnoringNamespace(
 			namespace,
@@ -250,11 +250,11 @@ public class CommandUtils
 		return builder.buildFuture();
 	}
 	
-	public static <T> void forEachMatchingIgnoringNamespace(String namespace, Iterable<T> candidates, String string, Function<T, Identifier> idFunc, Consumer<T> action)
+	public static <T> void forEachMatchingIgnoringNamespace(String namespace, Iterable<T> candidates, String string, Function<T, ResourceLocation> idFunc, Consumer<T> action)
 	{
 		final boolean hasColon = string.indexOf(':') > -1;
 		
-		Identifier id;
+		ResourceLocation id;
 		for (final T object : candidates)
 		{
 			id = idFunc.apply(object);

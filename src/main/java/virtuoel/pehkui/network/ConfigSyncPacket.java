@@ -1,8 +1,7 @@
 package virtuoel.pehkui.network;
 
 import java.util.Collection;
-
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.ConfigSyncUtils.SyncableConfigEntry;
 
@@ -16,12 +15,12 @@ public class ConfigSyncPacket
 		this.configEntries = configEntries;
 	}
 	
-	public ConfigSyncPacket(final PacketByteBuf buf)
+	public ConfigSyncPacket(final FriendlyByteBuf buf)
 	{
 		this.action = ConfigSyncUtils.readConfigs(buf);
 	}
 	
-	public void write(final PacketByteBuf buf)
+	public void write(final FriendlyByteBuf buf)
 	{
 		ConfigSyncUtils.write(configEntries, buf);
 	}

@@ -1,34 +1,34 @@
 package virtuoel.pehkui.network;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.server.command.DebugCommand;
 
-public class DebugPayload extends DebugPacket implements CustomPayload
+public class DebugPayload extends DebugPacket implements CustomPacketPayload
 {
-	public static final CustomPayload.Id<DebugPayload> ID = new CustomPayload.Id<>(Pehkui.DEBUG_PACKET);
-	public static final PacketCodec<PacketByteBuf, DebugPayload> CODEC = codec(ID);
+	public static final CustomPacketPayload.Type<DebugPayload> ID = new CustomPacketPayload.Type<>(Pehkui.DEBUG_PACKET);
+	public static final StreamCodec<FriendlyByteBuf, DebugPayload> CODEC = codec(ID);
 	
 	public DebugPayload(final DebugCommand.PacketType type)
 	{
 		super(type);
 	}
 	
-	public DebugPayload(final PacketByteBuf buf)
+	public DebugPayload(final FriendlyByteBuf buf)
 	{
 		super(buf);
 	}
 	
 	@Override
-	public CustomPayload.Id<? extends CustomPayload> getId()
+	public CustomPacketPayload.Type<? extends CustomPacketPayload> type()
 	{
 		return ID;
 	}
 	
-	private static PacketCodec<PacketByteBuf, DebugPayload> codec(final CustomPayload.Id<DebugPayload> id)
+	private static StreamCodec<FriendlyByteBuf, DebugPayload> codec(final CustomPacketPayload.Type<DebugPayload> id)
 	{
-		return CustomPayload.codecOf(DebugPayload::write, DebugPayload::new);
+		return CustomPacketPayload.codec(DebugPayload::write, DebugPayload::new);
 	}
 }

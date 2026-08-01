@@ -4,19 +4,18 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import net.minecraft.commands.arguments.OperationArgument;
 
-import net.minecraft.command.argument.OperationArgumentType;
-
-@Mixin(OperationArgumentType.class)
+@Mixin(OperationArgument.class)
 public interface OperationArgumentTypeAccessor
 {
-	@Accessor("INVALID_OPERATION")
+	@Accessor("ERROR_INVALID_OPERATION")
 	static SimpleCommandExceptionType getInvalidOperationException()
 	{
 		throw new UnsupportedOperationException();
 	}
 	
-	@Accessor("DIVISION_ZERO_EXCEPTION")
+	@Accessor("ERROR_DIVIDE_BY_ZERO")
 	static SimpleCommandExceptionType getDivisionZeroException()
 	{
 		throw new UnsupportedOperationException();

@@ -5,20 +5,19 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.entity.EntityLike;
-import net.minecraft.world.entity.EntityTrackingSection;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.entity.EntityAccess;
+import net.minecraft.world.level.entity.EntitySection;
+import net.minecraft.world.phys.AABB;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(EntityTrackingSection.class)
+@Mixin(EntitySection.class)
 public class EntityTrackingSectionMixin
 {
-	@WrapOperation(method = "forEach(Lnet/minecraft/util/math/Box;Lnet/minecraft/util/function/LazyIterationConsumer;)Lnet/minecraft/util/function/LazyIterationConsumer$NextIteration;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EntityLike;getBoundingBox()Lnet/minecraft/util/math/Box;"))
-	private Box pehkui$forEach$getBoundingBox(EntityLike obj, Operation<Box> original)
+	@WrapOperation(method = "getEntities(Lnet/minecraft/world/phys/AABB;Lnet/minecraft/util/AbortableIterationConsumer;)Lnet/minecraft/util/AbortableIterationConsumer$Continuation;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/entity/EntityAccess;getBoundingBox()Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$forEach$getBoundingBox(EntityAccess obj, Operation<AABB> original)
 	{
-		final Box bounds = original.call(obj);
+		final AABB bounds = original.call(obj);
 		
 		if (obj instanceof Entity entity)
 		{
@@ -28,21 +27,21 @@ public class EntityTrackingSectionMixin
 			
 			if (interactionWidth != 1.0F || interactionHeight != 1.0F)
 			{
-				final double scaledXLength = bounds.getLengthX() * 0.5D * (interactionWidth - 1.0F);
-				final double scaledYLength = bounds.getLengthY() * 0.5D * (interactionHeight - 1.0F);
-				final double scaledZLength = bounds.getLengthZ() * 0.5D * (interactionWidth - 1.0F);
+				final double scaledXLength = bounds.getXsize() * 0.5D * (interactionWidth - 1.0F);
+				final double scaledYLength = bounds.getYsize() * 0.5D * (interactionHeight - 1.0F);
+				final double scaledZLength = bounds.getZsize() * 0.5D * (interactionWidth - 1.0F);
 				
-				return bounds.expand(scaledXLength, scaledYLength, scaledZLength);
+				return bounds.inflate(scaledXLength, scaledYLength, scaledZLength);
 			}
 		}
 		
 		return bounds;
 	}
 	
-	@WrapOperation(method = "forEach(Lnet/minecraft/util/TypeFilter;Lnet/minecraft/util/math/Box;Lnet/minecraft/util/function/LazyIterationConsumer;)Lnet/minecraft/util/function/LazyIterationConsumer$NextIteration;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/EntityLike;getBoundingBox()Lnet/minecraft/util/math/Box;"))
-	private Box pehkui$forEach$getBoundingBox$filtered(EntityLike obj, Operation<Box> original)
+	@WrapOperation(method = "getEntities(Lnet/minecraft/world/level/entity/EntityTypeTest;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/util/AbortableIterationConsumer;)Lnet/minecraft/util/AbortableIterationConsumer$Continuation;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/entity/EntityAccess;getBoundingBox()Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$forEach$getBoundingBox$filtered(EntityAccess obj, Operation<AABB> original)
 	{
-		final Box bounds = original.call(obj);
+		final AABB bounds = original.call(obj);
 		
 		if (obj instanceof Entity entity)
 		{
@@ -52,11 +51,11 @@ public class EntityTrackingSectionMixin
 			
 			if (interactionWidth != 1.0F || interactionHeight != 1.0F)
 			{
-				final double scaledXLength = bounds.getLengthX() * 0.5D * (interactionWidth - 1.0F);
-				final double scaledYLength = bounds.getLengthY() * 0.5D * (interactionHeight - 1.0F);
-				final double scaledZLength = bounds.getLengthZ() * 0.5D * (interactionWidth - 1.0F);
+				final double scaledXLength = bounds.getXsize() * 0.5D * (interactionWidth - 1.0F);
+				final double scaledYLength = bounds.getYsize() * 0.5D * (interactionHeight - 1.0F);
+				final double scaledZLength = bounds.getZsize() * 0.5D * (interactionWidth - 1.0F);
 				
-				return bounds.expand(scaledXLength, scaledYLength, scaledZLength);
+				return bounds.inflate(scaledXLength, scaledYLength, scaledZLength);
 			}
 		}
 		

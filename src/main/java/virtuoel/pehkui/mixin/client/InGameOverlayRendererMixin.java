@@ -4,16 +4,15 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import net.minecraft.client.gui.hud.InGameOverlayRenderer;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.renderer.ScreenEffectRenderer;
+import net.minecraft.world.entity.player.Player;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(InGameOverlayRenderer.class)
+@Mixin(ScreenEffectRenderer.class)
 public abstract class InGameOverlayRendererMixin
 {
-	@ModifyExpressionValue(method = "getInWallBlockState", at = @At(value = "CONSTANT", args = "floatValue=0.1F"))
-	private static float pehkui$getInWallBlockState$offset(float value, PlayerEntity player)
+	@ModifyExpressionValue(method = "getViewBlockingState", at = @At(value = "CONSTANT", args = "floatValue=0.1F"))
+	private static float pehkui$getInWallBlockState$offset(float value, Player player)
 	{
 		final float scale = ScaleUtils.getEyeHeightScale(player);
 		

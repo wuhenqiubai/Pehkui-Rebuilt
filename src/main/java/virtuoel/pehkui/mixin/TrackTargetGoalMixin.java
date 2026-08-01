@@ -7,25 +7,24 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.TrackTargetGoal;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(TrackTargetGoal.class)
+@Mixin(TargetGoal.class)
 public class TrackTargetGoalMixin
 {
 	@Shadow
-	protected LivingEntity target;
+	protected LivingEntity targetMob;
 	@Shadow @Final @Mutable
-	protected MobEntity mob;
+	protected Mob mob;
 	
-	@ModifyReturnValue(method = "getFollowRange", at = @At("RETURN"))
+	@ModifyReturnValue(method = "getFollowDistance", at = @At("RETURN"))
 	private double pehkui$getFollowRange(double original)
 	{
 		LivingEntity target = this.mob.getTarget();
-		if (target == null && (target = this.target) == null)
+		if (target == null && (target = this.targetMob) == null)
 		{
 			return original;
 		}
