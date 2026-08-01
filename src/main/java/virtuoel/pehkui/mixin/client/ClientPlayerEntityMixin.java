@@ -25,7 +25,15 @@ public class ClientPlayerEntityMixin
 	{
 		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
 		final float jumpScale = ScaleUtils.getJumpHeightScale((Entity) (Object) this);
-		
+
 		return scale != 1.0F || jumpScale != 1.0F ? scale * jumpScale * value : value;
+	}
+
+	@ModifyExpressionValue(method = "sendMovementPackets", at = @At(value = "CONSTANT", args = "doubleValue=2.0E-4D"))
+	private double pehkui$sendMovementPackets$minVelocity(double value)
+	{
+		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
+
+		return scale < 1.0F ? scale * value : value;
 	}
 }
