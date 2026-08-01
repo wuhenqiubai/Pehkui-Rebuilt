@@ -113,4 +113,34 @@ public abstract class PlayerEntityMixin
 		
 		return original.call(obj, x, y, z);
 	}
+
+	@ModifyExpressionValue(method = "attack(Lnet/minecraft/entity/Entity;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
+	private double pehkui$attack$knockback(double value)
+	{
+		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
+
+		return scale != 1.0F ? scale * value : value;
+	}
+
+	@ModifyReturnValue(method = "getOffGroundSpeed", at = @At(value = "RETURN", ordinal = 0))
+	private float pehkui$getOffGroundSpeed(float original)
+	{
+		final float scale = ScaleUtils.getFlightScale((PlayerEntity) (Object) this);
+
+		return scale != 1.0F ? original * scale : original;
+	}
+
+	@ModifyReturnValue(method = "getBlockInteractionRange", at = @At("RETURN"))
+	private double pehkui$getBlockInteractionRange(double original)
+	{
+		final float scale = ScaleUtils.getBlockReachScale((Entity) (Object) this);
+		return scale != 1.0F ? scale * original : original;
+	}
+
+	@ModifyReturnValue(method = "getEntityInteractionRange", at = @At("RETURN"))
+	private double pehkui$getEntityInteractionRange(double original)
+	{
+		final float scale = ScaleUtils.getEntityReachScale((Entity) (Object) this);
+		return scale != 1.0F ? scale * original : original;
+	}
 }

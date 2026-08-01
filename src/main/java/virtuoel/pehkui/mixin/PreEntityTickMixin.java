@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.TntEntity;
+import net.minecraft.entity.decoration.BlockAttachedEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import virtuoel.pehkui.api.ScaleRegistries;
@@ -15,6 +16,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin({
 	AbstractMinecartEntity.class,
+	BlockAttachedEntity.class,
 	EndCrystalEntity.class,
 	FallingBlockEntity.class,
 	TntEntity.class

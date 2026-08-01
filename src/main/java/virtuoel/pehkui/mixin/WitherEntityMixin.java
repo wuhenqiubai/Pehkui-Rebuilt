@@ -24,7 +24,15 @@ public class WitherEntityMixin
 	private double pehkui$getHeadZ$offset(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
-		
+
+		return scale != 1.0F ? scale * value : value;
+	}
+
+	@ModifyExpressionValue(method = "getHeadY", at = { @At(value = "CONSTANT", args = "floatValue=3.0F"), @At(value = "CONSTANT", args = "floatValue=2.2F") })
+	private float pehkui$getHeadY$offset(float value)
+	{
+		final float scale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
+
 		return scale != 1.0F ? scale * value : value;
 	}
 }

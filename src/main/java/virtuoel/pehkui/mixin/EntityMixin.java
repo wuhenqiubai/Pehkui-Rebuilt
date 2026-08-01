@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -25,9 +26,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
 import virtuoel.pehkui.server.command.DebugCommand;
@@ -39,7 +42,15 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 {
 	@Shadow boolean onGround;
 	@Shadow boolean firstUpdate;
-	
+	@Shadow
+	private BlockPos blockPos;
+
+	@Unique
+	protected void setPosDirectly(final BlockPos pos)
+	{
+		blockPos = pos;
+	}
+
 	private boolean pehkui_shouldSyncScales = false;
 	private boolean pehkui_shouldIgnoreScaleNbt = false;
 	private ScaleData[] pehkui_scaleCache = null;
@@ -265,5 +276,87 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	public void pehkui_setOnGround(boolean onGround)
 	{
 		this.onGround = onGround;
+	}
+
+	@ModifyArg(method = "fall", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;onLandedUpon(Lnet/minecraft/world/World;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;F)V"))
+	private float pehkui$fall$fallDistance(float distance)
+	{
+		final float scale = ScaleUtils.getFallingScale((Entity) (Object) this);
+
+		if (scale != 1.0F)
+		{
+			if (PehkuiConfig.COMMON.scaledFallDamage.get())
+			{
+				return distance * scale;
+			}
+		}
+
+		return distance;
+	}
+
+	@ModifyExpressionValue(method = "move", at = @At(value = "CONSTANT", ordinal = 0, args = "doubleValue=0.6D"))
+	private double pehkui$move$flapping(double value)
+	{
+		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
+
+		if (scale != 1.0F)
+		{
+			return value / scale;
+		}
+
+		return value;
+	}
+
+	@ModifyExpressionValue(method = "move", at = @At(value = "CONSTANT", ordinal = 0, args = "floatValue=0.6F"))
+	private float pehkui$move$bobbing(float value)
+	{
+		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
+
+		if (scale != 1.0F)
+		{
+			return value / scale;
+		}
+
+		return value;
+	}
+
+	@ModifyExpressionValue(method = "move", at = @At(value = "CONSTANT", ordinal = 1, args = "floatValue=0.6F"))
+	private float pehkui$move$step(float value)
+	{
+		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
+
+		if (scale != 1.0F)
+		{
+			return value / scale;
+		}
+
+		return value;
+	}
+
+	@ModifyArg(method = "getPassengerRidingPos", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getPassengerAttachmentPos(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/EntityDimensions;F)Lnet/minecraft/util/math/Vec3d;"))
+	private float pehkui$getPassengerRidingPos$getPassengerAttachmentPos(float value)
+	{
+		final float scale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
+		return scale == 1.0F ? value : value * scale;
+	}
+
+	@ModifyReturnValue(method = "getFinalGravity", at = @At("RETURN"))
+	private double pehkui$getFinalGravity(double original)
+	{
+		if (original == 0.0D)
+		{
+			return 0.0D;
+		}
+
+		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
+		return scale != 1.0F ? original : original * scale;
+	}
+
+	@ModifyExpressionValue(method = "updateSupportingBlockPos", at = @At(value = "CONSTANT", args = "doubleValue=1.0E-6"))
+	private double pehkui$updateSupportingBlockPos$offset(double value)
+	{
+		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
+
+		return scale < 1.0F ? value * scale : value;
 	}
 }
