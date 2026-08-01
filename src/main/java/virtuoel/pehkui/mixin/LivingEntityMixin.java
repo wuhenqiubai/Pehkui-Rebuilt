@@ -1,12 +1,15 @@
 package virtuoel.pehkui.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -14,8 +17,10 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.block.ScaffoldingBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -23,11 +28,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
+import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin
 {
+	@Unique BlockPos pehkui$initialClimbingPos = null;
 	@Inject(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(DDD)V", shift = Shift.AFTER))
 	private void pehkui$tickMovement$minVelocity(CallbackInfo info, @Local Vec3d velocity)
 	{
@@ -151,5 +158,100 @@ public abstract class LivingEntityMixin
 		}
 		
 		return bounds;
+	}
+
+	@ModifyArg(method = "onKilledBy", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
+	private Entity pehkui$onKilledBy$spawnEntity(Entity entity)
+	{
+		ScaleUtils.setScaleOfDrop(entity, (Entity) (Object) this);
+
+		return entity;
+	}
+
+	@ModifyExpressionValue(method = "damage(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/damage/DamageSource;F)Z", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
+	private double pehkui$damage$knockback(double value, ServerWorld world, DamageSource source, float amount)
+	{
+		final float scale = ScaleUtils.getKnockbackScale(source.getAttacker());
+
+		return scale != 1.0F ? scale * value : value;
+	}
+
+	@ModifyExpressionValue(method = "knockback(Lnet/minecraft/entity/LivingEntity;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
+	private double pehkui$knockback$knockback(double value, LivingEntity target)
+	{
+		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
+
+		return scale != 1.0F ? scale * value : value;
+	}
+
+	@ModifyArg(method = "updateLimbs(Z)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;updateLimbs(F)V"))
+	private float pehkui$updateLimbs(float value)
+	{
+		return ScaleUtils.modifyLimbDistance(value, (LivingEntity) (Object) this);
+	}
+
+	@ModifyArg(method = "getPassengerRidingPos", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getPassengerAttachmentPos(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/EntityDimensions;F)Lnet/minecraft/util/math/Vec3d;"))
+	private float pehkui$getPassengerRidingPos$getPassengerAttachmentPos(float value)
+	{
+		final float scale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
+		return scale == 1.0F ? value : value * scale;
+	}
+
+	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
+	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
+	{
+		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
+		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
+
+		if (widthScale != 1.0F || heightScale != 1.0F)
+		{
+			return original.scaled(widthScale, heightScale);
+		}
+
+		return original;
+	}
+
+	@ModifyReturnValue(method = "isClimbing()Z", at = @At("RETURN"))
+	private boolean pehkui$isClimbing(boolean original)
+	{
+		final LivingEntity self = (LivingEntity) (Object) this;
+
+		if (pehkui$initialClimbingPos != null || original || self.isSpectator())
+		{
+			return original;
+		}
+
+		final float width = ScaleUtils.getBoundingBoxWidthScale(self);
+
+		if (width > 1.0F)
+		{
+			final Box bounds = self.getBoundingBox();
+
+			final double halfUnscaledXLength = (bounds.getLengthX() / width) / 2.0D;
+			final int minX = MathHelper.floor(bounds.minX + halfUnscaledXLength);
+			final int maxX = MathHelper.floor(bounds.maxX - halfUnscaledXLength);
+
+			final int minY = MathHelper.floor(bounds.minY);
+
+			final double halfUnscaledZLength = (bounds.getLengthZ() / width) / 2.0D;
+			final int minZ = MathHelper.floor(bounds.minZ + halfUnscaledZLength);
+			final int maxZ = MathHelper.floor(bounds.maxZ - halfUnscaledZLength);
+
+			pehkui$initialClimbingPos = self.getBlockPos();
+
+			for (final BlockPos pos : BlockPos.iterate(minX, minY, minZ, maxX, minY, maxZ))
+			{
+				((PehkuiEntityExtensions) self).pehkui_setPosDirectly(pos);
+				if (self.isClimbing())
+				{
+					return true;
+				}
+			}
+
+			((PehkuiEntityExtensions) self).pehkui_setPosDirectly(pehkui$initialClimbingPos);
+			pehkui$initialClimbingPos = null;
+		}
+
+		return original;
 	}
 }

@@ -73,7 +73,15 @@ public abstract class BoatEntityMixin
 	private double pehkui$updateVelocity$sinking(double value)
 	{
 		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
-		
+
 		return scale != 1.0F ? scale * value : value;
+	}
+
+	@ModifyExpressionValue(method = "updateVelocity", at = @At(value = "CONSTANT", args = "doubleValue=0.65D"))
+	private double pehkui$updateVelocity$multiplier(double value)
+	{
+		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
+
+		return scale != 1.0F ? value / scale : value;
 	}
 }
