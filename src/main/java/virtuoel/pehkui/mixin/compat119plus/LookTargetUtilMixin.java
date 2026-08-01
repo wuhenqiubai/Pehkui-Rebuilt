@@ -10,12 +10,12 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.task.TargetUtil;
+import net.minecraft.entity.ai.brain.task.LookTargetUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(TargetUtil.class)
+@Mixin(LookTargetUtil.class)
 public class LookTargetUtilMixin
 {
 	@ModifyVariable(method = "give(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;F)V", at = @At("HEAD"))

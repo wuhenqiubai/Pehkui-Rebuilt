@@ -62,7 +62,7 @@ public class PehkuiEntitySelectorOptions
 			r ->
 			{
 				final boolean negated = r.readNegationCharacter();
-				final NbtCompound parsed = StringNbtReader.readCompoundAsArgument(r.getReader());
+				final NbtCompound parsed = (new StringNbtReader(r.getReader())).parseCompound();
 				r.addPredicate(entity ->
 				{
 					final NbtCompound nbt = ((PehkuiEntityExtensions) entity).pehkui_writeScaleNbt(new NbtCompound());

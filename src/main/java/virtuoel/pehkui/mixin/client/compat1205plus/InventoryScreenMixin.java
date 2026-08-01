@@ -2,6 +2,9 @@ package virtuoel.pehkui.mixin.client.compat1205plus;
 
 import java.util.Map;
 
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,8 +32,8 @@ public abstract class InventoryScreenMixin
 	@Unique private static final ThreadLocal<Map<ScaleType, ScaleData>> pehkui$SCALES = ThreadLocal.withInitial(Object2ObjectLinkedOpenHashMap::new);
 	@Unique private static final ScaleData pehkui$IDENTITY = ScaleData.Builder.create().build();
 	
-	@Inject(method = "drawEntity(Lnet/minecraft/client/gui/DrawContext;IIIIIFFFLnet/minecraft/entity/LivingEntity;)V", at = @At(value = "HEAD"))
-	private static void pehkui$drawEntity$head(DrawContext drawContext, int left, int top, int right, int bottom, int size, float mouseX, float mouseY, float yOffset, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<Box> bounds)
+	@Inject(method = "drawEntity(Lnet/minecraft/client/gui/DrawContext;FFFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/entity/LivingEntity;)V", at = @At(value = "HEAD"))
+	private static void pehkui$drawEntity$head(DrawContext drawContext, float x, float y, float size, Vector3f offset, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<Box> bounds)
 	{
 		final Map<ScaleType, ScaleData> scales = pehkui$SCALES.get();
 		
@@ -47,7 +50,7 @@ public abstract class InventoryScreenMixin
 		bounds.set(entity.getBoundingBox());
 		
 		final EntityDimensions dims = entity.getDimensions(entity.getPose());
-		final Vec3d pos = entity.getEntityPos();
+		final Vec3d pos = entity.getPos();
 		final double r = ReflectionUtils.getDimensionsWidth(dims) / 2.0D;
 		final double h = ReflectionUtils.getDimensionsHeight(dims);
 		final double xPos = pos.x;
@@ -58,8 +61,8 @@ public abstract class InventoryScreenMixin
 		entity.setBoundingBox(box);
 	}
 	
-	@Inject(method = "drawEntity(Lnet/minecraft/client/gui/DrawContext;IIIIIFFFLnet/minecraft/entity/LivingEntity;)V", at = @At(value = "RETURN"))
-	private static void pehkui$drawEntity$return(DrawContext drawContext, int left, int top, int right, int bottom, int size, float mouseX, float mouseY, float yOffset, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<Box> bounds)
+	@Inject(method = "drawEntity(Lnet/minecraft/client/gui/DrawContext;FFFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/entity/LivingEntity;)V", at = @At(value = "RETURN"))
+	private static void pehkui$drawEntity$return(DrawContext drawContext, float x, float y, float size, Vector3f offset, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<Box> bounds)
 	{
 		final Map<ScaleType, ScaleData> scales = pehkui$SCALES.get();
 		

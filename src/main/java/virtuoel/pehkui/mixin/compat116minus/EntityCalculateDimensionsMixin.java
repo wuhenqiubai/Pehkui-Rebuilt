@@ -33,7 +33,7 @@ public abstract class EntityCalculateDimensionsMixin
 	{
 		final float currentWidth = ReflectionUtils.getDimensionsWidth(current);
 		final float previousWidth = ReflectionUtils.getDimensionsWidth(previous);
-		if (this.world.isClient() && type == EntityType.PLAYER && currentWidth > previousWidth)
+		if (this.world.isClient && type == EntityType.PLAYER && currentWidth > previousWidth)
 		{
 			final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 			final float dist = (previousWidth - currentWidth) / 2.0F;

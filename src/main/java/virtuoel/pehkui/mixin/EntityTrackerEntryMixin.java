@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.network.EntityTrackerEntry;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -19,12 +18,12 @@ import virtuoel.pehkui.util.ScaleUtils;
 public abstract class EntityTrackerEntryMixin
 {
 	@Shadow @Final Entity entity;
-	@Shadow @Final EntityTrackerEntry.TrackerPacketSender packetSender;
+	@Shadow abstract void sendSyncPacket(Packet<?> packet);
 	
 	@Inject(at = @At("TAIL"), method = "tick")
 	private void pehkui$tick(CallbackInfo info)
 	{
-		ScaleUtils.syncScalesIfNeeded(entity, this::pehkui$sendSyncPacket);
+		ScaleUtils.syncScalesIfNeeded(entity, p -> this.sendSyncPacket(p));
 	}
 	
 	@ModifyExpressionValue(method = "tick", at = @At(value = "CONSTANT", args = "doubleValue=7.62939453125E-6D"))
@@ -38,12 +37,6 @@ public abstract class EntityTrackerEntryMixin
 	@Inject(at = @At("HEAD"), method = "syncEntityData")
 	private void pehkui$syncEntityData(CallbackInfo info)
 	{
-		ScaleUtils.syncScalesIfNeeded(entity, this::pehkui$sendSyncPacket);
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void pehkui$sendSyncPacket(Packet<?> packet)
-	{
-		packetSender.sendToSelfAndListeners((Packet<? super ClientPlayPacketListener>) packet);
+		ScaleUtils.syncScalesIfNeeded(entity, p -> this.sendSyncPacket(p));
 	}
 }

@@ -6,10 +6,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.AbstractChestBoatEntity;
+import net.minecraft.entity.vehicle.ChestBoatEntity;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(AbstractChestBoatEntity.class)
+@Mixin(ChestBoatEntity.class)
 public abstract class ChestBoatEntityMixin
 {
 	@ModifyReturnValue(method = "getPassengerHorizontalOffset", at = @At("RETURN"))

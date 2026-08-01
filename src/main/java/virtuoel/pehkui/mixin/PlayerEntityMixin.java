@@ -22,8 +22,8 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin
 {
-	@Inject(at = @At("RETURN"), method = "dropItem(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/entity/ItemEntity;")
-	private void pehkui$dropItem(ItemStack stack, boolean throwRandomly, CallbackInfoReturnable<ItemEntity> info)
+	@Inject(at = @At("RETURN"), method = "dropItem(Lnet/minecraft/item/ItemStack;ZZ)Lnet/minecraft/entity/ItemEntity;")
+	private void pehkui$dropItem(ItemStack stack, boolean spread, boolean thrown, CallbackInfoReturnable<ItemEntity> info)
 	{
 		final ItemEntity entity = info.getReturnValue();
 		
@@ -35,7 +35,7 @@ public abstract class PlayerEntityMixin
 			
 			if (scale != 1.0F)
 			{
-				final Vec3d pos = entity.getEntityPos();
+				final Vec3d pos = entity.getPos();
 				
 				entity.setPosition(pos.x, pos.y + ((1.0F - scale) * 0.3D), pos.z);
 			}
@@ -86,7 +86,15 @@ public abstract class PlayerEntityMixin
 		return scale != 1.0F ? original * scale : original;
 	}
 	
-	@WrapOperation(method = "doSweepingAttack(Lnet/minecraft/entity/Entity;FLnet/minecraft/entity/damage/DamageSource;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;expand(DDD)Lnet/minecraft/util/math/Box;"))
+	@ModifyExpressionValue(method = "updateCapeAngles", at = { @At(value = "CONSTANT", args = "doubleValue=10.0D"), @At(value = "CONSTANT", args = "doubleValue=-10.0D") })
+	private double pehkui$updateCapeAngles$limits(double value)
+	{
+		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
+		
+		return scale != 1.0F ? scale * value : value;
+	}
+	
+	@WrapOperation(method = "attack(Lnet/minecraft/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Box;expand(DDD)Lnet/minecraft/util/math/Box;"))
 	private Box pehkui$attack$expand(Box obj, double x, double y, double z, Operation<Box> original, @Local(argsOnly = true) Entity target)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale(target);

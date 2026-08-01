@@ -21,13 +21,11 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.command.DefaultPermissions;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -42,6 +40,7 @@ import virtuoel.pehkui.network.DebugPayload;
 import virtuoel.pehkui.util.CommandUtils;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.I18nUtils;
+import virtuoel.pehkui.util.NbtCompoundExtensions;
 import virtuoel.pehkui.util.ReflectionUtils;
 import virtuoel.pehkui.util.VersionUtils;
 
@@ -51,7 +50,7 @@ public class DebugCommand
 	{
 		final LiteralArgumentBuilder<ServerCommandSource> builder =
 			CommandManager.literal("scale")
-			.requires(source -> source.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS));
+			.requires(source -> source.hasPermissionLevel(2));
 		
 		builder.then(CommandManager.literal("debug")
 			.then(ConfigSyncUtils.registerConfigCommands())
@@ -142,17 +141,14 @@ public class DebugCommand
 	
 	public static boolean unmarkEntityForScaleReset(final Entity entity, final NbtCompound nbt)
 	{
-		if (entity instanceof PlayerEntity && MARKED_USERNAMES.remove(((PlayerEntity) entity).getName().getString().toLowerCase(Locale.ROOT)))
+		if (entity instanceof PlayerEntity && MARKED_USERNAMES.remove(((PlayerEntity) entity).getGameProfile().getName().toLowerCase(Locale.ROOT)))
 		{
 			return true;
 		}
 		
-		return nbt.getIntArray("UUID").map(DebugCommand::uuidFromIntArray).map(MARKED_UUIDS::remove).orElse(false);
-	}
-	
-	private static UUID uuidFromIntArray(int[] values)
-	{
-		return new UUID(((long) values[0] << 32) | (values[1] & 0xFFFFFFFFL), ((long) values[2] << 32) | (values[3] & 0xFFFFFFFFL));
+		final NbtCompoundExtensions compound = ((NbtCompoundExtensions) nbt);
+		
+		return compound.pehkui_containsUuid("UUID") && MARKED_UUIDS.remove(compound.pehkui_getUuid("UUID"));
 	}
 	
 	private static final List<EntityType<? extends Entity>> TYPES = Arrays.asList(
@@ -177,7 +173,7 @@ public class DebugCommand
 		
 		int width = ((TYPES.size() - 1) * (spacing + 1)) + 1;
 		
-		Vec3d pos = entity.getEntityPos();
+		Vec3d pos = entity.getPos();
 		BlockPos.Mutable mut = new BlockPos.Mutable(pos.x, pos.y, pos.z).move(dir, distance).move(left, width / 2);
 		
 		World w = entity.getEntityWorld();
@@ -185,11 +181,11 @@ public class DebugCommand
 		for (EntityType<?> t : TYPES)
 		{
 			w.setBlockState(mut, Blocks.POLISHED_ANDESITE.getDefaultState());
-			final Entity e = t.create(w, SpawnReason.COMMAND);
+			final Entity e = t.create(w);
 			
-			e.updatePositionAndAngles(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.getPositiveHorizontalDegrees(), 0);
-			e.refreshPositionAndAngles(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.getPositiveHorizontalDegrees(), 0);
-			e.setHeadYaw(opposite.getPositiveHorizontalDegrees());
+			e.updatePositionAndAngles(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.asRotation(), 0);
+			e.refreshPositionAndAngles(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.asRotation(), 0);
+			e.setHeadYaw(opposite.asRotation());
 			
 			e.addCommandTag("pehkui");
 			

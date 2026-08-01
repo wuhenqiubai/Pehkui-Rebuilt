@@ -13,7 +13,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(ShulkerEntity.class)
 public class ShulkerEntityMixin
 {
-	@ModifyReturnValue(method = "calculateDefaultBoundingBox(Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/Box;", at = @At("RETURN"))
+	@ModifyReturnValue(method = "calculateBoundingBox", at = @At("RETURN"))
 	private Box pehkui$calculateBoundingBox(Box box)
 	{
 		final ShulkerEntity entity = (ShulkerEntity) (Object) this;

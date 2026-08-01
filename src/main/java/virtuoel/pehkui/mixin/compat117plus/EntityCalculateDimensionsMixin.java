@@ -29,13 +29,13 @@ public abstract class EntityCalculateDimensionsMixin
 		
 		final float currentWidth = ReflectionUtils.getDimensionsWidth(current);
 		final float previousWidth = ReflectionUtils.getDimensionsWidth(previous);
-		if (world.isClient() && self.getType() == EntityType.PLAYER && currentWidth > previousWidth)
+		if (world.isClient && self.getType() == EntityType.PLAYER && currentWidth > previousWidth)
 		{
 			final double prevW = Math.min(previousWidth, 4.0D);
 			final double prevH = Math.min(ReflectionUtils.getDimensionsHeight(previous), 4.0D);
 			final double currW = Math.min(currentWidth, 4.0D);
 			final double currH = Math.min(ReflectionUtils.getDimensionsHeight(current), 4.0D);
-			final Vec3d lastCenter = self.getEntityPos().add(0.0D, prevH / 2.0D, 0.0D);
+			final Vec3d lastCenter = self.getPos().add(0.0D, prevH / 2.0D, 0.0D);
 			final double w = Math.max(0.0F, currW - prevW) + 1.0E-6D;
 			final double h = Math.max(0.0F, currH - prevH) + 1.0E-6D;
 			final VoxelShape voxelShape = VoxelShapes.cuboid(Box.of(lastCenter, w, h, w));

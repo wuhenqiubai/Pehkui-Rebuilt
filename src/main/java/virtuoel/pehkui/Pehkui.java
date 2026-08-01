@@ -53,7 +53,7 @@ public class Pehkui implements ModInitializer
 		{
 			ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
 			{
-				if (!handler.player.getGameProfile().equals(server.getHostProfile()))
+				if (!server.isHost(handler.player.getGameProfile()))
 				{
 					ConfigSyncUtils.syncConfigs(handler);
 				}

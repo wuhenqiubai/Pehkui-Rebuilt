@@ -2,12 +2,15 @@ package virtuoel.pehkui.mixin.compat116plus;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LightningEntity;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.WitchEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -15,14 +18,9 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(VillagerEntity.class)
 public class VillagerEntityMixin
 {
-	@ModifyExpressionValue(method = "onStruckByLightning(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/LightningEntity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/VillagerEntity;convertTo(Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/conversion/EntityConversionContext;Lnet/minecraft/entity/conversion/EntityConversionContext$Finalizer;)Lnet/minecraft/entity/mob/MobEntity;"))
-	private MobEntity pehkui$onStruckByLightning(MobEntity converted, ServerWorld world, LightningEntity lightning)
+	@Inject(method = "onStruckByLightning(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/LightningEntity;)V", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/entity/mob/WitchEntity;refreshPositionAndAngles(DDDFF)V"))
+	private void pehkui$onStruckByLightning(ServerWorld world, LightningEntity lightning, CallbackInfo info, @Local WitchEntity witchEntity)
 	{
-		if (converted != null)
-		{
-			ScaleUtils.loadScale(converted, (Entity) (Object) this);
-		}
-		
-		return converted;
+		ScaleUtils.loadScale(witchEntity, (Entity) (Object) this);
 	}
 }

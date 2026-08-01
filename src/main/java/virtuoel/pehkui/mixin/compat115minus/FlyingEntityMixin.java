@@ -7,10 +7,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.FlyingEntity;
 import virtuoel.pehkui.util.MixinConstants;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(targets = "net.minecraft.entity.mob.FlyingEntity")
+@Mixin(FlyingEntity.class)
 public class FlyingEntityMixin
 {
 	@Dynamic

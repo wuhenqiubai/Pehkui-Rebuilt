@@ -9,7 +9,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
-import net.minecraft.server.world.ServerWorld;
 import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(TargetPredicate.class)
@@ -18,7 +17,7 @@ public class TargetPredicateMixin
 	@Shadow boolean useDistanceScalingFactor;
 	
 	@ModifyExpressionValue(method = "test", at = @At(value = "CONSTANT", args = "doubleValue=2.0D"))
-	private double pehkui$test$minDistance(double value, ServerWorld world, @Nullable LivingEntity baseEntity, LivingEntity targetEntity)
+	private double pehkui$test$minDistance(double value, @Nullable LivingEntity baseEntity, LivingEntity targetEntity)
 	{
 		if (useDistanceScalingFactor)
 		{

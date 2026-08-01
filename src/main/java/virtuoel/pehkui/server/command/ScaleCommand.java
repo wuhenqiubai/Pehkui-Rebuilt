@@ -17,7 +17,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.command.DefaultPermissions;
 import net.minecraft.command.EntityDataObject;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.NbtPathArgumentType;
@@ -52,7 +51,7 @@ public class ScaleCommand
 		
 		final LiteralArgumentBuilder<ServerCommandSource> builder =
 			CommandManager.literal("scale")
-			.requires(source -> source.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS));
+			.requires(source -> source.hasPermissionLevel(2));
 		
 		registerOperation(builder);
 		registerRandomize(builder);
