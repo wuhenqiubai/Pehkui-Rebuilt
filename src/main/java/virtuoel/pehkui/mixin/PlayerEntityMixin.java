@@ -85,14 +85,6 @@ public abstract class PlayerEntityMixin
 		return scale != 1.0F ? original * scale : original;
 	}
 	
-	@ModifyExpressionValue(method = "moveCloak", at = { @At(value = "CONSTANT", args = "doubleValue=10.0D"), @At(value = "CONSTANT", args = "doubleValue=-10.0D") })
-	private double pehkui$updateCapeAngles$limits(double value)
-	{
-		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
-		
-		return scale != 1.0F ? scale * value : value;
-	}
-	
 	@WrapOperation(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
 	private AABB pehkui$attack$expand(AABB obj, double x, double y, double z, Operation<AABB> original, @Local(argsOnly = true) Entity target)
 	{
