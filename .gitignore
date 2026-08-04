@@ -42,3 +42,4 @@ libs
 *.kate-swp
 changelog*.txt
 /CLAUDE.md
+/_dev/
