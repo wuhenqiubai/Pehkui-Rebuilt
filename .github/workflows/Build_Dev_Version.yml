@@ -1,0 +1,43 @@
+# 手动构建 Mod 一般用于发布测试版用 需要 Github Collaborators 里的 Write 权限启动
+# 爆警告不影响构建 不用管它 一般是清理缓存的警告
+
+name: 开发版 | Dev Version  # 开发版 手动触发构建 Jar 供玩家测试 不用再放网盘
+on:
+  workflow_dispatch:  # 手动触发 Actions 页面选分支后点 Run workflow 即可
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}  # Pehkui 的 build.gradle 用 BUILD_NUMBER 生成唯一 jar 名（build.N- 前缀）
+    steps:
+      - name: 从仓库拉取代码
+        uses: actions/checkout@v4
+
+      - name: 读取配置文件
+        id: 'properties'
+        uses: christian-draeger/read-properties@1.1.1
+        with:
+          path: gradle.properties
+          properties: 'mod_version archives_base_name minecraft_version'
+
+      - name: 配置Java环境 使用Java21 # 由于Java版本在build.gradle中写的 无法获取到 如果修改了build.gradle需要手动修改下面的java-version
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: 让./gradlew脚本在Linux环境中可执行 # 不加可能会爆 permission denied
+        if: ${{ runner.os != 'Windows' }}
+        run: chmod +x ./gradlew  # 在Linux中 运行脚本需要x权限
+
+      - name: 初始化Gradle # 由于Github在国外 不用使用镜像源
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+      - name: 构建Mod # 如果失败请检查代码是否有错误
+        run: ./gradlew build
+
+      - name: 发布构建产物 # jar 名带 build.<run_number> 每次构建唯一
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: "${{ steps.properties.outputs.archives_base_name }}-${{ steps.properties.outputs.mod_version }}+build.${{ github.run_number }}-${{ steps.properties.outputs.minecraft_version }}"
+          path: build/libs/${{ steps.properties.outputs.archives_base_name }}-${{ steps.properties.outputs.mod_version }}+build.${{ github.run_number }}-${{ steps.properties.outputs.minecraft_version }}.jar
