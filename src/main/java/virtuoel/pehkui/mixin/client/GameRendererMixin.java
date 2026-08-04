@@ -24,7 +24,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 public class GameRendererMixin
 {
 	@Shadow @Final @Mutable
-	Minecraft minecraft;
+	private Minecraft minecraft;
 
 	@Unique
 	boolean pehkui$isBobbing = false;
