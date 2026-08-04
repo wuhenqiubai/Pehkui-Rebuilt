@@ -30,7 +30,7 @@ version = project.mod_version + "+" + (ENV.BUILD_NUMBER ? "build.${ENV.BUILD_NUM
 
 loom {
 	// 自动匹配驼峰转下划线的access widener
-	def awFile = file("src/main/resources/${archives_base_name.replaceAll(/([a-z])([A-Z])/, /$1_$2/).replaceAll(/([A-Z])([A-Z][a-z])/, /$1_$2/).toLowerCase()}.accesswidener")
+	def awFile = file("src/main/resources/pehkui.accesswidener")
 	if (awFile.exists()) accessWidenerPath = awFile
 	mixin.useLegacyMixinAp = false
 }
