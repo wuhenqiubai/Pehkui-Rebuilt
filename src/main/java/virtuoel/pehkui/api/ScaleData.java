@@ -481,17 +481,17 @@ public class ScaleData
 	{
 		final ScaleType type = getScaleType();
 		
-		this.baseScale = tag.contains("scale") ? tag.getFloat("scale") : type.getDefaultBaseScale();
-		this.prevBaseScale = tag.contains("previous") ? tag.getFloat("previous") : this.baseScale;
-		this.initialScale = tag.contains("initial") ? tag.getFloat("initial") : this.baseScale;
-		this.targetScale = tag.contains("target") ? tag.getFloat("target") : this.baseScale;
-		
-		this.scaleTicks = tag.contains("ticks") ? tag.getInt("ticks") : 0;
-		this.totalScaleTicks = tag.contains("total_ticks") ? tag.getInt("total_ticks") : type.getDefaultTickDelay();
-		
-		this.persistent = tag.contains("persistent") ? tag.getBoolean("persistent") : null;
-		
-		this.easing = tag.contains("easing") ? ScaleRegistries.getEntry(ScaleRegistries.SCALE_EASINGS, ResourceLocation.tryParse(tag.getString("easing"))) : null;
+		this.baseScale = tag.getFloatOr("scale", type.getDefaultBaseScale());
+		this.prevBaseScale = tag.getFloatOr("previous", this.baseScale);
+		this.initialScale = tag.getFloatOr("initial", this.baseScale);
+		this.targetScale = tag.getFloatOr("target", this.baseScale);
+
+		this.scaleTicks = tag.getIntOr("ticks", 0);
+		this.totalScaleTicks = tag.getIntOr("total_ticks", type.getDefaultTickDelay());
+
+		this.persistent = tag.contains("persistent") ? tag.getBooleanOr("persistent", false) : null;
+
+		this.easing = tag.contains("easing") ? ScaleRegistries.getEntry(ScaleRegistries.SCALE_EASINGS, ResourceLocation.tryParse(tag.getStringOr("easing", ""))) : null;
 		
 		this.trackModifierChanges = false;
 		
@@ -501,24 +501,24 @@ public class ScaleData
 		
 		baseValueModifiers.addAll(type.getDefaultBaseValueModifiers());
 		
-		if (tag.contains("baseValueModifiers", Tag.TAG_LIST))
+		if (tag.contains("baseValueModifiers"))
 		{
-			final ListTag modifiers = (ListTag) tag.get("baseValueModifiers");
-			final byte elementType = modifiers.getElementType();
-			
+			final ListTag modifiers = tag.getListOrEmpty("baseValueModifiers");
+			final byte elementType = modifiers.getId();
+
 			ResourceLocation id;
 			ScaleModifier modifier;
 			for (int i = 0; i < modifiers.size(); i++)
 			{
 				if (elementType == Tag.TAG_STRING)
 				{
-					id = ResourceLocation.tryParse(modifiers.getString(i));
+					id = ResourceLocation.tryParse(modifiers.getStringOr(i, ""));
 					modifier = ScaleRegistries.getEntry(ScaleRegistries.SCALE_MODIFIERS, id);
 				}
 				else if (elementType == Tag.TAG_COMPOUND)
 				{
-					final CompoundTag compound = modifiers.getCompound(i);
-					id = ResourceLocation.tryParse(compound.getString("id"));
+					final CompoundTag compound = modifiers.getCompoundOrEmpty(i);
+					id = ResourceLocation.tryParse(compound.getStringOr("id", ""));
 					modifier = ScaleRegistries.getEntry(ScaleRegistries.SCALE_MODIFIERS, id);
 				}
 				else

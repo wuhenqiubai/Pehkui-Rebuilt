@@ -41,7 +41,6 @@ import virtuoel.pehkui.network.DebugPayload;
 import virtuoel.pehkui.util.CommandUtils;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.I18nUtils;
-import virtuoel.pehkui.util.NbtCompoundExtensions;
 import virtuoel.pehkui.util.ReflectionUtils;
 import virtuoel.pehkui.util.VersionUtils;
 
@@ -147,9 +146,13 @@ public class DebugCommand
 			return true;
 		}
 		
-		final NbtCompoundExtensions compound = ((NbtCompoundExtensions) nbt);
-		
-		return compound.pehkui_containsUuid("UUID") && MARKED_UUIDS.remove(compound.pehkui_getUuid("UUID"));
+		return nbt.getIntArray("UUID").map(DebugCommand::uuidFromIntArray).map(MARKED_UUIDS::remove).orElse(false);
+	}
+
+	private static UUID uuidFromIntArray(int[] values)
+	{
+		return new UUID(((long) values[0] << 32) | (values[1] & 0xFFFFFFFFL),
+			((long) values[2] << 32) | (values[3] & 0xFFFFFFFFL));
 	}
 	
 	private static final List<EntityType<? extends Entity>> TYPES = Arrays.asList(
@@ -184,8 +187,8 @@ public class DebugCommand
 			w.setBlockAndUpdate(mut, Blocks.POLISHED_ANDESITE.defaultBlockState());
 			final Entity e = t.create(w, EntitySpawnReason.COMMAND);
 			
-			e.absMoveTo(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.toYRot(), 0);
-			e.moveTo(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.toYRot(), 0);
+			e.absSnapTo(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.toYRot(), 0);
+			e.snapTo(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.toYRot(), 0);
 			e.setYHeadRot(opposite.toYRot());
 			
 			e.addTag("pehkui");
