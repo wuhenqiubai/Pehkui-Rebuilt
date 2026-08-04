@@ -29,7 +29,7 @@ public class GameRendererMixin
 	@Unique
 	boolean pehkui$isBobbing = false;
 
-	@ModifyExpressionValue(method = "getProjectionMatrix(D)Lorg/joml/Matrix4f;", at = @At(value = "CONSTANT", args = "floatValue=0.05F"))
+	@ModifyExpressionValue(method = "getProjectionMatrix(F)Lorg/joml/Matrix4f;", at = @At(value = "CONSTANT", args = "floatValue=0.05F"))
 	private float pehkui$getBasicProjectionMatrix$depth(float value)
 	{
 		return ScaleRenderUtils.modifyProjectionMatrixDepth(value, minecraft.getCameraEntity(), ScaleRenderUtils.getTickDelta(minecraft));
