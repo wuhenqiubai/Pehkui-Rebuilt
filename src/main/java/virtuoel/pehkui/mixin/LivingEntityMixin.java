@@ -15,6 +15,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -211,8 +212,8 @@ public abstract class LivingEntityMixin
 		return original;
 	}
 
-	@ModifyExpressionValue(method = "hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
-	private double pehkui$damage$knockback(double value, DamageSource source, float amount)
+	@ModifyExpressionValue(method = "hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
+	private double pehkui$damage$knockback(double value, ServerLevel world, DamageSource source, float amount)
 	{
 		final float scale = ScaleUtils.getKnockbackScale(source.getEntity());
 

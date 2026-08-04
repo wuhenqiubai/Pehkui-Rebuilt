@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -206,7 +207,7 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		ScaleUtils.syncScalesOnTrackingStart((Entity) (Object) this, player.connection);
 	}
 	
-	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"))
+	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"))
 	private ItemEntity pehkui$dropStack(ItemEntity entity)
 	{
 		ScaleUtils.setScaleOfDrop(entity, (Entity) (Object) this);
@@ -303,34 +304,8 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		return distance;
 	}
 
-	@ModifyExpressionValue(method = "move", at = @At(value = "CONSTANT", ordinal = 0, args = "doubleValue=0.6D"))
-	private double pehkui$move$flapping(double value)
-	{
-		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
-
-		if (scale != 1.0F)
-		{
-			return value / scale;
-		}
-
-		return value;
-	}
-
-	@ModifyExpressionValue(method = "move", at = @At(value = "CONSTANT", ordinal = 0, args = "floatValue=0.6F"))
-	private float pehkui$move$bobbing(float value)
-	{
-		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
-
-		if (scale != 1.0F)
-		{
-			return value / scale;
-		}
-
-		return value;
-	}
-
-	@ModifyExpressionValue(method = "move", at = @At(value = "CONSTANT", ordinal = 1, args = "floatValue=0.6F"))
-	private float pehkui$move$step(float value)
+	@ModifyExpressionValue(method = "applyMovementEmissionAndPlaySound", at = @At(value = "CONSTANT", args = "floatValue=0.6F"))
+	private float pehkui$applyMovementEmissionAndPlaySound$distance(float value)
 	{
 		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
 

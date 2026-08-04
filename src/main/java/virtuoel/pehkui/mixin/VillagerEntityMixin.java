@@ -17,7 +17,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(Villager.class)
 public class VillagerEntityMixin
 {
-	@Inject(method = "thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/entity/monster/Witch;moveTo(DDDFF)V"))
+	@Inject(method = "thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V", at = @At(value = "RETURN"))
 	private void pehkui$onStruckByLightning(ServerLevel world, LightningBolt lightning, CallbackInfo info, @Local Witch witchEntity)
 	{
 		ScaleUtils.loadScale(witchEntity, (Entity) (Object) this);
