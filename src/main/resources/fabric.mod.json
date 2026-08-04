@@ -1,12 +1,13 @@
 {
 	"schemaVersion": 1,
 	"id": "pehkui",
-	"name": "Pehkui",
+	"name": "Pehkui Rebuilt",
 	"version": "${version}",
-	"description": "Allows resizing of most entities.",
+	"description": "Allows resizing of most entities. Pehkui Rebuilt is an independent rebuild of Pehkui.",
 	"authors":
 	[
-		"Virtuoel"
+		"Virtuoel",
+		"WuhenQiuBai"
 	],
 	"contributors":
 	[
@@ -18,9 +19,9 @@
 	],
 	"contact":
 	{
-		"homepage": "https://www.curseforge.com/minecraft/mc-mods/pehkui",
-		"issues": "https://github.com/Virtuoel/Pehkui/issues",
-		"sources": "https://github.com/Virtuoel/Pehkui"
+		"homepage": "https://github.com/wuhenqiubai/Pehkui-Rebuilt",
+		"issues": "https://github.com/wuhenqiubai/Pehkui-Rebuilt/issues",
+		"sources": "https://github.com/wuhenqiubai/Pehkui-Rebuilt"
 	},
 	"license": "MIT",
 	"icon": "assets/pehkui/icon.png",
