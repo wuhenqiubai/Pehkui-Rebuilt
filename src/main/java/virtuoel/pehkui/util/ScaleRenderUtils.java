@@ -23,6 +23,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -171,7 +172,7 @@ public class ScaleRenderUtils
 			}
 		}
 		
-		return client.getTimer().getGameTimeDeltaPartialTick(false);
+		return client.getDeltaTracker().getGameTimeDeltaPartialTick(false);
 	}
 	
 	public static boolean hasExtendedReach(final MultiPlayerGameMode interactionManager)
@@ -220,7 +221,7 @@ public class ScaleRenderUtils
 	{
 		if (VersionUtils.MINOR >= 15)
 		{
-			LevelRenderer.renderLineBox((PoseStack) matrices, (VertexConsumer) vertices, box, red, green, blue, alpha);
+			ShapeRenderer.renderLineBox((PoseStack) matrices, (VertexConsumer) vertices, box, red, green, blue, alpha);
 		}
 		else if (DRAW_BOX_OUTLINE != null)
 		{
@@ -296,7 +297,7 @@ public class ScaleRenderUtils
 			final Item i = lastRenderedStack.getItem();
 			if (force || !loggedItems.contains(i))
 			{
-				final String stackKey = lastRenderedStack.getDescriptionId();
+				final String stackKey = lastRenderedStack.getItem().getDescriptionId();
 				final String itemKey = lastRenderedStack.getItem().getDescriptionId();
 				if (stackKey.equals(itemKey))
 				{

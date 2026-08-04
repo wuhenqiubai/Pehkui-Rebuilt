@@ -28,6 +28,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -181,7 +182,7 @@ public class DebugCommand
 		for (EntityType<?> t : TYPES)
 		{
 			w.setBlockAndUpdate(mut, Blocks.POLISHED_ANDESITE.defaultBlockState());
-			final Entity e = t.create(w);
+			final Entity e = t.create(w, EntitySpawnReason.COMMAND);
 			
 			e.absMoveTo(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.toYRot(), 0);
 			e.moveTo(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.toYRot(), 0);
