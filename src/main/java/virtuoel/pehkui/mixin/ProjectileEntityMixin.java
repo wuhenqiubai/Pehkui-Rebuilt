@@ -38,7 +38,7 @@ public abstract class ProjectileEntityMixin
 		return scale != 1.0F ? value * scale : value;
 	}
 	
-	@Inject(at = @At("HEAD"), method = "setOwner")
+	@Inject(at = @At("HEAD"), method = "setOwner(Lnet/minecraft/world/entity/Entity;)V")
 	private void pehkui$setOwner(@Nullable Entity entity, CallbackInfo info)
 	{
 		if (entity != null)

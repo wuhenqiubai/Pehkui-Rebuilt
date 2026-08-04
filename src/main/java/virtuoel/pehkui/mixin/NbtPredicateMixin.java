@@ -13,13 +13,13 @@ import virtuoel.pehkui.util.PehkuiEntityExtensions;
 @Mixin(NbtPredicate.class)
 public class NbtPredicateMixin
 {
-	@Inject(method = "getEntityTagToCompare", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/entity/Entity;saveWithoutId(Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/nbt/CompoundTag;"))
+	@Inject(method = "getEntityTagToCompare", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/entity/Entity;saveWithoutId(Lnet/minecraft/world/level/storage/ValueOutput;)V"))
 	private static void pehkui$entityToNbt$before(Entity entity, CallbackInfoReturnable<CompoundTag> info)
 	{
 		((PehkuiEntityExtensions) entity).pehkui_setShouldIgnoreScaleNbt(true);
 	}
 	
-	@Inject(method = "getEntityTagToCompare", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;saveWithoutId(Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/nbt/CompoundTag;"))
+	@Inject(method = "getEntityTagToCompare", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/world/entity/Entity;saveWithoutId(Lnet/minecraft/world/level/storage/ValueOutput;)V"))
 	private static void pehkui$entityToNbt$after(Entity entity, CallbackInfoReturnable<CompoundTag> info)
 	{
 		((PehkuiEntityExtensions) entity).pehkui_setShouldIgnoreScaleNbt(false);

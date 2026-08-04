@@ -16,7 +16,7 @@ public class ServerPlayNetworkHandlerMixin
 	@Shadow
 	public ServerPlayer player;
 	
-	@ModifyArg(method = "handleMoveVehicle", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;deflate(D)Lnet/minecraft/world/phys/AABB;"))
+	@ModifyArg(method = "isEntityCollidingWithAnythingNew(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;DDD)Z", index = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;deflate(D)Lnet/minecraft/world/phys/AABB;", ordinal = 0))
 	private double pehkui$onVehicleMove$contract(double value)
 	{
 		final float scale = ScaleUtils.getMotionScale(player);

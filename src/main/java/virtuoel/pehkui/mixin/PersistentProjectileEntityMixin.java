@@ -31,8 +31,8 @@ public abstract class PersistentProjectileEntityMixin
 		}
 	}
 
-	@ModifyArg(method = "findHitEntity", index = 4, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/ProjectileUtil;getEntityHitResult(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Lnet/minecraft/world/phys/EntityHitResult;"))
-	private AABB pehkui$getEntityCollision$expand(Level world, Entity entity, Vec3 vec3d, Vec3 vec3d2, AABB box, Predicate<Entity> predicate)
+	@ModifyArg(method = "findHitEntity", index = 4, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/ProjectileUtil;getEntityHitResult(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/projectile/Projectile;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Lnet/minecraft/world/phys/EntityHitResult;"))
+	private AABB pehkui$getEntityCollision$expand(Level world, Projectile entity, Vec3 vec3d, Vec3 vec3d2, AABB box, Predicate<Entity> predicate)
 	{
 		final float width = ScaleUtils.getBoundingBoxWidthScale(entity);
 		final float height = ScaleUtils.getBoundingBoxHeightScale(entity);
