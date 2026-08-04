@@ -10,7 +10,7 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 ## Current Branch Status
 
-- Minecraft target: `1.21.11` (Yarn `1.21.11+build.5`)
+- Minecraft target: `1.21.11`
 - Fabric Loader: `0.19.2`
 - Fabric API: `0.141.4+1.21.11`
 - Mod version: `3.8.3`
@@ -22,6 +22,10 @@ Each supported Minecraft version lives on its own branch (e.g. `fabric/1.21.11`)
 
 To port to a new Minecraft version, copy this skeleton to a new branch and adjust the mixin injection-point method descriptors for the new mappings. Version differences are isolated by branches rather than by in-tree compat code.
 
+### API stability
+
+Pehkui is a **library mod** — downstream mods depend on the public API (`virtuoel.pehkui.api` package, `ScaleUtils`, `ScaleRegistries`, etc.). The public API signatures and semantics are kept **stable across versions and branches**: no breaking changes to `ScaleType` / `ScaleData` / `ScaleModifier` / `ScaleRegistries` / `ScaleTypes`. Version-specific work is confined to the mixin layer.
+
 ### 1.21.11 rendering pipeline notes
 
 Minecraft 1.21.11 moved entity/item rendering onto the `EntityRenderState` / `EntityRenderManager` pipeline (the old `EntityRenderDispatcher` and `render(Entity, …)` entry points no longer exist). The client mixin layer on this branch targets the new pipeline directly:
@@ -29,6 +33,7 @@ Minecraft 1.21.11 moved entity/item rendering onto the `EntityRenderState` / `En
 - Entity model scaling is applied in `EntityRenderManagerMixin` around the `render` pass, driven by per-state model scale stored through `PehkuiEntityRenderStateExtensions`.
 - First-person held item scaling hooks `HeldItemRenderer.renderFirstPersonItem`.
 - The former `compat12110plus` rendering classes (which 1.21.1 did not have) are flattened into `mixin/client/`.
+
 
 ## Installation
 
