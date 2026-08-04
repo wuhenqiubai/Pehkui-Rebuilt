@@ -1,6 +1,6 @@
-# Pehkui Continuation
+# Pehkui Rebuilt
 
-Pehkui Continuation is an unofficial continuation of Pehkui, a library mod that allows mods and commands to change the size of entities and scale-related behavior.
+Pehkui Rebuilt is an independent rebuild of Pehkui, a library mod that allows mods and commands to change the size of entities and scale-related behavior.
 
 ## What It Does
 
@@ -39,29 +39,29 @@ Minecraft 1.21.11 moved entity/item rendering onto the `EntityRenderState` / `En
 
 1. Install Fabric Loader for the supported Minecraft version.
 2. Install Fabric API as required by your loader and modpack.
-3. Put the Pehkui Continuation jar in your `mods` folder.
+3. Put the Pehkui Rebuilt jar in your `mods` folder.
 4. Install any mods that depend on Pehkui.
 5. Launch the game.
 
 ## Downloads
 
-Use the approved Modrinth or CurseForge project page when available. Development builds may also be attached to GitHub releases for this repository.
+Use the approved Modrinth or CurseForge project page when available. For development builds, run the **「开发版 | Dev Version」** workflow from the **Actions** page of this repository: choose a version branch, click **Run workflow**, and download the built jar from the workflow's **Artifacts**. Each build is numbered by the run, so jars never collide.
 
 ## For Developers
 
-The original Pehkui API style is preserved where possible. Mods that already depend on Pehkui should continue to use their normal dependency declarations unless a continuation release note says otherwise.
+The original Pehkui API style is preserved where possible. Mods that already depend on Pehkui should continue to use their normal dependency declarations.
 
-When targeting this fork directly, depend on the released continuation jar that matches your Minecraft version.
+When targeting this repository directly, depend on the released jar that matches your Minecraft version.
 
 ## Reporting Issues
 
-Open issues on this continuation repository for bugs in this fork.
+Open issues on this repository for bugs.
 
 Include:
 
 - Minecraft version
 - loader and loader version
-- Pehkui Continuation version
+- Pehkui Rebuilt version
 - the mod, command, or datapack that changes scale
 - steps to reproduce the scale issue
 - `latest.log` or the crash report
@@ -76,4 +76,4 @@ Built jars are written to `build/libs`.
 
 ## Credits
 
-Pehkui was originally created by Virtuoel. This continuation keeps the project available for newer versions while preserving original credits and license terms.
+Pehkui was originally created by Virtuoel. This project rebuilds and keeps Pehkui available for newer Minecraft versions while preserving original credits and license terms.
