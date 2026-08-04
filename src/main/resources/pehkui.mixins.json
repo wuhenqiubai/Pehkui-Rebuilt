@@ -38,7 +38,6 @@
 		"ServerPlayNetworkHandlerMixin",
 		"ThreadSafeScaledEntityMixin",
 		"ThreadUnsafeScaledEntityMixin",
-		"ThrownEntityMixin",
 		"TrackTargetGoalMixin",
 		"WitherEntityMixin",
 		"AbstractBlockStateMixin",
@@ -58,7 +57,6 @@
 		"EntityCalculateDimensionsMixin",
 		"ServerWorldMixin",
 		"ShulkerEntityMixin",
-		"SlimeEntityMixin",
 		"EntityTrackingSectionMixin",
 		"FireballEntityMixin",
 		"ChestBoatEntityMixin",
@@ -73,22 +71,23 @@
 		"ExplosiveProjectileEntityMixin"
 	],
 	"client": [
+		"client.CameraMixin",
+		"client.ClientPlayNetworkHandlerMixin",
 		"client.ClientPlayerEntityMixin",
 		"client.ClientWorldMixin",
 		"client.EntityRenderDispatcherMixin",
+		"client.EntityRenderStateMixin",
+		"client.EntityRendererMixin",
 		"client.GameRendererMixin",
+		"client.InGameHudMixin",
+		"client.InGameOverlayRendererMixin",
 		"client.InventoryScreenMixin",
 		"client.ItemEntityMixin",
-		"client.InGameOverlayRendererMixin",
 		"client.ItemFrameEntityRendererMixin",
-		"client.PlayerEntityRendererMixin",
-		"client.WorldRendererMixin",
-		"client.ClientPlayNetworkHandlerMixin",
 		"client.ItemRendererMixin",
+		"client.PlayerEntityRendererMixin",
 		"client.ShulkerEntityRendererMixin",
-		"client.InGameHudMixin",
-		"client.CameraMixin",
-		"client.EntityRendererMixin"
+		"client.WorldRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
