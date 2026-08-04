@@ -17,7 +17,7 @@ import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
 public abstract class PortalBlockMixin
 {
 	@Inject(at = @At("HEAD"), method = "entityInside", cancellable = true)
-	private void pehkui$onEntityCollision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, CallbackInfo info)
+	private void pehkui$onEntityCollision(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean tick, CallbackInfo info)
 	{
 		if (PehkuiConfig.COMMON.accurateNetherPortals.get())
 		{
