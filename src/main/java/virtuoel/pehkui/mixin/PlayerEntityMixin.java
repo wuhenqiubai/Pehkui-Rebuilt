@@ -21,8 +21,8 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(Player.class)
 public abstract class PlayerEntityMixin
 {
-	@Inject(at = @At("RETURN"), method = "drop(Lnet/minecraft/world/item/ItemStack;ZZ)Lnet/minecraft/world/entity/item/ItemEntity;")
-	private void pehkui$dropItem(ItemStack stack, boolean spread, boolean thrown, CallbackInfoReturnable<ItemEntity> info)
+	@Inject(at = @At("RETURN"), method = "drop(Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/entity/item/ItemEntity;")
+	private void pehkui$dropItem(ItemStack stack, boolean spread, CallbackInfoReturnable<ItemEntity> info)
 	{
 		final ItemEntity entity = info.getReturnValue();
 		

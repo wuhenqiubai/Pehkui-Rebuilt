@@ -120,20 +120,20 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 			return;
 		}
 		
-		if (nbt.contains(Pehkui.MOD_ID + ":scale_data_types", Tag.TAG_COMPOUND) && !DebugCommand.unmarkEntityForScaleReset((Entity) (Object) this, nbt))
+		if (nbt.contains(Pehkui.MOD_ID + ":scale_data_types") && !DebugCommand.unmarkEntityForScaleReset((Entity) (Object) this, nbt))
 		{
-			final CompoundTag typeData = nbt.getCompound(Pehkui.MOD_ID + ":scale_data_types");
-			
+			final CompoundTag typeData = nbt.getCompoundOrEmpty(Pehkui.MOD_ID + ":scale_data_types");
+
 			String key;
 			ScaleData scaleData;
 			for (final Map.Entry<ResourceLocation, ScaleType> entry : ScaleRegistries.SCALE_TYPES.entrySet())
 			{
 				key = entry.getKey().toString();
-				
-				if (typeData.contains(key, Tag.TAG_COMPOUND))
+
+				if (typeData.contains(key))
 				{
 					scaleData = pehkui_getScaleData(entry.getValue());
-					scaleData.readNbt(typeData.getCompound(key));
+					scaleData.readNbt(typeData.getCompoundOrEmpty(key));
 				}
 			}
 		}
@@ -287,8 +287,8 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		this.onGround = onGround;
 	}
 
-	@ModifyArg(method = "checkFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;fallOn(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;F)V"))
-	private float pehkui$fall$fallDistance(float distance)
+	@ModifyArg(method = "checkFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;fallOn(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;D)V"))
+	private double pehkui$fall$fallDistance(double distance)
 	{
 		final float scale = ScaleUtils.getFallingScale((Entity) (Object) this);
 

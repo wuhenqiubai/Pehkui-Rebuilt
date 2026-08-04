@@ -220,8 +220,8 @@ public abstract class LivingEntityMixin
 		return scale != 1.0F ? scale * value : value;
 	}
 
-	@ModifyExpressionValue(method = "blockedByShield(Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
-	private double pehkui$knockback$knockback(double value, LivingEntity target)
+	@ModifyExpressionValue(method = "blockedByItem(Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
+	private double pehkui$knockback$knockback(double value)
 	{
 		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
 
