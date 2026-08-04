@@ -16,6 +16,10 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 - Mod version: `3.8.3`
 - Published loader format: Fabric (loadable by Quilt via its Fabric compatibility)
 
+## Origin
+
+The `fabric/1.21.11` branch is based on the former **Pehkui-Continuation** project, rebuilt and maintained independently as **Pehkui-Rebuilt**.
+
 ## Branching & Versioning
 
 Each supported Minecraft version lives on its own branch (e.g. `fabric/1.21.11`). Branches are **single-version skeletons**: the mixin layer contains only the injection points that apply to that version — no cross-version `compat*` subpackages, no legacy version-gating infrastructure. All mixins are flattened into `mixin/` (server) and `mixin/client/`.
