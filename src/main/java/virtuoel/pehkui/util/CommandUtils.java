@@ -25,7 +25,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
-import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.predicates.MinMaxBounds;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
@@ -172,7 +172,8 @@ public class CommandUtils
 				h.put(0, lookup.unreflect(m));
 			}
 			
-			mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2096$class_2099", "method_9047", is116Minus ? "(F)Z" : "(D)Z");
+			// 26.x 起 Minecraft 彻底移除混淆，intermediary 映射名（method_XXXX）在无混淆下失效，改用官方方法名
+			mapped = VersionUtils.MINOR > 21 ? "matches" : mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2096$class_2099", "method_9047", is116Minus ? "(F)Z" : "(D)Z");
 			m = MinMaxBounds.Doubles.class.getMethod(mapped, is116Minus ? float.class : double.class);
 			h.put(1, lookup.unreflect(m));
 			

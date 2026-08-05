@@ -31,6 +31,7 @@ import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -156,10 +157,10 @@ public class DebugCommand
 	}
 	
 	private static final List<EntityType<? extends Entity>> TYPES = Arrays.asList(
-		EntityType.ZOMBIE,
-		EntityType.CREEPER,
-		EntityType.END_CRYSTAL,
-		EntityType.BLAZE
+		EntityTypes.ZOMBIE,
+		EntityTypes.CREEPER,
+		EntityTypes.END_CRYSTAL,
+		EntityTypes.BLAZE
 	);
 	
 	private static int runTests(CommandContext<CommandSourceStack> context) throws CommandSyntaxException

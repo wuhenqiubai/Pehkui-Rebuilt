@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -28,7 +28,7 @@ public abstract class EntityCalculateDimensionsMixin
 		
 		final float currentWidth = ReflectionUtils.getDimensionsWidth(current);
 		final float previousWidth = ReflectionUtils.getDimensionsWidth(previous);
-		if (world.isClientSide() && self.getType() == EntityType.PLAYER && currentWidth > previousWidth)
+		if (world.isClientSide() && self.getType() == EntityTypes.PLAYER && currentWidth > previousWidth)
 		{
 			final double prevW = Math.min(previousWidth, 4.0D);
 			final double prevH = Math.min(ReflectionUtils.getDimensionsHeight(previous), 4.0D);

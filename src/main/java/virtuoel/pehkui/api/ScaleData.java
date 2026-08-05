@@ -18,6 +18,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 
 public class ScaleData
@@ -238,7 +239,7 @@ public class ScaleData
 	public float getScale(float delta)
 	{
 		final Entity e = getEntity();
-		final boolean canCache = delta == 1.0F && e != null && e.level() != null && !e.level().isClientSide() && (e.getType() != EntityType.PLAYER || !getScaleType().getAffectsDimensions()) && !((PehkuiEntityExtensions) e).pehkui_isFirstUpdate();
+		final boolean canCache = delta == 1.0F && e != null && e.level() != null && !e.level().isClientSide() && (e.getType() != EntityTypes.PLAYER || !getScaleType().getAffectsDimensions()) && !((PehkuiEntityExtensions) e).pehkui_isFirstUpdate();
 		
 		if (canCache && !Float.isNaN(cachedScale))
 		{
