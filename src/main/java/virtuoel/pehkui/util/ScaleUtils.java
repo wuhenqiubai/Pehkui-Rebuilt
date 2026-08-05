@@ -10,13 +10,13 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -231,7 +231,8 @@ public class ScaleUtils
 		return !scaleData.hasDefaultValues();
 	}
 	
-	private static final boolean NETWORKING_API_LOADED = ModLoaderUtils.isModLoaded("fabric-networking-api-v1");
+	// NeoForge 原生支持 payload 系统，恒视为已加载
+	private static final boolean NETWORKING_API_LOADED = true;
 	
 	private static final ThreadLocal<Collection<ScaleData>> SYNCED_SCALE_DATA = ThreadLocal.withInitial(ArrayList::new);
 	
@@ -256,18 +257,7 @@ public class ScaleUtils
 		{
 			if (NETWORKING_API_LOADED)
 			{
-				if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
-				{
-					packetSender.accept(ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new ScalePayload(entity, syncedScales)));
-				}
-				else
-				{
-					final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-					
-					new ScalePacket(entity, syncedScales).write(buffer);
-					
-					packetSender.accept(ReflectionUtils.createS2CPacket(Pehkui.SCALE_PACKET, buffer));
-				}
+				packetSender.accept(new ClientboundCustomPayloadPacket(new ScalePayload(entity, syncedScales)));
 			}
 			
 			syncedScales.clear();

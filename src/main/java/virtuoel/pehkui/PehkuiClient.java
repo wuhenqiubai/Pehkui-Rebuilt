@@ -3,76 +3,31 @@ package virtuoel.pehkui;
 import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import virtuoel.pehkui.api.ScaleRegistries;
-import virtuoel.pehkui.network.ConfigSyncPacket;
 import virtuoel.pehkui.network.ConfigSyncPayload;
-import virtuoel.pehkui.network.DebugPacket;
 import virtuoel.pehkui.network.DebugPayload;
 import virtuoel.pehkui.network.ScalePacket;
 import virtuoel.pehkui.network.ScalePayload;
 import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.I18nUtils;
-import virtuoel.pehkui.util.ModLoaderUtils;
-import virtuoel.pehkui.util.ScaleRenderUtils;
-import virtuoel.pehkui.util.VersionUtils;
 
 @ApiStatus.Internal
-public class PehkuiClient implements ClientModInitializer
+public class PehkuiClient
 {
-	@Override
-	public void onInitializeClient()
+	public static void handleScalePacket(IPayloadContext context, ScalePayload packet)
 	{
-		if (ModLoaderUtils.isModLoaded("fabric-networking-api-v1"))
-		{
-			if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
-			{
-				((Runnable) () -> {
-					ClientPlayNetworking.registerGlobalReceiver(ScalePayload.ID, (payload, context) ->
-					{
-						handleScalePacket(context.client(), payload);
-					});
-
-					ClientPlayNetworking.registerGlobalReceiver(ConfigSyncPayload.ID, (payload, context) ->
-					{
-						context.client().execute(payload.action);
-					});
-
-					ClientPlayNetworking.registerGlobalReceiver(DebugPayload.ID, (payload, context) ->
-					{
-						handleDebugPacket(context.client(), payload.type);
-					});
-				}).run();
-			}
-			else
-			{
-				ScaleRenderUtils.registerPacketHandler(Pehkui.SCALE_PACKET, PehkuiClient.class, "handleScalePacket");
-				ScaleRenderUtils.registerPacketHandler(Pehkui.CONFIG_SYNC_PACKET, PehkuiClient.class, "handleConfigSyncPacket");
-				ScaleRenderUtils.registerPacketHandler(Pehkui.DEBUG_PACKET, PehkuiClient.class, "handleDebugPacket");
-			}
-		}
-		else
-		{
-			Pehkui.LOGGER.error("Failed to register Pehkui's packet handlers! Is Fabric API's networking module missing?");
-		}
+		handleScalePacket(Minecraft.getInstance(), packet);
 	}
-	
-	public static void handleScalePacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
-	{
-		handleScalePacket(client, new ScalePacket(buf));
-	}
-	
-	protected static void handleScalePacket(Minecraft client, ScalePacket packet)
+
+	public static void handleScalePacket(Minecraft client, ScalePacket packet)
 	{
 		client.execute(() ->
 		{
 			final Entity e = client.level.getEntity(packet.entityId);
-			
+
 			if (e != null)
 			{
 				packet.syncedScales.forEach((typeId, scaleData) ->
@@ -85,18 +40,18 @@ public class PehkuiClient implements ClientModInitializer
 			}
 		});
 	}
-	
-	public static void handleConfigSyncPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
+
+	public static void handleConfigSyncPacket(IPayloadContext context, ConfigSyncPayload packet)
 	{
-		client.execute(new ConfigSyncPacket(buf).action);
+		Minecraft.getInstance().execute(packet.action);
 	}
-	
-	public static void handleDebugPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
+
+	public static void handleDebugPacket(IPayloadContext context, DebugPayload packet)
 	{
-		handleDebugPacket(client, new DebugPacket(buf).type);
+		handleDebugPacket(Minecraft.getInstance(), packet.type);
 	}
-	
-	protected static void handleDebugPacket(Minecraft client, DebugCommand.PacketType type)
+
+	public static void handleDebugPacket(Minecraft client, DebugCommand.PacketType type)
 	{
 		client.execute(() ->
 		{
@@ -106,7 +61,7 @@ public class PehkuiClient implements ClientModInitializer
 					client.player.displayClientMessage(I18nUtils.translate("commands.pehkui.debug.audit.start.client", "Starting Mixin environment audit (client)..."), false);
 					MixinEnvironment.getCurrentEnvironment().audit();
 					client.player.displayClientMessage(I18nUtils.translate("commands.pehkui.debug.audit.end.client", "Mixin environment audit (client) complete!"), false);
-					
+
 					break;
 				case GARBAGE_COLLECT:
 					System.gc();

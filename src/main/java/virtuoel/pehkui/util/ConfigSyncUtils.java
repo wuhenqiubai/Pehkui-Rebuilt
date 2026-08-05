@@ -24,15 +24,15 @@ import com.mojang.brigadier.context.CommandContext;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.neoforged.fml.loading.FMLPaths;
 import virtuoel.kanos_config.api.JsonConfigHandler;
 import virtuoel.kanos_config.api.MutableConfigEntry;
 import virtuoel.pehkui.Pehkui;
@@ -132,33 +132,20 @@ public class ConfigSyncUtils
 		syncConfigs(networkHandler, entries);
 	}
 	
-	private static final boolean NETWORKING_API_LOADED = ModLoaderUtils.isModLoaded("fabric-networking-api-v1");
+	// NeoForge 原生支持 payload 系统，恒视为已加载
+	private static final boolean NETWORKING_API_LOADED = true;
 	
 	public static void syncConfigs(final ServerGamePacketListenerImpl networkHandler, final Collection<SyncableConfigEntry<?>> configEntries)
 	{
 		if (NETWORKING_API_LOADED)
 		{
-			if (ServerPlayNetworking.canSend(networkHandler, Pehkui.CONFIG_SYNC_PACKET))
-			{
-				ReflectionUtils.sendPacket(networkHandler, createConfigSyncPacket(configEntries));
-			}
+			ReflectionUtils.sendPacket(networkHandler, createConfigSyncPacket(configEntries));
 		}
 	}
 	
 	public static Packet<?> createConfigSyncPacket(final Collection<SyncableConfigEntry<?>> configEntries)
 	{
-		if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
-		{
-			return ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new ConfigSyncPayload(configEntries));
-		}
-		else
-		{
-			final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-			
-			new ConfigSyncPacket(configEntries).write(buffer);
-			
-			return ReflectionUtils.createS2CPacket(Pehkui.CONFIG_SYNC_PACKET, buffer);
-		}
+		return new ClientboundCustomPayloadPacket(new ConfigSyncPayload(configEntries));
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -340,7 +327,7 @@ public class ConfigSyncUtils
 						config.onConfigChanged();
 						try
 						{
-							Files.deleteIfExists(FabricLoader.getInstance().getConfigDir().resolve(Pehkui.MOD_ID).resolve("config.json").normalize());
+							Files.deleteIfExists(FMLPaths.CONFIGDIR.get().resolve(Pehkui.MOD_ID).resolve("config.json").normalize());
 							config.get();
 							syncConfigs(context.getSource().getLevel().getServer().getPlayerList().getPlayers());
 							

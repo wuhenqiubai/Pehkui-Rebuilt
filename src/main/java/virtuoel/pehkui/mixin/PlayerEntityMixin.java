@@ -93,24 +93,13 @@ public abstract class PlayerEntityMixin
 		return scale != 1.0F ? scale * value : value;
 	}
 	
-	@WrapOperation(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
-	private AABB pehkui$attack$expand(AABB obj, double x, double y, double z, Operation<AABB> original, @Local(argsOnly = true) Entity target)
+	// NeoForge 1.21.1 将攻击范围从 vanilla 的 AABB.inflate 重构为 entityInteractionRange() 机制，注入点相应迁移
+	@ModifyExpressionValue(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;entityInteractionRange()D"))
+	private double pehkui$attack$expandRange(double value, @Local(argsOnly = true) Entity target)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale(target);
-		final float heightScale = ScaleUtils.getBoundingBoxHeightScale(target);
-		
-		if (widthScale != 1.0F)
-		{
-			x *= widthScale;
-			z *= widthScale;
-		}
-		
-		if (heightScale != 1.0F)
-		{
-			y *= heightScale;
-		}
-		
-		return original.call(obj, x, y, z);
+
+		return widthScale != 1.0F ? value * widthScale : value;
 	}
 
 	@ModifyExpressionValue(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))

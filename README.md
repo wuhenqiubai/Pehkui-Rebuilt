@@ -11,14 +11,13 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 ## Current Branch Status
 
 - Minecraft target: `1.21.1`
-- Fabric Loader: `0.19.3`
-- Fabric API: `0.116.15+1.21.1`
+- NeoForge: `21.1.248`
 - Mod version: `3.8.3`
-- Published loader format: Fabric (loadable by Quilt via its Fabric compatibility)
+- Published loader format: NeoForge
 
 ## Branching & Versioning
 
-Each supported Minecraft version lives on its own branch (e.g. `fabric/1.21.1`). Branches are **single-version skeletons**: the mixin layer contains only the injection points that apply to that version — no cross-version `compat*` subpackages, no legacy version-gating infrastructure. All mixins are flattened into `mixin/` (server) and `mixin/client/`.
+Each supported Minecraft version lives on its own branch (e.g. `neoforge/1.21.1`). Branches are **single-version skeletons**: the mixin layer contains only the injection points that apply to that version — no cross-version `compat*` subpackages, no legacy version-gating infrastructure. All mixins are flattened into `mixin/` (server) and `mixin/client/`.
 
 To port to a new Minecraft version, copy this skeleton to a new branch and adjust the mixin injection-point method descriptors for the new mappings. Version differences are isolated by branches rather than by in-tree compat code.
 
@@ -28,11 +27,10 @@ Pehkui is a **library mod** — downstream mods depend on the public API (`virtu
 
 ## Installation
 
-1. Install Fabric Loader for the supported Minecraft version.
-2. Install Fabric API as required by your loader and modpack.
-3. Put the Pehkui Rebuilt jar in your `mods` folder.
-4. Install any mods that depend on Pehkui.
-5. Launch the game.
+1. Install NeoForge for the supported Minecraft version.
+2. Put the Pehkui Rebuilt jar in your `mods` folder.
+3. Install any mods that depend on Pehkui.
+4. Launch the game.
 
 ## Downloads
 

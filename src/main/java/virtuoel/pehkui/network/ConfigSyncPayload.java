@@ -4,7 +4,9 @@ import java.util.Collection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import virtuoel.pehkui.Pehkui;
+import virtuoel.pehkui.PehkuiClient;
 import virtuoel.pehkui.util.ConfigSyncUtils.SyncableConfigEntry;
 
 public class ConfigSyncPayload extends ConfigSyncPacket implements CustomPacketPayload
@@ -31,5 +33,10 @@ public class ConfigSyncPayload extends ConfigSyncPacket implements CustomPacketP
 	private static StreamCodec<FriendlyByteBuf, ConfigSyncPayload> codec(final CustomPacketPayload.Type<ConfigSyncPayload> id)
 	{
 		return CustomPacketPayload.codec(ConfigSyncPayload::write, ConfigSyncPayload::new);
+	}
+
+	public static void handle(final ConfigSyncPayload payload, final IPayloadContext context)
+	{
+		PehkuiClient.handleConfigSyncPacket(context, payload);
 	}
 }

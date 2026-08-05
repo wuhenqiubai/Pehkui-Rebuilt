@@ -16,16 +16,16 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -56,7 +56,7 @@ public class DebugCommand
 			.then(ConfigSyncUtils.registerConfigCommands())
 		);
 		
-		if (FabricLoader.getInstance().isDevelopmentEnvironment() || PehkuiConfig.COMMON.enableCommands.get())
+		if (!FMLEnvironment.production || PehkuiConfig.COMMON.enableCommands.get())
 		{
 			builder
 				.then(Commands.literal("debug")
@@ -97,18 +97,7 @@ public class DebugCommand
 						{
 							final Packet<?> packet;
 							
-							if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
-							{
-								packet = ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new DebugPayload(PacketType.GARBAGE_COLLECT));
-							}
-							else
-							{
-								final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-								
-								new DebugPacket(PacketType.GARBAGE_COLLECT).write(buffer);
-								
-								packet = ReflectionUtils.createS2CPacket(Pehkui.DEBUG_PACKET, buffer);
-							}
+							packet = new ClientboundCustomPayloadPacket(new DebugPayload(PacketType.GARBAGE_COLLECT));
 							
 							ReflectionUtils.sendPacket(context.getSource().getPlayerOrException().connection, packet);
 							
@@ -120,7 +109,7 @@ public class DebugCommand
 				);
 		}
 		
-		if (FabricLoader.getInstance().isDevelopmentEnvironment() || PehkuiConfig.COMMON.enableDebugCommands.get())
+		if (!FMLEnvironment.production || PehkuiConfig.COMMON.enableDebugCommands.get())
 		{
 			builder
 				.then(Commands.literal("debug")
@@ -217,18 +206,7 @@ public class DebugCommand
 		{
 			final Packet<?> packet;
 			
-			if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
-			{
-				packet = ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new DebugPayload(PacketType.MIXIN_AUDIT));
-			}
-			else
-			{
-				final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-				
-				new DebugPacket(PacketType.MIXIN_AUDIT).write(buffer);
-				
-				packet = ReflectionUtils.createS2CPacket(Pehkui.DEBUG_PACKET, buffer);
-			}
+			packet = new ClientboundCustomPayloadPacket(new DebugPayload(PacketType.MIXIN_AUDIT));
 			
 			ReflectionUtils.sendPacket(((ServerPlayer) executor).connection, packet);
 		}

@@ -5,7 +5,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import virtuoel.pehkui.Pehkui;
+import virtuoel.pehkui.PehkuiClient;
 import virtuoel.pehkui.api.ScaleData;
 
 public class ScalePayload extends ScalePacket implements CustomPacketPayload
@@ -32,5 +34,10 @@ public class ScalePayload extends ScalePacket implements CustomPacketPayload
 	private static StreamCodec<FriendlyByteBuf, ScalePayload> codec(final CustomPacketPayload.Type<ScalePayload> id)
 	{
 		return CustomPacketPayload.codec(ScalePayload::write, ScalePayload::new);
+	}
+
+	public static void handle(final ScalePayload payload, final IPayloadContext context)
+	{
+		PehkuiClient.handleScalePacket(context, payload);
 	}
 }

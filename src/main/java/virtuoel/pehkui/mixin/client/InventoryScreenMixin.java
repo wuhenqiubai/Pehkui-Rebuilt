@@ -34,7 +34,7 @@ public abstract class InventoryScreenMixin
 	@Unique private static final ThreadLocal<Map<ScaleType, ScaleData>> pehkui$SCALES = ThreadLocal.withInitial(Object2ObjectLinkedOpenHashMap::new);
 	@Unique private static final ScaleData pehkui$IDENTITY = ScaleData.Builder.create().build();
 
-	@WrapOperation(method = "renderEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphics;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBbHeight()F"))
+	@WrapOperation(method = "renderEntityInInventoryFollowsAngle(Lnet/minecraft/client/gui/GuiGraphics;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBbHeight()F"))
 	private static float pehkui$drawEntity$getHeight(LivingEntity obj, Operation<Float> original)
 	{
 		final float value = original.call(obj);

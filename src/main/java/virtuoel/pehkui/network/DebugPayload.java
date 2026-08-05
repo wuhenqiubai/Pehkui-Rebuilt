@@ -3,7 +3,9 @@ package virtuoel.pehkui.network;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import virtuoel.pehkui.Pehkui;
+import virtuoel.pehkui.PehkuiClient;
 import virtuoel.pehkui.server.command.DebugCommand;
 
 public class DebugPayload extends DebugPacket implements CustomPacketPayload
@@ -30,5 +32,10 @@ public class DebugPayload extends DebugPacket implements CustomPacketPayload
 	private static StreamCodec<FriendlyByteBuf, DebugPayload> codec(final CustomPacketPayload.Type<DebugPayload> id)
 	{
 		return CustomPacketPayload.codec(DebugPayload::write, DebugPayload::new);
+	}
+
+	public static void handle(final DebugPayload payload, final IPayloadContext context)
+	{
+		PehkuiClient.handleDebugPacket(context, payload);
 	}
 }

@@ -2,27 +2,40 @@ package virtuoel.pehkui.util;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.api.Version;
+import net.neoforged.fml.loading.FMLLoader;
 
 public class VersionUtils
 {
 	@Nullable
-	public static final SemanticVersion MINECRAFT_VERSION = lookupMinecraftVersion();
+	public static final String MINECRAFT_VERSION = lookupMinecraftVersion();
 	public static final int MAJOR = getVersionComponent(0);
 	public static final int MINOR = getVersionComponent(1);
 	public static final int PATCH = getVersionComponent(2);
 
-	private static SemanticVersion lookupMinecraftVersion()
+	private static String lookupMinecraftVersion()
 	{
-		final Version version = FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion();
-
-		return (SemanticVersion) (version instanceof SemanticVersion ? version : null);
+		return FMLLoader.versionInfo().mcVersion();
 	}
 
 	private static int getVersionComponent(int pos)
 	{
-		return MINECRAFT_VERSION != null ? MINECRAFT_VERSION.getVersionComponent(pos) : -1;
+		if (MINECRAFT_VERSION != null)
+		{
+			final String[] parts = MINECRAFT_VERSION.split("\\.");
+
+			if (parts.length > pos)
+			{
+				try
+				{
+					return Integer.parseInt(parts[pos]);
+				}
+				catch (NumberFormatException e)
+				{
+					// ignore
+				}
+			}
+		}
+
+		return -1;
 	}
 }

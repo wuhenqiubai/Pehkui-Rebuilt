@@ -4,86 +4,67 @@ import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.service.MixinService;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleOperations;
 import virtuoel.pehkui.api.ScaleTypes;
 import virtuoel.pehkui.command.PehkuiEntitySelectorOptions;
-import virtuoel.pehkui.network.ConfigSyncPayload;
-import virtuoel.pehkui.network.DebugPayload;
-import virtuoel.pehkui.network.ScalePayload;
+import virtuoel.pehkui.network.PehkuiPacketHandler;
 import virtuoel.pehkui.util.CommandUtils;
-import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.GravityChangerCompatibility;
 import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
-import virtuoel.pehkui.util.ModLoaderUtils;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.ReflectionUtils;
-import virtuoel.pehkui.util.VersionUtils;
 
 @ApiStatus.Internal
-public class Pehkui implements ModInitializer
+@Mod(Pehkui.MOD_ID)
+public class Pehkui
 {
 	public static final String MOD_ID = "pehkui";
-	
+
 	public static final ILogger LOGGER = MixinService.getService().getLogger(MOD_ID);
-	
-	public Pehkui()
+
+	public Pehkui(final IEventBus modEventBus)
 	{
 		ScaleTypes.INVALID.getClass();
 		ScaleOperations.NOOP.getClass();
+
 		PehkuiConfig.BUILDER.config.get();
-	}
-	
-	@Override
-	public void onInitialize()
-	{
-		CommandUtils.registerArgumentTypes();
-		
+
+		CommandUtils.registerArgumentTypes(modEventBus);
+
 		PehkuiEntitySelectorOptions.register();
-		
-		CommandUtils.registerCommands();
-		
-		if (ModLoaderUtils.isModLoaded("fabric-networking-api-v1"))
-		{
-			ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-			{
-				if (!server.isSingleplayerOwner(handler.player.getGameProfile()))
-				{
-					ConfigSyncUtils.syncConfigs(handler);
-				}
-				else
-				{
-					ConfigSyncUtils.resetSyncedConfigs();
-				}
-			});
-			
-			if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
-			{
-				PayloadTypeRegistry.playS2C().register(ScalePayload.ID, ScalePayload.CODEC);
-				PayloadTypeRegistry.playS2C().register(ConfigSyncPayload.ID, ConfigSyncPayload.CODEC);
-				PayloadTypeRegistry.playS2C().register(DebugPayload.ID, DebugPayload.CODEC);
-			}
-		}
-		
+
+		modEventBus.addListener(PehkuiPacketHandler::register);
+
+		NeoForge.EVENT_BUS.register(this);
+
 		GravityChangerCompatibility.INSTANCE.getClass();
 		ImmersivePortalsCompatibility.INSTANCE.getClass();
 		MulticonnectCompatibility.INSTANCE.getClass();
 	}
-	
+
+	@SubscribeEvent
+	public void onRegisterCommands(RegisterCommandsEvent event)
+	{
+		CommandUtils.registerCommands(event.getDispatcher());
+	}
+
 	public static ResourceLocation id(String path)
 	{
 		return ReflectionUtils.constructIdentifier(MOD_ID, path);
 	}
-	
+
 	public static ResourceLocation id(String path, String... paths)
 	{
 		return id(paths.length == 0 ? path : path + "/" + String.join("/", paths));
 	}
-	
+
 	public static final ResourceLocation SCALE_PACKET = id("scale");
 	public static final ResourceLocation CONFIG_SYNC_PACKET = id("config_sync");
 	public static final ResourceLocation DEBUG_PACKET = id("debug");

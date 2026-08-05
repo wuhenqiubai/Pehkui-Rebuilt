@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.fabricmc.loader.api.FabricLoader;
+import net.neoforged.fml.loading.FMLPaths;
 import net.minecraft.resources.ResourceLocation;
 import virtuoel.kanos_config.api.JsonConfigBuilder;
 import virtuoel.kanos_config.api.MutableConfigEntry;
@@ -22,7 +22,7 @@ public class PehkuiConfig
 	@ApiStatus.Internal
 	public static final JsonConfigBuilder BUILDER = new JsonConfigBuilder(
 		Pehkui.MOD_ID,
-		FabricLoader.getInstance().getConfigDir().resolve(Pehkui.MOD_ID).resolve("config.json").normalize()
+		FMLPaths.CONFIGDIR.get().resolve(Pehkui.MOD_ID).resolve("config.json").normalize()
 	)
 	{
 		@Override
