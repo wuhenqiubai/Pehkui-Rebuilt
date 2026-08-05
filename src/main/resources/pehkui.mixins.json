@@ -58,7 +58,6 @@
 		"EntityCalculateDimensionsMixin",
 		"ServerWorldMixin",
 		"ShulkerEntityMixin",
-		"SlimeEntityMixin",
 		"EntityTrackingSectionMixin",
 		"FireballEntityMixin",
 		"ChestBoatEntityMixin",

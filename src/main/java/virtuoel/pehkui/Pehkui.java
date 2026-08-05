@@ -43,6 +43,7 @@ public class Pehkui
 		modEventBus.addListener(PehkuiPacketHandler::register);
 
 		NeoForge.EVENT_BUS.register(this);
+		NeoForge.EVENT_BUS.register(PehkuiEvents.class);
 
 		GravityChangerCompatibility.INSTANCE.getClass();
 		ImmersivePortalsCompatibility.INSTANCE.getClass();
