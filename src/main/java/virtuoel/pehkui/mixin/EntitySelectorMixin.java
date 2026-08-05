@@ -13,8 +13,8 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(EntitySelector.class)
 public class EntitySelectorMixin
 {
-	@ModifyArg(method = "method_9810", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;intersects(Lnet/minecraft/world/phys/AABB;)Z"))
-	private static AABB pehkui$method_9810$intersects(AABB bounds, @Local(argsOnly = true) Entity obj)
+	@ModifyArg(method = "lambda$getPredicate$1", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;intersects(Lnet/minecraft/world/phys/AABB;)Z"))
+	private static AABB pehkui$lambda$getPredicate$1$intersects(AABB bounds, @Local(argsOnly = true) Entity obj)
 	{
 		final float interactionWidth = ScaleUtils.getInteractionBoxWidthScale(obj);
 		final float interactionHeight = ScaleUtils.getInteractionBoxHeightScale(obj);

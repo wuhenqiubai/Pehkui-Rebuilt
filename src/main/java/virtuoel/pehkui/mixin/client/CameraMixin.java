@@ -30,4 +30,10 @@ public abstract class CameraMixin
 		
 		return scale < 1.0F ? scale * value : value;
 	}
+	
+	@ModifyExpressionValue(method = "update", at = @At(value = "CONSTANT", args = "floatValue=0.05F"))
+	private float pehkui$update$nearPlane(float value)
+	{
+		return ScaleRenderUtils.modifyProjectionMatrixDepth(value, entity, ScaleRenderUtils.getTickDelta(Minecraft.getInstance()));
+	}
 }

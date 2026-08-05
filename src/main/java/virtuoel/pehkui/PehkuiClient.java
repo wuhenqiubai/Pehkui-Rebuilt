@@ -108,9 +108,9 @@ public class PehkuiClient implements ClientModInitializer
 			switch (type)
 			{
 				case MIXIN_AUDIT:
-					client.player.displayClientMessage(I18nUtils.translate("commands.pehkui.debug.audit.start.client", "Starting Mixin environment audit (client)..."), false);
+					client.player.sendSystemMessage(I18nUtils.translate("commands.pehkui.debug.audit.start.client", "Starting Mixin environment audit (client)..."));
 					MixinEnvironment.getCurrentEnvironment().audit();
-					client.player.displayClientMessage(I18nUtils.translate("commands.pehkui.debug.audit.end.client", "Mixin environment audit (client) complete!"), false);
+					client.player.sendSystemMessage(I18nUtils.translate("commands.pehkui.debug.audit.end.client", "Mixin environment audit (client) complete!"));
 					
 					break;
 				case GARBAGE_COLLECT:

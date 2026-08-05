@@ -151,7 +151,7 @@ public class ConfigSyncUtils
 	{
 		if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
 		{
-			return ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new ConfigSyncPayload(configEntries));
+			return ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new ConfigSyncPayload(configEntries));
 		}
 		else
 		{

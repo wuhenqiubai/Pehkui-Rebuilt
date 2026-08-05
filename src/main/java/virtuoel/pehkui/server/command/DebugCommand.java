@@ -100,7 +100,7 @@ public class DebugCommand
 							
 							if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
 							{
-								packet = ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new DebugPayload(PacketType.GARBAGE_COLLECT));
+								packet = ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new DebugPayload(PacketType.GARBAGE_COLLECT));
 							}
 							else
 							{
@@ -224,7 +224,7 @@ public class DebugCommand
 			
 			if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
 			{
-				packet = ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new DebugPayload(PacketType.MIXIN_AUDIT));
+				packet = ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new DebugPayload(PacketType.MIXIN_AUDIT));
 			}
 			else
 			{

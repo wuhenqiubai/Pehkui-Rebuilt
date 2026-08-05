@@ -56,13 +56,13 @@ public final class ReflectionUtils
 			
 			if (is118Minus)
 			{
-				mapped = mappingResolver.mapClassName("intermediary", "net.minecraft.class_2585");
+				mapped = mappingResolver.mapClassName("intermediary", "net.minecraft.class_2585");// PlainTextContents.LiteralContents
 				c[0] = Class.forName(mapped);
 			}
 			
 			if (is1193Minus)
 			{
-				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_1309", "field_6281", "F");
+				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_1309", "field_6281", "F");// LivingEntity。field_6281没有
 				f = LivingEntity.class.getField(mapped);
 				f.setAccessible(true);
 				h.put(0, lookup.unreflectGetter(f));
@@ -71,27 +71,27 @@ public final class ReflectionUtils
 			
 			if (is1201Minus)
 			{
-				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_1297", "method_5621", "()D");
+				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_1297", "method_5621", "()D");//Entity。method_5621没有
 				m = Entity.class.getMethod(mapped);
 				h.put(2, lookup.unreflect(m));
 				
-				mapped = mappingResolver.mapMethodName("intermediary", is117Plus ? "net.minecraft.class_5629" : "net.minecraft.class_3244", "method_14364", "(Lnet/minecraft/class_2596;)V");
+				mapped = mappingResolver.mapMethodName("intermediary", is117Plus ? "net.minecraft.class_5629" : "net.minecraft.class_3244", "method_14364", "(Lnet/minecraft/class_2596;)V");//ServerPlayerConnection、ServerGamePacketListenerImpl、ServerCommonPacketListenerImpl.send和Packet
 				m = (is117Plus ? ServerPlayerConnection.class : ServerGamePacketListenerImpl.class).getMethod(mapped, Packet.class);
 				h.put(3, lookup.unreflect(m));
 				
-				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2096", "method_9041", "()Z");
+				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2096", "method_9041", "()Z");//MinMaxBounds和MinMaxBounds.isAny
 				m = MinMaxBounds.class.getMethod(mapped);
 				h.put(4, lookup.unreflect(m));
 			}
 			
 			if (is1204Minus)
 			{
-				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_4048", "field_18067", "F");
+				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_4048", "field_18067", "F");//EntityDimensions、field_18067没有
 				f = EntityDimensions.class.getField(mapped);
 				f.setAccessible(true);
 				h.put(5, lookup.unreflectGetter(f));
 				
-				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_4048", "field_18068", "F");
+				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_4048", "field_18068", "F");//EntityDimensions、field_18068没有
 				f = EntityDimensions.class.getField(mapped);
 				f.setAccessible(true);
 				h.put(6, lookup.unreflectGetter(f));
@@ -105,7 +105,7 @@ public final class ReflectionUtils
 			
 			if (is1206Minus)
 			{
-				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_1308", "method_5933", "()Lnet/minecraft/class_1297;");
+				mapped = mappingResolver.mapFieldName("intermediary", "net.minecraft.class_1308", "method_5933", "()Lnet/minecraft/class_1297;");//Mob、method_5933没有
 				m = Mob.class.getMethod(mapped);
 				h.put(8, lookup.unreflect(m));
 				

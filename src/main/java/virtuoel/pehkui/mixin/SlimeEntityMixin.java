@@ -13,13 +13,13 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(Slime.class)
 public class SlimeEntityMixin
 {
-	@Inject(method = "method_63653(IFFLnet/minecraft/world/entity/monster/Slime;)V", at = @At("HEAD"))
+	@Inject(method = "lambda$remove$0(IFFLnet/minecraft/world/entity/monster/Slime;)V", at = @At("HEAD"))
 	private void pehkui$remove$copyScale(int size, float offsetX, float offsetZ, Slime entity, CallbackInfo info)
 	{
 		ScaleUtils.loadScale(entity, (Entity) (Object) this);
 	}
 	
-	@ModifyExpressionValue(method = "method_63653(IFFLnet/minecraft/world/entity/monster/Slime;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
+	@ModifyExpressionValue(method = "lambda$remove$0(IFFLnet/minecraft/world/entity/monster/Slime;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
 	private double pehkui$remove$verticalOffset(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);

@@ -63,9 +63,9 @@ public class Pehkui implements ModInitializer
 			
 			if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
 			{
-				PayloadTypeRegistry.playS2C().register(ScalePayload.ID, ScalePayload.CODEC);
-				PayloadTypeRegistry.playS2C().register(ConfigSyncPayload.ID, ConfigSyncPayload.CODEC);
-				PayloadTypeRegistry.playS2C().register(DebugPayload.ID, DebugPayload.CODEC);
+				PayloadTypeRegistry.clientboundPlay().register(ScalePayload.ID, ScalePayload.CODEC);
+				PayloadTypeRegistry.clientboundPlay().register(ConfigSyncPayload.ID, ConfigSyncPayload.CODEC);
+				PayloadTypeRegistry.clientboundPlay().register(DebugPayload.ID, DebugPayload.CODEC);
 			}
 		}
 		

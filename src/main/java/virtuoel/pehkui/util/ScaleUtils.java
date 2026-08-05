@@ -258,7 +258,7 @@ public class ScaleUtils
 			{
 				if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
 				{
-					packetSender.accept(ServerPlayNetworking.createS2CPacket((CustomPacketPayload) (Object) new ScalePayload(entity, syncedScales)));
+					packetSender.accept(ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new ScalePayload(entity, syncedScales)));
 				}
 				else
 				{

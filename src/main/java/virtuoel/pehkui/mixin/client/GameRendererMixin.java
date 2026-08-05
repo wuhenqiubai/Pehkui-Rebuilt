@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -29,13 +28,13 @@ public class GameRendererMixin
 	@Unique
 	boolean pehkui$isBobbing = false;
 	
-	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
+	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;)V"))
 	private void pehkui$renderWorld$before(DeltaTracker tickCounter, CallbackInfo info)
 	{
 		pehkui$isBobbing = true;
 	}
 	
-	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
+	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;)V"))
 	private void pehkui$renderWorld$after(DeltaTracker tickCounter, CallbackInfo info)
 	{
 		pehkui$isBobbing = false;
@@ -59,9 +58,4 @@ public class GameRendererMixin
 		original.call(obj, x, y, z);
 	}
 
-	@ModifyExpressionValue(method = "getProjectionMatrix(F)Lorg/joml/Matrix4f;", at = @At(value = "CONSTANT", args = "floatValue=0.05F"))
-	private float pehkui$getBasicProjectionMatrix$depth(float value)
-	{
-		return ScaleRenderUtils.modifyProjectionMatrixDepth(value, minecraft.getCameraEntity(), ScaleRenderUtils.getTickDelta(minecraft));
-	}
 }

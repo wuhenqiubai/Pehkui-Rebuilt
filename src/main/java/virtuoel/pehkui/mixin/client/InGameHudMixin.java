@@ -21,7 +21,7 @@ public abstract class InGameHudMixin
 	@Shadow @Final @Mutable
 	Minecraft minecraft;
 	
-	@ModifyArg(method = "renderPlayerHealth", index = 0, at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(FF)F"))
+	@ModifyArg(method = "extractPlayerHealth(Lnet/minecraft/client/gui/GuiGraphicsExtractor;)V", index = 0, at = @At(value = "INVOKE", target = "Ljava/lang/Math;max(FF)F"))
 	private float pehkui$renderStatusBars(float value)
 	{
 		final float healthScale = ScaleUtils.getHealthScale(getCameraPlayer(), ScaleRenderUtils.getTickDelta(minecraft));
