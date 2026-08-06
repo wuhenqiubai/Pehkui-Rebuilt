@@ -35,6 +35,7 @@
 		"PreEntityTickMixin",
 		"ProjectileUtilMixin",
 		"ServerPlayNetworkHandlerMixin",
+		"StepHeightMixin",
 		"ThreadSafeScaledEntityMixin",
 		"ThreadUnsafeScaledEntityMixin",
 		"TrackTargetGoalMixin",
