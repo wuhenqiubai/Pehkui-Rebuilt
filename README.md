@@ -13,7 +13,7 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 - Minecraft target: `1.21.5`
 - Fabric Loader: `0.19.3`
 - Fabric API: `0.128.2+1.21.5`
-- Mod version: `3.8.3`
+- Mod version: `3.8.4`
 - Published loader format: Fabric (loadable by Quilt via its Fabric compatibility)
 
 ## Branching & Versioning
