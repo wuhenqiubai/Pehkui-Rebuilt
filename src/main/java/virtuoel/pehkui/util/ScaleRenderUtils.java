@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.client.renderer.ShapeRenderer;
 import org.jetbrains.annotations.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -42,7 +43,7 @@ public class ScaleRenderUtils
 			}
 		}
 
-		return client.getTimer().getGameTimeDeltaPartialTick(false);
+		return client.getDeltaTracker().getGameTimeDeltaPartialTick(false);
 	}
 
 	public static boolean hasExtendedReach(final MultiPlayerGameMode interactionManager)
@@ -91,7 +92,7 @@ public class ScaleRenderUtils
 	{
 		if (VersionUtils.MINOR >= 15)
 		{
-			LevelRenderer.renderLineBox((PoseStack) matrices, (VertexConsumer) vertices, box, red, green, blue, alpha);
+			ShapeRenderer.renderLineBox((PoseStack) matrices, (VertexConsumer) vertices, box, red, green, blue, alpha);
 		}
 		else if (DRAW_BOX_OUTLINE != null)
 		{
@@ -167,7 +168,7 @@ public class ScaleRenderUtils
 			final Item i = lastRenderedStack.getItem();
 			if (force || !loggedItems.contains(i))
 			{
-				final String stackKey = lastRenderedStack.getDescriptionId();
+				final String stackKey = lastRenderedStack.getItem().getDescriptionId();
 				final String itemKey = lastRenderedStack.getItem().getDescriptionId();
 				if (stackKey.equals(itemKey))
 				{

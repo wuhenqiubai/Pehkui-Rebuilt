@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -170,7 +171,7 @@ public class DebugCommand
 		for (EntityType<?> t : TYPES)
 		{
 			w.setBlockAndUpdate(mut, Blocks.POLISHED_ANDESITE.defaultBlockState());
-			final Entity e = t.create(w);
+			final Entity e = t.create(w, EntitySpawnReason.COMMAND);
 			
 			e.absMoveTo(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.toYRot(), 0);
 			e.moveTo(mut.getX() + 0.5, mut.getY() + 1, mut.getZ() + 0.5, opposite.toYRot(), 0);
