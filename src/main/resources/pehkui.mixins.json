@@ -24,6 +24,7 @@
 		"GhastEntityShootFireballGoalMixin",
 		"ItemEntityMixin",
 		"LivingEntityMixin",
+		"StepHeightMixin",
 		"LlamaSpitEntityMixin",
 		"MobEntityMixin",
 		"NbtPredicateMixin",
