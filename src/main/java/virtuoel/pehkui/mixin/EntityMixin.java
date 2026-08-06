@@ -5,8 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MoverType;
@@ -199,12 +197,6 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		}
 		
 		return original;
-	}
-	
-	@Inject(at = @At("HEAD"), method = "startSeenByPlayer")
-	private void pehkui$onStartedTrackingBy(ServerPlayer player, CallbackInfo info)
-	{
-		ScaleUtils.syncScalesOnTrackingStart((Entity) (Object) this, player.connection);
 	}
 	
 	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"))
