@@ -12,7 +12,7 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 - Minecraft target: `1.21.1`
 - NeoForge: `21.1.248`
-- Mod version: `3.8.3`
+- Mod version: `3.8.4`
 - Published loader format: NeoForge
 
 ## Branching & Versioning
