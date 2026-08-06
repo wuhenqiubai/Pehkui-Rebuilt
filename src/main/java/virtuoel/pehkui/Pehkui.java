@@ -22,7 +22,6 @@ import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
 import virtuoel.pehkui.util.ModLoaderUtils;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.ReflectionUtils;
-import virtuoel.pehkui.util.VersionUtils;
 
 @ApiStatus.Internal
 public class Pehkui implements ModInitializer

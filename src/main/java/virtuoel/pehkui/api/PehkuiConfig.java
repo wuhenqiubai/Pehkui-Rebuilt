@@ -15,7 +15,6 @@ import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.util.ClampingScaleModifier;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.ScaleUtils;
-import virtuoel.pehkui.util.VersionUtils;
 
 public class PehkuiConfig
 {
