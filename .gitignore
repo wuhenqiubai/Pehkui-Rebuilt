@@ -45,3 +45,4 @@ changelog*.txt
 /_dev/
 /_dev/NeoForm/
 /docs/
+/build-all-logs/
