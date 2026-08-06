@@ -25,13 +25,13 @@ public class ServerWorldMixin
 	@ModifyReturnValue(method = "getWatchdogStats", at = @At("RETURN"))
 	private String pehkui$getDebugString(String value)
 	{
-		String additional = "";
-		
+		final StringBuilder additional = new StringBuilder();
+
 		for (final Entity entity : entityManager.getEntityGetter().getAll())
 		{
 			float maxScale = 1.0F;
 			ScaleType maxType = null;
-			
+
 			float scale;
 			for (final ScaleType type : ScaleRegistries.SCALE_TYPES.values())
 			{
@@ -42,19 +42,19 @@ public class ServerWorldMixin
 					maxType = type;
 				}
 			}
-			
+
 			if (maxType != null)
 			{
-				additional += additional.isEmpty() ? ", pehkui:scaled_entities: {[{" : "}, {";
-				
+				additional.append(additional.isEmpty() ? ", pehkui:scaled_entities: {[{" : "}, {");
+
 				final Identifier id = ScaleRegistries.getId(ScaleRegistries.SCALE_TYPES, maxType);
-				
+
 				final String idString = Pehkui.MOD_ID.equals(id.getNamespace()) ? id.getPath() : id.toString();
-				
-				additional += "\"" + entity.getStringUUID() + "\":\"" + EntityType.getKey(entity.getType()) + "\",\"" + idString + "\":" + maxScale;
+
+				additional.append("\"").append(entity.getStringUUID()).append("\":\"").append(EntityType.getKey(entity.getType())).append("\",\"").append(idString).append("\":").append(maxScale);
 			}
 		}
-		
+
 		return additional.isEmpty() ? value : (value + additional + "}]}");
 	}
 }

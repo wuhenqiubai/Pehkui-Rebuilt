@@ -23,7 +23,6 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
@@ -37,7 +36,6 @@ import virtuoel.kanos_config.api.JsonConfigHandler;
 import virtuoel.kanos_config.api.MutableConfigEntry;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.PehkuiConfig;
-import virtuoel.pehkui.network.ConfigSyncPacket;
 import virtuoel.pehkui.network.ConfigSyncPayload;
 
 public class ConfigSyncUtils
