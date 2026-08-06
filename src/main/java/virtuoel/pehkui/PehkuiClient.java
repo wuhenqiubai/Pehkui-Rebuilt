@@ -18,9 +18,6 @@ import virtuoel.pehkui.network.ScalePacket;
 import virtuoel.pehkui.network.ScalePayload;
 import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.I18nUtils;
-import virtuoel.pehkui.util.ModLoaderUtils;
-import virtuoel.pehkui.util.ScaleRenderUtils;
-import virtuoel.pehkui.util.VersionUtils;
 
 @ApiStatus.Internal
 public class PehkuiClient implements ClientModInitializer
@@ -28,43 +25,20 @@ public class PehkuiClient implements ClientModInitializer
 	@Override
 	public void onInitializeClient()
 	{
-		if (ModLoaderUtils.isModLoaded("fabric-networking-api-v1"))
+		ClientPlayNetworking.registerGlobalReceiver(ScalePayload.ID, (payload, context) ->
 		{
-			if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
-			{
-				new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						ClientPlayNetworking.registerGlobalReceiver(ScalePayload.ID, (payload, context) ->
-						{
-							handleScalePacket(context.client(), payload);
-						});
-						
-						ClientPlayNetworking.registerGlobalReceiver(ConfigSyncPayload.ID, (payload, context) ->
-						{
-							context.client().execute(payload.action);
-						});
-						
-						ClientPlayNetworking.registerGlobalReceiver(DebugPayload.ID, (payload, context) ->
-						{
-							handleDebugPacket(context.client(), payload.type);
-						});
-					}
-				}.run();
-			}
-			else
-			{
-				ScaleRenderUtils.registerPacketHandler(Pehkui.SCALE_PACKET, PehkuiClient.class, "handleScalePacket");
-				ScaleRenderUtils.registerPacketHandler(Pehkui.CONFIG_SYNC_PACKET, PehkuiClient.class, "handleConfigSyncPacket");
-				ScaleRenderUtils.registerPacketHandler(Pehkui.DEBUG_PACKET, PehkuiClient.class, "handleDebugPacket");
-			}
-		}
-		else
+			handleScalePacket(context.client(), payload);
+		});
+
+		ClientPlayNetworking.registerGlobalReceiver(ConfigSyncPayload.ID, (payload, context) ->
 		{
-			Pehkui.LOGGER.error("Failed to register Pehkui's packet handlers! Is Fabric API's networking module missing?");
-		}
+			context.client().execute(payload.action);
+		});
+
+		ClientPlayNetworking.registerGlobalReceiver(DebugPayload.ID, (payload, context) ->
+		{
+			handleDebugPacket(context.client(), payload.type);
+		});
 	}
 	
 	public static void handleScalePacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)

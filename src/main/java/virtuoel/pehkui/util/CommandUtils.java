@@ -1,12 +1,5 @@
 package virtuoel.pehkui.util;
 
-import java.lang.invoke.CallSite;
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -18,17 +11,10 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.synchronization.ArgumentTypeInfo;
-import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -44,96 +30,30 @@ public class CommandUtils
 {
 	public static void registerCommands()
 	{
-		if (ModLoaderUtils.isModLoaded("fabric-command-api-v2"))
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) ->
 		{
-			new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) ->
-					{
-						registerCommands(dispatcher);
-					});
-				}
-			}.run();
-		}
-		else if (ModLoaderUtils.isModLoaded("fabric-command-api-v1"))
-		{
-			registerV1ApiCommands();
-		}
+			registerCommands(dispatcher);
+		});
 	}
-	
+
 	public static void registerArgumentTypes()
 	{
-		if (ModLoaderUtils.isModLoaded("fabric-command-api-v2") && ModLoaderUtils.isModLoaded("fabric-registry-sync-v0"))
+		CommandUtils.registerArgumentTypes(new ArgumentTypeConsumer()
 		{
-			new Runnable()
+			@Override
+			public <T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier)
 			{
-				@Override
-				public void run()
-				{
-					CommandUtils.registerArgumentTypes(new ArgumentTypeConsumer()
-					{
-						@Override
-						public <T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier)
-						{
-							ArgumentTypeRegistry.registerArgumentType(id, argClass, SingletonArgumentInfo.contextFree(supplier));
-						}
-					});
-				}
-			}.run();
-		}
-		else if (VersionUtils.MINOR <= 18)
-		{
-			registerArgumentTypes(CommandUtils::registerConstantArgumentType);
-		}
+				ArgumentTypeRegistry.registerArgumentType(id, argClass, SingletonArgumentInfo.contextFree(supplier));
+			}
+		});
 	}
-	
+
 	public static void registerCommands(final CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		ScaleCommand.register(dispatcher);
 		DebugCommand.register(dispatcher);
 	}
-	
-	private static void registerV1ApiCommands()
-	{
-		try
-		{
-			final MethodHandles.Lookup lookup = MethodHandles.lookup();
-			
-			final Method staticRegister = CommandUtils.class.getDeclaredMethod("registerV1ApiCommands", CommandDispatcher.class, boolean.class);
-			final MethodHandle staticRegisterHandle = lookup.unreflect(staticRegister);
-			final MethodType staticRegisterType = staticRegisterHandle.type();
-			
-			final Class<?> callbackClass = Class.forName("net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback");
-			
-			@SuppressWarnings("unchecked")
-			final Event<Object> registerEvent = (Event<Object>) callbackClass.getField("EVENT").get(null);
-			
-			final Method register = callbackClass.getDeclaredMethod("register", CommandDispatcher.class, boolean.class);
-			final MethodType registerType = MethodType.methodType(register.getReturnType(), register.getParameterTypes());
-			
-			final MethodType factoryMethodType = MethodType.methodType(callbackClass);
-			
-			final CallSite lambdaFactory = LambdaMetafactory.metafactory(lookup, "register", factoryMethodType, registerType, staticRegisterHandle, staticRegisterType);
-			final MethodHandle factoryInvoker = lambdaFactory.getTarget();
-			
-			final Object eventLambda = factoryInvoker.asType(factoryMethodType).invokeWithArguments(Collections.emptyList());
-			
-			registerEvent.register(eventLambda);
-		}
-		catch (Throwable e)
-		{
-			Pehkui.LOGGER.catching(e);
-		}
-	}
-	
-	protected static void registerV1ApiCommands(final CommandDispatcher<CommandSourceStack> dispatcher, final boolean dedicated)
-	{
-		registerCommands(dispatcher);
-	}
-	
+
 	public static void registerArgumentTypes(ArgumentTypeConsumer consumer)
 	{
 		consumer.register(Pehkui.id("scale_type"), ScaleTypeArgumentType.class, ScaleTypeArgumentType::scaleType);
@@ -141,118 +61,23 @@ public class CommandUtils
 		consumer.register(Pehkui.id("scale_operation"), ScaleOperationArgumentType.class, ScaleOperationArgumentType::operation);
 		consumer.register(Pehkui.id("scale_easing"), ScaleEasingArgumentType.class, ScaleEasingArgumentType::scaleEasing);
 	}
-	
+
 	@FunctionalInterface
 	public interface ArgumentTypeConsumer
 	{
 		<T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier);
 	}
-	
-	public static final MethodHandle REGISTER_ARGUMENT_TYPE, TEST_FLOAT_RANGE, SEND_FEEDBACK;
-	
-	static
-	{
-		final MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
-		final Int2ObjectMap<MethodHandle> h = new Int2ObjectArrayMap<MethodHandle>();
-		
-		final MethodHandles.Lookup lookup = MethodHandles.lookup();
-		String mapped = "unset";
-		Method m;
-		
-		try
-		{
-			final boolean is116Minus = VersionUtils.MINOR <= 16;
-			final boolean is118Minus = VersionUtils.MINOR <= 18;
-			final boolean is119Minus = VersionUtils.MINOR <= 19;
-			
-			if (is118Minus)
-			{
-				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2316", "method_10017", "(Ljava/lang/String;Ljava/lang/Class;Lnet/minecraft/class_2314;)V");
-				m = ArgumentTypeInfos.class.getMethod(mapped, String.class, Class.class, ArgumentTypeInfo.class);
-				h.put(0, lookup.unreflect(m));
-			}
-			
-			mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2096$class_2099", "method_9047", is116Minus ? "(F)Z" : "(D)Z");
-			m = MinMaxBounds.Doubles.class.getMethod(mapped, is116Minus ? float.class : double.class);
-			h.put(1, lookup.unreflect(m));
-			
-			if (is119Minus)
-			{
-				mapped = mappingResolver.mapMethodName("intermediary", "net.minecraft.class_2168", "method_9226", "(Lnet/minecraft/class_2561;Z)V");
-				m = CommandSourceStack.class.getMethod(mapped, Component.class, boolean.class);
-				h.put(2, lookup.unreflect(m));
-			}
-		}
-		catch (NoSuchMethodException | SecurityException | IllegalAccessException e1)
-		{
-			Pehkui.LOGGER.error("Last method lookup: {}", mapped);
-			Pehkui.LOGGER.catching(e1);
-		}
-		
-		REGISTER_ARGUMENT_TYPE = h.get(0);
-		TEST_FLOAT_RANGE = h.get(1);
-		SEND_FEEDBACK = h.get(2);
-	}
-	
+
 	public static void sendFeedback(CommandSourceStack source, Supplier<Component> text, boolean broadcastToOps)
 	{
-		if (SEND_FEEDBACK != null)
-		{
-			try
-			{
-				SEND_FEEDBACK.invoke(source, text.get(), broadcastToOps);
-				
-				return;
-			}
-			catch (Throwable e)
-			{
-				Pehkui.LOGGER.catching(e);
-			}
-		}
-		
 		source.sendSuccess(text, broadcastToOps);
 	}
-	
+
 	public static boolean testFloatRange(MinMaxBounds.Doubles range, float value)
 	{
-		if (TEST_FLOAT_RANGE != null)
-		{
-			try
-			{
-				if (VersionUtils.MINOR <= 16)
-				{
-					return (boolean) TEST_FLOAT_RANGE.invoke(range, value);
-				}
-				else
-				{
-					return (boolean) TEST_FLOAT_RANGE.invoke(range, (double) value);
-				}
-			}
-			catch (Throwable e)
-			{
-				Pehkui.LOGGER.catching(e);
-			}
-		}
-		
-		return false;
+		return range.matches((double) value);
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static <T extends ArgumentType<?>> void registerConstantArgumentType(Identifier id, Class<? extends T> argClass, Supplier<T> supplier)
-	{
-		if (REGISTER_ARGUMENT_TYPE != null)
-		{
-			try
-			{
-				REGISTER_ARGUMENT_TYPE.invoke(id.toString(), argClass, SingletonArgumentInfo.class.getConstructor(Supplier.class).newInstance(supplier));
-			}
-			catch (Throwable e)
-			{
-				Pehkui.LOGGER.catching(e);
-			}
-		}
-	}
-	
+
 	public static CompletableFuture<Suggestions> suggestIdentifiersIgnoringNamespace(String namespace, Iterable<Identifier> candidates, SuggestionsBuilder builder)
 	{
 		forEachMatchingIgnoringNamespace(
@@ -262,14 +87,14 @@ public class CommandUtils
 			Function.identity(),
 			id -> builder.suggest(String.valueOf(id))
 		);
-		
+
 		return builder.buildFuture();
 	}
-	
+
 	public static <T> void forEachMatchingIgnoringNamespace(String namespace, Iterable<T> candidates, String string, Function<T, Identifier> idFunc, Consumer<T> action)
 	{
 		final boolean hasColon = string.indexOf(':') > -1;
-		
+
 		Identifier id;
 		for (final T object : candidates)
 		{
@@ -291,7 +116,7 @@ public class CommandUtils
 			}
 		}
 	}
-	
+
 	public static boolean wordStartsWith(String string, String substring, char wordSeparator)
 	{
 		for (int i = 0; !substring.startsWith(string, i); i++)
@@ -302,7 +127,7 @@ public class CommandUtils
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 }
