@@ -44,3 +44,4 @@ changelog*.txt
 /CLAUDE.md
 /_dev/
 /docs/
+/build-all-logs/
