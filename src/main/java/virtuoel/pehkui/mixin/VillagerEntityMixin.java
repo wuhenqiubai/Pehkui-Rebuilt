@@ -2,24 +2,26 @@ package virtuoel.pehkui.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.At.Shift;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.npc.Villager;
 import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(Villager.class)
 public class VillagerEntityMixin
 {
-	@Inject(method = "thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/entity/monster/Witch;moveTo(DDDFF)V"))
-	private void pehkui$onStruckByLightning(ServerLevel world, LightningBolt lightning, CallbackInfo info, @Local Witch witchEntity)
+	@ModifyExpressionValue(method = "thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/npc/Villager;convertTo(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/ConversionParams;Lnet/minecraft/world/entity/ConversionParams$AfterConversion;)Lnet/minecraft/world/entity/Mob;"))
+	private Mob pehkui$onStruckByLightning(Mob converted, ServerLevel world, LightningBolt lightning)
 	{
-		ScaleUtils.loadScale(witchEntity, (Entity) (Object) this);
+		if (converted != null)
+		{
+			ScaleUtils.loadScale(converted, (Entity) (Object) this);
+		}
+
+		return converted;
 	}
 }

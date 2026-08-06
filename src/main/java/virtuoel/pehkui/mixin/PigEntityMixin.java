@@ -2,14 +2,12 @@ package virtuoel.pehkui.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.At.Shift;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -17,9 +15,14 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(Pig.class)
 public class PigEntityMixin
 {
-	@Inject(method = "thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/world/entity/monster/ZombifiedPiglin;moveTo(DDDFF)V"))
-	private void pehkui$onStruckByLightning(ServerLevel world, LightningBolt lightning, CallbackInfo info, @Local ZombifiedPiglin zombifiedPiglinEntity)
+	@ModifyExpressionValue(method = "thunderHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LightningBolt;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Pig;convertTo(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/ConversionParams;Lnet/minecraft/world/entity/ConversionParams$AfterConversion;)Lnet/minecraft/world/entity/Mob;"))
+	private Mob pehkui$onStruckByLightning(Mob converted, ServerLevel world, LightningBolt lightning)
 	{
-		ScaleUtils.loadScale(zombifiedPiglinEntity, (Entity) (Object) this);
+		if (converted instanceof ZombifiedPiglin)
+		{
+			ScaleUtils.loadScale(converted, (Entity) (Object) this);
+		}
+
+		return converted;
 	}
 }

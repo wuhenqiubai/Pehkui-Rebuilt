@@ -14,7 +14,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(HangingEntity.class)
 public abstract class AbstractDecorationEntityMixin
 {
-	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"))
+	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"))
 	private ItemEntity pehkui$dropStack(ItemEntity entity)
 	{
 		ScaleUtils.setScaleOfDrop(entity, (Entity) (Object) this);

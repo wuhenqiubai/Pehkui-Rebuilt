@@ -11,7 +11,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(AreaEffectCloud.class)
 public class AreaEffectCloudEntityMixin
 {
-	@ModifyExpressionValue(method = "tick", at = @At(value = "CONSTANT", args = "floatValue=0.5F"))
+	@ModifyExpressionValue(method = "serverTick", at = @At(value = "CONSTANT", args = "floatValue=0.5F"))
 	private float pehkui$tick$minRadius(float value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);

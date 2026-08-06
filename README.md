@@ -10,14 +10,14 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 ## Current Branch Status
 
-- Minecraft target: `1.21.1`
-- NeoForge: `21.1.248`
+- Minecraft target: `1.21.2`
+- NeoForge: `21.2.1-beta`
 - Mod version: `3.8.3`
 - Published loader format: NeoForge
 
 ## Branching & Versioning
 
-Each supported Minecraft version lives on its own branch (e.g. `neoforge/1.21.1`). Branches are **single-version skeletons**: the mixin layer contains only the injection points that apply to that version — no cross-version `compat*` subpackages, no legacy version-gating infrastructure. All mixins are flattened into `mixin/` (server) and `mixin/client/`.
+Each supported Minecraft version lives on its own branch (e.g. `neoforge/1.21.2`). Branches are **single-version skeletons**: the mixin layer contains only the injection points that apply to that version — no cross-version `compat*` subpackages, no legacy version-gating infrastructure. All mixins are flattened into `mixin/` (server) and `mixin/client/`.
 
 To port to a new Minecraft version, copy this skeleton to a new branch and adjust the mixin injection-point method descriptors for the new mappings. Version differences are isolated by branches rather than by in-tree compat code.
 

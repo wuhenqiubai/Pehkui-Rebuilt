@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(targets = "net.minecraft.world.entity.monster.Blaze.BlazeAttackGoal")
+@Mixin(targets = "net.minecraft.world.entity.monster.Blaze$BlazeAttackGoal")
 public abstract class BlazeEntityShootFireballGoalMixin
 {
 	@Shadow @Final

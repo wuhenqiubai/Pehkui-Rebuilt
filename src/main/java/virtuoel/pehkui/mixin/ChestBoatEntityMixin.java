@@ -5,10 +5,10 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.ChestBoat;
+import net.minecraft.world.entity.vehicle.AbstractBoat;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(ChestBoat.class)
+@Mixin(AbstractBoat.class)
 public abstract class ChestBoatEntityMixin
 {
 	@ModifyReturnValue(method = "getSinglePassengerXOffset", at = @At("RETURN"))

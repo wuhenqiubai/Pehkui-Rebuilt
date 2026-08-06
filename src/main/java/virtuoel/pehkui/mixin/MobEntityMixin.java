@@ -9,15 +9,17 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ConversionParams;
 import net.minecraft.world.phys.AABB;
 import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(Mob.class)
 public abstract class MobEntityMixin
 {
-	@ModifyExpressionValue(method = "doHurtTarget(Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "CONSTANT", args = "floatValue=0.5F"))
+	@ModifyExpressionValue(method = "doHurtTarget(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "CONSTANT", args = "floatValue=0.5F"))
 	private float pehkui$tryAttack$knockback(float value)
 	{
 		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
@@ -46,7 +48,7 @@ public abstract class MobEntityMixin
 	}
 
 	@Inject(at = @At("RETURN"), method = "convertTo")
-	private <T extends Mob> void pehkui$convertTo(EntityType<T> entityType, boolean bl, CallbackInfoReturnable<T> info)
+	private <T extends Mob> void pehkui$convertTo(EntityType<T> entityType, ConversionParams conversionParams, EntitySpawnReason spawnReason, ConversionParams.AfterConversion<T> afterConversion, CallbackInfoReturnable<T> info)
 	{
 		final Mob e = info.getReturnValue();
 
