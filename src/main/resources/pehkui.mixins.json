@@ -36,6 +36,7 @@
 		"ProjectileUtilMixin",
 		"ServerPlayerEntityMixin",
 		"ServerPlayNetworkHandlerMixin",
+		"StepHeightMixin",
 		"ThreadSafeScaledEntityMixin",
 		"ThreadUnsafeScaledEntityMixin",
 		"ThrownEntityMixin",
