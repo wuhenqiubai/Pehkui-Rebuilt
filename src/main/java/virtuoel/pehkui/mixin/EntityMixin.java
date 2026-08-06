@@ -198,7 +198,7 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		
 		return original;
 	}
-	
+
 	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"))
 	private ItemEntity pehkui$dropStack(ItemEntity entity)
 	{
