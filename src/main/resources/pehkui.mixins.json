@@ -41,6 +41,7 @@
 		"ItemEntityMixin",
 		"LingeringPotionEntityMixin",
 		"LivingEntityMixin",
+		"StepHeightMixin",
 		"LlamaSpitEntityMixin",
 		"LookTargetUtilMixin",
 		"MobEntityMixin",
