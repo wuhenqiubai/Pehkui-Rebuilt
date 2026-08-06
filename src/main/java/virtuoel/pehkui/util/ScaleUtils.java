@@ -256,18 +256,7 @@ public class ScaleUtils
 		{
 			if (NETWORKING_API_LOADED)
 			{
-				if (VersionUtils.MINOR > 20 || (VersionUtils.MINOR == 20 && VersionUtils.PATCH >= 5))
-				{
-					packetSender.accept(ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new ScalePayload(entity, syncedScales)));
-				}
-				else
-				{
-					final FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-					
-					new ScalePacket(entity, syncedScales).write(buffer);
-					
-					packetSender.accept(ReflectionUtils.createS2CPacket(Pehkui.SCALE_PACKET, buffer));
-				}
+				packetSender.accept(ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new ScalePayload(entity, syncedScales)));
 			}
 			
 			syncedScales.clear();
