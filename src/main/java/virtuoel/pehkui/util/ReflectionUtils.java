@@ -19,7 +19,6 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Leashable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import virtuoel.pehkui.Pehkui;
 
 public final class ReflectionUtils
 {

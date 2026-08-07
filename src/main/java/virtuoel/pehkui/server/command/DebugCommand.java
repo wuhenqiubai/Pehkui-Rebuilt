@@ -22,10 +22,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,15 +33,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.PehkuiConfig;
-import virtuoel.pehkui.network.DebugPacket;
 import virtuoel.pehkui.network.DebugPayload;
 import virtuoel.pehkui.util.CommandUtils;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.I18nUtils;
 import virtuoel.pehkui.util.ReflectionUtils;
-import virtuoel.pehkui.util.VersionUtils;
 
 public class DebugCommand
 {

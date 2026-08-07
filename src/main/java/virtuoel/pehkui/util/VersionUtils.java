@@ -9,7 +9,7 @@ public class VersionUtils
 	@Nullable
 	public static final String MINECRAFT_VERSION = lookupMinecraftVersion();
 	public static final int MAJOR = getVersionComponent(0);
-	public static final int MINOR = getVersionComponent(1);
+	public static final int MINOR = MAJOR > 21 ? 100 : getVersionComponent(1);
 	public static final int PATCH = getVersionComponent(2);
 
 	private static String lookupMinecraftVersion()

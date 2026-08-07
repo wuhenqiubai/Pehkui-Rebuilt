@@ -22,17 +22,12 @@ base {
     archivesName = archives_base_name
 }
 
-// Minecraft 1.21.1 使用 Java 21
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+// Minecraft 26.x 使用 Java 25
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 neoForge {
     // NeoForge 版本见 gradle.properties
     version = project.neo_version
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
 
     runs {
         client {
