@@ -1,7 +1,8 @@
 package virtuoel.pehkui.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.entity.state.ItemFrameRenderState;
 import net.minecraft.core.Direction;
@@ -14,8 +15,8 @@ import virtuoel.pehkui.util.PehkuiEntityRenderStateExtensions;
 @Mixin(ItemFrameRenderer.class)
 public class ItemFrameEntityRendererMixin
 {
-	@ModifyVariable(method = "render", at = @At(value = "STORE"))
-	private Vec3 pehkui$render(Vec3 value, ItemFrameRenderState state, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i)
+	@ModifyVariable(method = "submit", at = @At(value = "STORE"))
+	private Vec3 pehkui$render(Vec3 value, ItemFrameRenderState state, PoseStack matrixStack, SubmitNodeCollector queue, CameraRenderState cameraRenderState)
 	{
 		final PehkuiEntityRenderStateExtensions pehkuiState = (PehkuiEntityRenderStateExtensions) state;
 

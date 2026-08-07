@@ -14,7 +14,7 @@ public class VersionUtils
 
 	private static String lookupMinecraftVersion()
 	{
-		return FMLLoader.versionInfo().mcVersion();
+		return FMLLoader.getCurrent().getVersionInfo().mcVersion();
 	}
 
 	private static int getVersionComponent(int pos)

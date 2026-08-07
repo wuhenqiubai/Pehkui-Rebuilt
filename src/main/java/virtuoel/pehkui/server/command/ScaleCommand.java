@@ -44,7 +44,7 @@ public class ScaleCommand
 {
 	public static void register(final CommandDispatcher<CommandSourceStack> commandDispatcher)
 	{
-		if (FMLEnvironment.production && !PehkuiConfig.COMMON.enableCommands.get())
+		if (FMLEnvironment.isProduction() && !PehkuiConfig.COMMON.enableCommands.get())
 		{
 			return;
 		}

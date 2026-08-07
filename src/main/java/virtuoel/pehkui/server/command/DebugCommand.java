@@ -56,7 +56,7 @@ public class DebugCommand
 			.then(ConfigSyncUtils.registerConfigCommands())
 		);
 		
-		if (!FMLEnvironment.production || PehkuiConfig.COMMON.enableCommands.get())
+		if (!FMLEnvironment.isProduction() || PehkuiConfig.COMMON.enableCommands.get())
 		{
 			builder
 				.then(Commands.literal("debug")
@@ -109,7 +109,7 @@ public class DebugCommand
 				);
 		}
 		
-		if (!FMLEnvironment.production || PehkuiConfig.COMMON.enableDebugCommands.get())
+		if (!FMLEnvironment.isProduction() || PehkuiConfig.COMMON.enableDebugCommands.get())
 		{
 			builder
 				.then(Commands.literal("debug")
@@ -130,7 +130,7 @@ public class DebugCommand
 	
 	public static boolean unmarkEntityForScaleReset(final Entity entity, final CompoundTag nbt)
 	{
-		if (entity instanceof Player && MARKED_USERNAMES.remove(((Player) entity).getGameProfile().getName().toLowerCase(Locale.ROOT)))
+		if (entity instanceof Player && MARKED_USERNAMES.remove(((Player) entity).getName().getString().toLowerCase(Locale.ROOT)))
 		{
 			return true;
 		}

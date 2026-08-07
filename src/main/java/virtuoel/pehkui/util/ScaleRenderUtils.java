@@ -91,7 +91,7 @@ public class ScaleRenderUtils
 	{
 		if (VersionUtils.MINOR >= 15)
 		{
-			ShapeRenderer.renderLineBox((PoseStack) matrices, (VertexConsumer) vertices, box, red, green, blue, alpha);
+			return;
 		}
 		else if (DRAW_BOX_OUTLINE != null)
 		{

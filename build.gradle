@@ -64,7 +64,7 @@ dependencies {
         exclude group: "net.fabricmc", module: "fabric-loader"
     })
     // dev 运行环境（runClient/runServer）需要 KanosConfig 在 classpath（jar-in-jar 仅最终 jar 生效）；@jar 避免解析 fabric-loader 传递依赖
-    additionalRuntimeClasspath "com.github.Virtuoel:KanosConfig:${kanos_config_tag}@jar"
+	// additionalRuntimeClasspath "com.github.Virtuoel:KanosConfig:${kanos_config_tag}@jar"
 }
 
 // 展开 src/main/templates 里的 ${} 占位符（neoforge.mods.toml）

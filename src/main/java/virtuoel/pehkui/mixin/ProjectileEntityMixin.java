@@ -8,8 +8,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -17,18 +18,18 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(Projectile.class)
 public abstract class ProjectileEntityMixin
 {
-	@ModifyArg(method = "checkLeftOwner", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(D)Lnet/minecraft/world/phys/AABB;"))
-	private double pehkui$shouldLeaveOwner$expand(double value)
+	@WrapOperation(method = "isOutsideOwnerCollisionRange", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(D)Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$hasLeftOwner$expand(AABB obj, double value, Operation<AABB> original)
 	{
 		final float width = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 		final float height = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
 
 		if (width != 1.0F || height != 1.0F)
 		{
-			return Math.max(width, height) * value;
+			return obj.inflate(value * width, value * height, value * width);
 		}
 
-		return value;
+		return original.call(obj, value);
 	}
 	
 	@ModifyVariable(method = "shoot(DDDFF)V", ordinal = 0, argsOnly = true, at = @At("HEAD"))

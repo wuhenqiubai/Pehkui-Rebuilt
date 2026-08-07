@@ -85,14 +85,6 @@ public abstract class PlayerEntityMixin
 		return scale != 1.0F ? original * scale : original;
 	}
 	
-	@ModifyExpressionValue(method = "moveCloak", at = { @At(value = "CONSTANT", args = "doubleValue=10.0D"), @At(value = "CONSTANT", args = "doubleValue=-10.0D") })
-	private double pehkui$updateCapeAngles$limits(double value)
-	{
-		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
-		
-		return scale != 1.0F ? scale * value : value;
-	}
-	
 	// NeoForge 1.21.1 将攻击范围从 vanilla 的 AABB.inflate 重构为 entityInteractionRange() 机制，注入点相应迁移
 	@ModifyExpressionValue(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;entityInteractionRange()D"))
 	private double pehkui$attack$expandRange(double value, @Local(argsOnly = true) Entity target)
