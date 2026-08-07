@@ -29,7 +29,7 @@
 	"depends":
 	{
 		"minecraft": "${minecraft_version}",
-		"fabricloader": ">=0.19.2",
+		"fabricloader": ">=0.14.0",
 		"fabric-api-base": "*",
 		"kanos_config": ">=0.4.1"
 	},
