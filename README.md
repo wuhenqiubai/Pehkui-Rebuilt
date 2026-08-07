@@ -10,8 +10,8 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 ## Current Branch Status
 
-- Minecraft versions: `26.1`
-- NeoForge: `26.1.0.19-beta`
+- Minecraft versions: `26.1.x`
+- NeoForge: `26.1.2.94`
 - Mod version: `3.8.4`
 - Published loader format: NeoForge
 
