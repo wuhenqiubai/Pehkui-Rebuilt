@@ -4,7 +4,8 @@
 # 用法：
 #   ./build-all-branches.sh            # 默认 compileJava（快，Mixin AP 检查注入点 + 编译错误）
 #   ./build-all-branches.sh full       # 完整 build（含 jar 产出）
-#   ./build-all-branches.sh compile 26  # 只构建名字包含 "26" 的分支（可选过滤，也可传任意子串）
+#   ./build-all-branches.sh publish    # 发布到本地 Maven 仓库（publishToMavenLocal → ~/.m2）
+#   ./build-all-branches.sh compile 26  # 只构建名字包含 "26" 的分支（可选过滤，也可传任意子串，如 publish 26）
 #
 # 注意：脚本会依次 git checkout 每个分支（会改变工作区），构建完停在最后一个分支。
 # 每个分支的完整构建日志保存在 build-all-logs/<分支名>.log。
@@ -17,7 +18,10 @@ MODE="${1:-compile}"
 FILTER="${2:-}"
 
 GRADLE_TASK="compileJava"
-[ "$MODE" = "full" ] && GRADLE_TASK="build"
+case "$MODE" in
+  full)    GRADLE_TASK="build" ;;
+  publish) GRADLE_TASK="publishToMavenLocal" ;;
+esac
 
 JAVA_HOME_DEFAULT="D:/Java/jdk-25.0.3"
 LOG_DIR="build-all-logs"
