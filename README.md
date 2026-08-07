@@ -10,7 +10,7 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 ## Current Branch Status
 
-- Minecraft target: `1.21.8`
+- Minecraft versions: `1.21.6` ~ `1.21.8`
 - Fabric Loader: `0.19.3`
 - Fabric API: `0.136.1+1.21.8`
 - Mod version: `3.8.4`
@@ -18,7 +18,7 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 ## Branching & Versioning
 
-Each supported Minecraft version lives on its own branch (e.g. `fabric/1.21.8`). Branches are **single-version skeletons**: the mixin layer contains only the injection points that apply to that version — no cross-version `compat*` subpackages, no legacy version-gating infrastructure. All mixins are flattened into `mixin/` (server) and `mixin/client/`.
+Each supported Minecraft version family lives on its own branch (e.g. `fabric/1.21.8`). Branches are **single-main-version skeletons**: built against the latest patch of the family, with `fabric.mod.json` declaring a version range covering the whole supported series (e.g. `1.21.6` through `1.21.8`). The mixin layer contains only the injection points that apply to that version family — no cross-version `compat*` subpackages, no legacy version-gating infrastructure. All mixins are flattened into `mixin/` (server) and `mixin/client/`.
 
 To port to a new Minecraft version, copy this skeleton to a new branch and adjust the mixin injection-point method descriptors for the new mappings. Version differences are isolated by branches rather than by in-tree compat code.
 
