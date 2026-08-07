@@ -169,7 +169,7 @@ public class DebugCommand
 		Vec3 pos = entity.position();
 		BlockPos.MutableBlockPos mut = new BlockPos.MutableBlockPos(pos.x, pos.y, pos.z).move(dir, distance).move(left, width / 2);
 		
-		Level w = entity.getCommandSenderWorld();
+		Level w = entity.level();
 		
 		for (EntityType<?> t : TYPES)
 		{

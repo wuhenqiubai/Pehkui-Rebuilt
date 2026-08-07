@@ -3,12 +3,13 @@ package virtuoel.pehkui.mixin;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,9 +17,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -106,9 +105,14 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	}
 	
 	@Inject(at = @At("HEAD"), method = "load")
-	private void pehkui$readNbt(CompoundTag tag, CallbackInfo info)
+	private void pehkui$readData(ValueInput view, CallbackInfo info)
 	{
-		pehkui_readScaleNbt(tag);
+		view.read(Pehkui.MOD_ID + ":scale_data_types", CompoundTag.CODEC).ifPresent(typeData ->
+		{
+			final CompoundTag tag = new CompoundTag();
+			tag.put(Pehkui.MOD_ID + ":scale_data_types", typeData);
+			pehkui_readScaleNbt(tag);
+		});
 	}
 	
 	@Override
@@ -138,10 +142,15 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		}
 	}
 	
-	@Inject(at = @At("HEAD"), method = "saveWithoutId")
-	private void pehkui$writeNbt(CompoundTag tag, CallbackInfoReturnable<CompoundTag> info)
+	@Inject(at = @At("RETURN"), method = "saveWithoutId")
+	private void pehkui$writeData(ValueOutput view, CallbackInfo info)
 	{
-		pehkui_writeScaleNbt(tag);
+		final CompoundTag tag = pehkui_writeScaleNbt(new CompoundTag());
+
+		if (tag.contains(Pehkui.MOD_ID + ":scale_data_types"))
+		{
+			view.store(Pehkui.MOD_ID + ":scale_data_types", CompoundTag.CODEC, tag.getCompoundOrEmpty(Pehkui.MOD_ID + ":scale_data_types"));
+		}
 	}
 	
 	@Override
@@ -199,7 +208,7 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		return original;
 	}
 
-	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"))
+	@ModifyReturnValue(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At("RETURN"))
 	private ItemEntity pehkui$dropStack(ItemEntity entity)
 	{
 		if (entity != null)

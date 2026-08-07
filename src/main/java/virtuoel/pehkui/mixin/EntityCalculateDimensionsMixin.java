@@ -24,7 +24,7 @@ public abstract class EntityCalculateDimensionsMixin
 	private void pehkui$calculateDimensions(CallbackInfo info, @Local(ordinal = 0) EntityDimensions previous, @Local(ordinal = 1) EntityDimensions current)
 	{
 		final Entity self = (Entity) (Object) this;
-		final Level world = self.getCommandSenderWorld();
+		final Level world = self.level();
 		
 		final float currentWidth = ReflectionUtils.getDimensionsWidth(current);
 		final float previousWidth = ReflectionUtils.getDimensionsWidth(previous);

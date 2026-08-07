@@ -126,7 +126,7 @@ public abstract class LivingEntityMixin
 			final int minZ = Mth.floor(bounds.minZ + halfUnscaledZLength);
 			final int maxZ = Mth.floor(bounds.maxZ - halfUnscaledZLength);
 
-			final Level world = self.getCommandSenderWorld();
+			final Level world = self.level();
 
 			for (final BlockPos pos : BlockPos.betweenClosed(minX, minY, minZ, maxX, minY, maxZ))
 			{

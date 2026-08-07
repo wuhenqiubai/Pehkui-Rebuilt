@@ -43,8 +43,8 @@ public abstract class InventoryScreenMixin
 		return scale != 1.0F ? ScaleUtils.divideClamped(value, scale) : value;
 	}
 
-	@Inject(method = "renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "HEAD"))
-	private static void pehkui$drawEntity$head(GuiGraphics drawContext, float x, float y, float size, Vector3f offset, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
+	@Inject(method = "renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;IIIIFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "HEAD"))
+	private static void pehkui$drawEntity$head(GuiGraphics drawContext, int i, int j, int k, int l, float f, Vector3f offset, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
 	{
 		final Map<ScaleType, ScaleData> scales = pehkui$SCALES.get();
 
@@ -72,8 +72,8 @@ public abstract class InventoryScreenMixin
 		entity.setBoundingBox(box);
 	}
 
-	@Inject(method = "renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "RETURN"))
-	private static void pehkui$drawEntity$return(GuiGraphics drawContext, float x, float y, float size, Vector3f offset, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
+	@Inject(method = "renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;IIIIFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "RETURN"))
+	private static void pehkui$drawEntity$return(GuiGraphics drawContext, int i, int j, int k, int l, float f, Vector3f offset, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
 	{
 		final Map<ScaleType, ScaleData> scales = pehkui$SCALES.get();
 
