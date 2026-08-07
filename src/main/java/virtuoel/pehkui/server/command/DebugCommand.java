@@ -27,6 +27,7 @@ import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -50,7 +51,7 @@ public class DebugCommand
 	{
 		final LiteralArgumentBuilder<CommandSourceStack> builder =
 			Commands.literal("scale")
-			.requires(source -> source.hasPermission(2));
+			.requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER));
 		
 		builder.then(Commands.literal("debug")
 			.then(ConfigSyncUtils.registerConfigCommands())

@@ -22,7 +22,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 public abstract class PlayerEntityMixin
 {
 	@Inject(at = @At("RETURN"), method = "drop(Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/entity/item/ItemEntity;")
-	private void pehkui$dropItem(ItemStack stack, boolean spread, CallbackInfoReturnable<ItemEntity> info)
+	private void pehkui$dropItem(ItemStack stack, boolean throwRandomly, CallbackInfoReturnable<ItemEntity> info)
 	{
 		final ItemEntity entity = info.getReturnValue();
 		
@@ -61,7 +61,7 @@ public abstract class PlayerEntityMixin
 		return original.call(obj, x, y, z);
 	}
 	
-	@ModifyExpressionValue(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = { @At(value = "CONSTANT", args = "floatValue=0.5F", ordinal = 1), @At(value = "CONSTANT", args = "floatValue=0.5F", ordinal = 2), @At(value = "CONSTANT", args = "floatValue=0.5F", ordinal = 3) })
+	@ModifyExpressionValue(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = { @At(value = "CONSTANT", args = "floatValue=0.5F", ordinal = 0), @At(value = "CONSTANT", args = "floatValue=0.5F", ordinal = 1) })
 	private float pehkui$attack$knockback(float value)
 	{
 		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
@@ -85,21 +85,24 @@ public abstract class PlayerEntityMixin
 		return scale != 1.0F ? original * scale : original;
 	}
 	
-	// NeoForge 1.21.1 将攻击范围从 vanilla 的 AABB.inflate 重构为 entityInteractionRange() 机制，注入点相应迁移
-	@ModifyExpressionValue(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;entityInteractionRange()D"))
-	private double pehkui$attack$expandRange(double value, @Local(argsOnly = true) Entity target)
+	@WrapOperation(method = "doSweepAttack(Lnet/minecraft/world/entity/Entity;FLnet/minecraft/world/damagesource/DamageSource;F)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$attack$expand(AABB obj, double x, double y, double z, Operation<AABB> original, @Local(argsOnly = true) Entity target)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale(target);
-
-		return widthScale != 1.0F ? value * widthScale : value;
-	}
-
-	@ModifyExpressionValue(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
-	private double pehkui$attack$knockback(double value)
-	{
-		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
-
-		return scale != 1.0F ? scale * value : value;
+		final float heightScale = ScaleUtils.getBoundingBoxHeightScale(target);
+		
+		if (widthScale != 1.0F)
+		{
+			x *= widthScale;
+			z *= widthScale;
+		}
+		
+		if (heightScale != 1.0F)
+		{
+			y *= heightScale;
+		}
+		
+		return original.call(obj, x, y, z);
 	}
 
 	@ModifyReturnValue(method = "getFlyingSpeed", at = @At(value = "RETURN", ordinal = 0))

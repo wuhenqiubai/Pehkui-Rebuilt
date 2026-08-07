@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import io.netty.buffer.ByteBuf;
 import virtuoel.pehkui.api.ScaleData;
@@ -17,7 +17,7 @@ public class ScalePacket
 {
 	public final int entityId;
 	public final Collection<ScaleData> scales = new ArrayList<>();
-	public final Map<ResourceLocation, CompoundTag> syncedScales = new HashMap<>();
+	public final Map<Identifier, CompoundTag> syncedScales = new HashMap<>();
 	
 	public ScalePacket(final Entity entity, final Collection<ScaleData> scales)
 	{
@@ -31,7 +31,7 @@ public class ScalePacket
 		
 		for (int i = buf.readInt(); i > 0; i--)
 		{
-			final ResourceLocation typeId = buf.readResourceLocation();
+			final Identifier typeId = buf.readIdentifier();
 			
 			final CompoundTag scaleData = ScaleUtils.buildScaleNbtFromPacketByteBuf(buf);
 			
@@ -46,7 +46,7 @@ public class ScalePacket
 		
 		for (final ScaleData s : scales)
 		{
-			buf.writeResourceLocation(ScaleRegistries.getId(ScaleRegistries.SCALE_TYPES, s.getScaleType()));
+			buf.writeIdentifier(ScaleRegistries.getId(ScaleRegistries.SCALE_TYPES, s.getScaleType()));
 			s.toPacket(buf);
 		}
 	}

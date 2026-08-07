@@ -25,28 +25,22 @@ public class GameRendererMixin
 {
 	@Shadow @Final @Mutable
 	Minecraft minecraft;
-
+	
 	@Unique
 	boolean pehkui$isBobbing = false;
-
-	@ModifyExpressionValue(method = "getProjectionMatrix(F)Lorg/joml/Matrix4f;", at = @At(value = "CONSTANT", args = "floatValue=0.05F"))
-	private float pehkui$getBasicProjectionMatrix$depth(float value)
-	{
-		return ScaleRenderUtils.modifyProjectionMatrixDepth(value, minecraft.getCameraEntity(), ScaleRenderUtils.getTickDelta(minecraft));
-	}
-
+	
 	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
 	private void pehkui$renderWorld$before(DeltaTracker tickCounter, CallbackInfo info)
 	{
 		pehkui$isBobbing = true;
 	}
-
+	
 	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"))
 	private void pehkui$renderWorld$after(DeltaTracker tickCounter, CallbackInfo info)
 	{
 		pehkui$isBobbing = false;
 	}
-
+	
 	@WrapOperation(method = "bobView", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V"))
 	private void pehkui$bobView$translate(PoseStack obj, float x, float y, float z, Operation<Void> original)
 	{
@@ -63,5 +57,11 @@ public class GameRendererMixin
 		}
 
 		original.call(obj, x, y, z);
+	}
+
+	@ModifyExpressionValue(method = "getProjectionMatrix(F)Lorg/joml/Matrix4f;", at = @At(value = "CONSTANT", args = "floatValue=0.05F"))
+	private float pehkui$getBasicProjectionMatrix$depth(float value)
+	{
+		return ScaleRenderUtils.modifyProjectionMatrixDepth(value, minecraft.getCameraEntity(), ScaleRenderUtils.getTickDelta(minecraft));
 	}
 }

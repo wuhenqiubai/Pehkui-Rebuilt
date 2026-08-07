@@ -1,13 +1,13 @@
 package virtuoel.pehkui.command;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
@@ -94,10 +94,10 @@ public class PehkuiEntitySelectorOptions
 		
 		final int i = reader.getReader().getCursor();
 		
-		final ResourceLocation id = ResourceLocation.read(reader.getReader());
+		final Identifier id = Identifier.read(reader.getReader());
 		final ScaleType scaleType = ScaleRegistries.getEntry(ScaleRegistries.SCALE_TYPES, id);
 		
-		final ResourceLocation defaultId = ScaleRegistries.getDefaultId(ScaleRegistries.SCALE_TYPES);
+		final Identifier defaultId = ScaleRegistries.getDefaultId(ScaleRegistries.SCALE_TYPES);
 		final ScaleType defaultType = ScaleRegistries.getEntry(ScaleRegistries.SCALE_TYPES, defaultId);
 		
 		if (scaleType == null || (scaleType == defaultType && !id.equals(defaultId)))

@@ -1,7 +1,7 @@
 package virtuoel.pehkui.api;
 
 import java.util.function.DoubleBinaryOperator;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
 
 public class ScaleOperations
@@ -19,7 +19,7 @@ public class ScaleOperations
 		return register(Pehkui.id(path), easing);
 	}
 	
-	private static DoubleBinaryOperator register(ResourceLocation id, DoubleBinaryOperator easing)
+	private static DoubleBinaryOperator register(Identifier id, DoubleBinaryOperator easing)
 	{
 		return ScaleRegistries.register(ScaleRegistries.SCALE_OPERATIONS, id, easing);
 	}

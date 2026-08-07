@@ -8,10 +8,10 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.ResourceLocationException;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.IdentifierException;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
@@ -27,13 +27,13 @@ public final class ReflectionUtils
 	public static final Class<?> LITERAL_TEXT = null;
 	public static final MethodHandle GET_FLYING_SPEED = null, SET_FLYING_SPEED = null, GET_MOUNTED_HEIGHT_OFFSET = null, SEND_PACKET = null, IS_DUMMY = null, GET_WIDTH = null, GET_HEIGHT = null, GET_HOLDING_ENTITY = null, CONSTRUCT_ID_FROM_STRING = null, CONSTRUCT_ID_FROM_STRINGS = null;
 
-	public static ResourceLocation constructIdentifier(final String id)
+	public static Identifier constructIdentifier(final String id)
 	{
 		try
 		{
-			return (ResourceLocation) CONSTRUCT_ID_FROM_STRING.invoke(id);
+			return (Identifier) CONSTRUCT_ID_FROM_STRING.invoke(id);
 		}
-		catch (final ResourceLocationException e)
+		catch (final IdentifierException e)
 		{
 			throw e;
 		}
@@ -42,16 +42,16 @@ public final class ReflectionUtils
 			// CONSTRUCT_ID_FROM_STRING 恒为 null，走官方 API
 		}
 
-		return ResourceLocation.parse(id);
+		return Identifier.parse(id);
 	}
 
-	public static ResourceLocation constructIdentifier(final String namespace, final String path)
+	public static Identifier constructIdentifier(final String namespace, final String path)
 	{
 		try
 		{
-			return (ResourceLocation) CONSTRUCT_ID_FROM_STRINGS.invoke(namespace, path);
+			return (Identifier) CONSTRUCT_ID_FROM_STRINGS.invoke(namespace, path);
 		}
-		catch (final ResourceLocationException e)
+		catch (final IdentifierException e)
 		{
 			throw e;
 		}
@@ -60,7 +60,7 @@ public final class ReflectionUtils
 			// CONSTRUCT_ID_FROM_STRINGS 恒为 null，走官方 API
 		}
 
-		return ResourceLocation.fromNamespaceAndPath(namespace, path);
+		return Identifier.fromNamespaceAndPath(namespace, path);
 	}
 
 	public static @Nullable Entity getHoldingEntity(final Entity leashed)

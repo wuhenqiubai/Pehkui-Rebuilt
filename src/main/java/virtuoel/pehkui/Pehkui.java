@@ -4,7 +4,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.service.MixinService;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -56,17 +56,17 @@ public class Pehkui
 		CommandUtils.registerCommands(event.getDispatcher());
 	}
 
-	public static ResourceLocation id(String path)
+	public static Identifier id(String path)
 	{
 		return ReflectionUtils.constructIdentifier(MOD_ID, path);
 	}
 
-	public static ResourceLocation id(String path, String... paths)
+	public static Identifier id(String path, String... paths)
 	{
 		return id(paths.length == 0 ? path : path + "/" + String.join("/", paths));
 	}
 
-	public static final ResourceLocation SCALE_PACKET = id("scale");
-	public static final ResourceLocation CONFIG_SYNC_PACKET = id("config_sync");
-	public static final ResourceLocation DEBUG_PACKET = id("debug");
+	public static final Identifier SCALE_PACKET = id("scale");
+	public static final Identifier CONFIG_SYNC_PACKET = id("config_sync");
+	public static final Identifier DEBUG_PACKET = id("debug");
 }

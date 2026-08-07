@@ -14,7 +14,7 @@ import virtuoel.pehkui.util.PehkuiEntityRenderStateExtensions;
 import virtuoel.pehkui.util.ScaleRenderUtils;
 
 @Mixin(EntityRenderDispatcher.class)
-public class EntityRenderDispatcherMixin
+public class EntityRenderManagerMixin
 {
 	@WrapOperation(method = "submit(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lnet/minecraft/client/renderer/state/CameraRenderState;DDDLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderer;submit(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V"))
 	private <S extends EntityRenderState> void pehkui$render(EntityRenderer<?, ? super S> renderer, S state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraRenderState, Operation<Void> original)
@@ -29,7 +29,7 @@ public class EntityRenderDispatcherMixin
 		matrices.scale(widthScale, heightScale, widthScale);
 		matrices.pushPose();
 
-		ScaleRenderUtils.saveLastRenderedEntity(pehkuiState.getEntityType());
+		ScaleRenderUtils.saveLastRenderedEntity(state.entityType);
 
 		try
 		{

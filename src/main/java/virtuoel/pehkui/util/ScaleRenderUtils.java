@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -215,7 +215,7 @@ public class ScaleRenderUtils
 		{
 			if (force || !loggedEntityTypes.contains(lastRenderedEntity))
 			{
-				final ResourceLocation id = EntityType.getKey(lastRenderedEntity);
+				final Identifier id = EntityType.getKey(lastRenderedEntity);
 
 				Pehkui.LOGGER.error("[{}]: Did something cancel entity rendering early? Matrix stack was not popped after rendering entity {}.", Pehkui.MOD_ID, id);
 
@@ -249,7 +249,7 @@ public class ScaleRenderUtils
 
 		if (lastRenderedEntity != null)
 		{
-			final ResourceLocation id = EntityType.getKey(lastRenderedEntity);
+			final Identifier id = EntityType.getKey(lastRenderedEntity);
 
 			section.setDetail("pehkui:debug/render/entity", id);
 		}

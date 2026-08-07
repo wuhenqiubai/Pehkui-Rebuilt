@@ -1,6 +1,6 @@
 package virtuoel.pehkui.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
 
 public class ScaleModifiers
@@ -19,7 +19,7 @@ public class ScaleModifiers
 		return register(Pehkui.id(path), scaleModifier);
 	}
 	
-	private static ScaleModifier register(ResourceLocation id, ScaleModifier scaleModifier)
+	private static ScaleModifier register(Identifier id, ScaleModifier scaleModifier)
 	{
 		return ScaleRegistries.register(
 			ScaleRegistries.SCALE_MODIFIERS,
@@ -28,7 +28,7 @@ public class ScaleModifiers
 		);
 	}
 	
-	private static ScaleModifier register(ResourceLocation id)
+	private static ScaleModifier register(Identifier id)
 	{
 		return register(id, new ScaleModifier());
 	}

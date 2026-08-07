@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.neoforged.fml.loading.FMLPaths;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import virtuoel.kanos_config.api.JsonConfigBuilder;
 import virtuoel.kanos_config.api.MutableConfigEntry;
 import virtuoel.pehkui.Pehkui;
@@ -76,11 +76,11 @@ public class PehkuiConfig
 			this.scaledProjectiles = builder.booleanConfig(synced("scaledProjectiles", "boolean"), true);
 			this.scaledExplosions = builder.booleanConfig(synced("scaledExplosions", "boolean"), true);
 			
-			ResourceLocation id;
+			Identifier id;
 			String namespace, path;
 			ScaleType type;
 			Supplier<Double> min, max;
-			for (final Map.Entry<ResourceLocation, ScaleType> entry : ScaleRegistries.SCALE_TYPES.entrySet())
+			for (final Map.Entry<Identifier, ScaleType> entry : ScaleRegistries.SCALE_TYPES.entrySet())
 			{
 				id = entry.getKey();
 				namespace = id.getNamespace();

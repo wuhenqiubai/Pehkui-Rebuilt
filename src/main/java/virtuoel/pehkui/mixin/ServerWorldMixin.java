@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -47,7 +47,7 @@ public class ServerWorldMixin
 			{
 				additional += additional.isEmpty() ? ", pehkui:scaled_entities: {[{" : "}, {";
 				
-				final ResourceLocation id = ScaleRegistries.getId(ScaleRegistries.SCALE_TYPES, maxType);
+				final Identifier id = ScaleRegistries.getId(ScaleRegistries.SCALE_TYPES, maxType);
 				
 				final String idString = Pehkui.MOD_ID.equals(id.getNamespace()) ? id.getPath() : id.toString();
 				

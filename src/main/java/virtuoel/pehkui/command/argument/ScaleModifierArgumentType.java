@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -28,7 +28,7 @@ public class ScaleModifierArgumentType implements ArgumentType<ScaleModifier>
 	@Override
 	public ScaleModifier parse(StringReader stringReader) throws CommandSyntaxException
 	{
-		final ResourceLocation identifier = ResourceLocation.read(stringReader);
+		final Identifier identifier = Identifier.read(stringReader);
 		return Optional.ofNullable(ScaleRegistries.getEntry(ScaleRegistries.SCALE_MODIFIERS, identifier)).orElseThrow(() -> INVALID_ENTRY_EXCEPTION.create(identifier));
 	}
 	

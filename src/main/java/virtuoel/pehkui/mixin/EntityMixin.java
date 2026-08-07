@@ -3,7 +3,7 @@ package virtuoel.pehkui.mixin;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MoverType;
@@ -129,7 +129,7 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 
 			String key;
 			ScaleData scaleData;
-			for (final Map.Entry<ResourceLocation, ScaleType> entry : ScaleRegistries.SCALE_TYPES.entrySet())
+			for (final Map.Entry<Identifier, ScaleType> entry : ScaleRegistries.SCALE_TYPES.entrySet())
 			{
 				key = entry.getKey().toString();
 

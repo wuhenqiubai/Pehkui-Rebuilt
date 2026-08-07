@@ -2,7 +2,7 @@ package virtuoel.pehkui.mixin;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +16,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 public abstract class ExplosiveProjectileEntityMixin
 {
 	@Shadow
-	protected abstract void assignDirectionalMovement(Vec3 velocity, double accelerationPower);
+	abstract void assignDirectionalMovement(Vec3 velocity, double accelerationPower);
 	
 	@Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/level/Level;)V")
 	private void pehkui$construct(EntityType<? extends AbstractHurtingProjectile> type, LivingEntity owner, Vec3 velocity, Level world, CallbackInfo info)

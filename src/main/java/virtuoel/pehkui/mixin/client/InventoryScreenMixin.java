@@ -7,17 +7,12 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 
@@ -26,28 +21,18 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
 import virtuoel.pehkui.util.ReflectionUtils;
-import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMixin
 {
 	@Unique private static final ThreadLocal<Map<ScaleType, ScaleData>> pehkui$SCALES = ThreadLocal.withInitial(Object2ObjectLinkedOpenHashMap::new);
 	@Unique private static final ScaleData pehkui$IDENTITY = ScaleData.Builder.create().build();
-
-	@WrapOperation(method = "renderEntityInInventoryFollowsAngle(Lnet/minecraft/client/gui/GuiGraphics;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getBbHeight()F"))
-	private static float pehkui$drawEntity$getHeight(LivingEntity obj, Operation<Float> original)
-	{
-		final float value = original.call(obj);
-		final float scale = ScaleUtils.getBoundingBoxHeightScale(obj);
-
-		return scale != 1.0F ? ScaleUtils.divideClamped(value, scale) : value;
-	}
-
-	@Inject(method = "renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;IIIIFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "HEAD"))
-	private static void pehkui$drawEntity$head(GuiGraphics drawContext, int i, int j, int k, int l, float f, Vector3f offset, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
+	
+	@Inject(method = "renderEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphics;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "HEAD"))
+	private static void pehkui$drawEntity$head(GuiGraphics drawContext, int left, int top, int right, int bottom, int size, float mouseX, float mouseY, float yOffset, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
 	{
 		final Map<ScaleType, ScaleData> scales = pehkui$SCALES.get();
-
+		
 		ScaleData data;
 		ScaleData cachedData;
 		for (final ScaleType type : ScaleRegistries.SCALE_TYPES.values())
@@ -57,9 +42,9 @@ public abstract class InventoryScreenMixin
 			cachedData.fromScale(data, false);
 			data.fromScale(pehkui$IDENTITY, false);
 		}
-
+		
 		bounds.set(entity.getBoundingBox());
-
+		
 		final EntityDimensions dims = entity.getDimensions(entity.getPose());
 		final Vec3 pos = entity.position();
 		final double r = ReflectionUtils.getDimensionsWidth(dims) / 2.0D;
@@ -68,12 +53,12 @@ public abstract class InventoryScreenMixin
 		final double yPos = pos.y;
 		final double zPos = pos.z;
 		final AABB box = new AABB(xPos - r, yPos, zPos - r, xPos + r, yPos + h, zPos + r);
-
+		
 		entity.setBoundingBox(box);
 	}
-
-	@Inject(method = "renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;IIIIFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "RETURN"))
-	private static void pehkui$drawEntity$return(GuiGraphics drawContext, int i, int j, int k, int l, float f, Vector3f offset, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
+	
+	@Inject(method = "renderEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphics;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "RETURN"))
+	private static void pehkui$drawEntity$return(GuiGraphics drawContext, int left, int top, int right, int bottom, int size, float mouseX, float mouseY, float yOffset, LivingEntity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
 	{
 		final Map<ScaleType, ScaleData> scales = pehkui$SCALES.get();
 

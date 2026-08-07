@@ -1,0 +1,20 @@
+package virtuoel.pehkui.mixin.client;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import net.minecraft.client.entity.ClientAvatarState;
+import virtuoel.pehkui.util.PehkuiClientPlayerLikeStateScale;
+
+@Mixin(ClientAvatarState.class)
+public class ClientPlayerLikeStateMixin
+{
+	@ModifyExpressionValue(method = "moveCloak", at = { @At(value = "CONSTANT", args = "doubleValue=10.0D"), @At(value = "CONSTANT", args = "doubleValue=-10.0D") })
+	private double pehkui$setPos$limits(double value)
+	{
+		final float scale = PehkuiClientPlayerLikeStateScale.getMotionScale();
+		
+		return scale != 1.0F ? scale * value : value;
+	}
+}

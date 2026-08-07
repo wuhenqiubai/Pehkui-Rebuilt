@@ -6,7 +6,7 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Collectors;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -22,7 +22,7 @@ import virtuoel.pehkui.util.ReflectionUtils;
 
 public class ScaleOperationArgumentType implements ArgumentType<ScaleOperationArgumentType.Operation>
 {
-	private static final Collection<String> EXAMPLES = ScaleRegistries.SCALE_OPERATIONS.keySet().stream().map(ResourceLocation::toString).collect(Collectors.toList());
+	private static final Collection<String> EXAMPLES = ScaleRegistries.SCALE_OPERATIONS.keySet().stream().map(Identifier::toString).collect(Collectors.toList());
 	private static final SimpleCommandExceptionType INVALID_OPERATION = OperationArgumentTypeAccessor.getInvalidOperationException();
 	private static final SimpleCommandExceptionType DIVISION_ZERO_EXCEPTION = OperationArgumentTypeAccessor.getDivisionZeroException();
 	

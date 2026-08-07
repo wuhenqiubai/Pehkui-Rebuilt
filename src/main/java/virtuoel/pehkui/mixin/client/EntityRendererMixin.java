@@ -20,6 +20,5 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState>
 
 		pehkuiState.setModelWidthScale(ScaleUtils.getModelWidthScale(entity, tickDelta));
 		pehkuiState.setModelHeightScale(ScaleUtils.getModelHeightScale(entity, tickDelta));
-		pehkuiState.setEntityType(entity.getType());
 	}
 }

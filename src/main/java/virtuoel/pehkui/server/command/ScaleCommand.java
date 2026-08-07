@@ -23,6 +23,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.NbtPathArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.server.commands.data.EntityDataAccessor;
 import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.api.PehkuiConfig;
@@ -51,7 +52,7 @@ public class ScaleCommand
 		
 		final LiteralArgumentBuilder<CommandSourceStack> builder =
 			Commands.literal("scale")
-			.requires(source -> source.hasPermission(2));
+			.requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER));
 		
 		registerOperation(builder);
 		registerRandomize(builder);

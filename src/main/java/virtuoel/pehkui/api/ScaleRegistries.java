@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.Supplier;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
@@ -15,43 +15,43 @@ import virtuoel.pehkui.Pehkui;
 
 public class ScaleRegistries
 {
-	private static final Map<Map<ResourceLocation, ?>, ResourceLocation> REGISTRY_IDS = new IdentityHashMap<>();
-	private static final Map<ResourceLocation, Supplier<?>> DEFAULT_ENTRIES = new LinkedHashMap<>();
-	private static final Map<ResourceLocation, ResourceLocation> DEFAULT_IDS = new LinkedHashMap<>();
+	private static final Map<Map<Identifier, ?>, Identifier> REGISTRY_IDS = new IdentityHashMap<>();
+	private static final Map<Identifier, Supplier<?>> DEFAULT_ENTRIES = new LinkedHashMap<>();
+	private static final Map<Identifier, Identifier> DEFAULT_IDS = new LinkedHashMap<>();
 	
-	public static final BiMap<ResourceLocation, ScaleType> SCALE_TYPES = create("scale_types", "invalid", () -> ScaleTypes.INVALID);
-	public static final BiMap<ResourceLocation, ScaleModifier> SCALE_MODIFIERS = create("scale_modifiers", "identity", () -> ScaleModifiers.IDENTITY);
-	public static final BiMap<ResourceLocation, Float2FloatFunction> SCALE_EASINGS = create("scale_easings", "linear", () -> ScaleEasings.LINEAR);
-	public static final BiMap<ResourceLocation, DoubleBinaryOperator> SCALE_OPERATIONS = create("scale_operations", "noop", () -> ScaleOperations.NOOP);
+	public static final BiMap<Identifier, ScaleType> SCALE_TYPES = create("scale_types", "invalid", () -> ScaleTypes.INVALID);
+	public static final BiMap<Identifier, ScaleModifier> SCALE_MODIFIERS = create("scale_modifiers", "identity", () -> ScaleModifiers.IDENTITY);
+	public static final BiMap<Identifier, Float2FloatFunction> SCALE_EASINGS = create("scale_easings", "linear", () -> ScaleEasings.LINEAR);
+	public static final BiMap<Identifier, DoubleBinaryOperator> SCALE_OPERATIONS = create("scale_operations", "noop", () -> ScaleOperations.NOOP);
 	
-	public static <E> E register(Map<ResourceLocation, E> registry, ResourceLocation id, E entry)
+	public static <E> E register(Map<Identifier, E> registry, Identifier id, E entry)
 	{
 		return registry.computeIfAbsent(id, i -> entry);
 	}
 	
-	public static <E> E getEntry(Map<ResourceLocation, E> registry, ResourceLocation id)
+	public static <E> E getEntry(Map<Identifier, E> registry, Identifier id)
 	{
 		return registry.get(id);
 	}
 	
-	public static <E> ResourceLocation getDefaultId(BiMap<ResourceLocation, E> registry)
+	public static <E> Identifier getDefaultId(BiMap<Identifier, E> registry)
 	{
 		return DEFAULT_IDS.get(REGISTRY_IDS.get(registry));
 	}
 	
-	public static <E> ResourceLocation getId(BiMap<ResourceLocation, E> registry, E entry)
+	public static <E> Identifier getId(BiMap<Identifier, E> registry, E entry)
 	{
 		return registry.inverse().get(entry);
 	}
 	
-	private static <E> BiMap<ResourceLocation, E> create(String id, String defaultPath, Supplier<E> defaultEntry)
+	private static <E> BiMap<Identifier, E> create(String id, String defaultPath, Supplier<E> defaultEntry)
 	{
 		return create(Pehkui.id(id), Pehkui.id(defaultPath), defaultEntry);
 	}
 	
-	private static <E> BiMap<ResourceLocation, E> create(ResourceLocation id, ResourceLocation defaultId, Supplier<E> defaultEntry)
+	private static <E> BiMap<Identifier, E> create(Identifier id, Identifier defaultId, Supplier<E> defaultEntry)
 	{
-		final BiMap<ResourceLocation, E> registry = Maps.synchronizedBiMap(HashBiMap.create());
+		final BiMap<Identifier, E> registry = Maps.synchronizedBiMap(HashBiMap.create());
 		REGISTRY_IDS.put(registry, id);
 		DEFAULT_IDS.put(id, defaultId);
 		DEFAULT_ENTRIES.put(id, defaultEntry);

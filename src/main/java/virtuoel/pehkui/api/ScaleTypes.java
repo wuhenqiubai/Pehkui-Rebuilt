@@ -1,6 +1,6 @@
 package virtuoel.pehkui.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
 
 public class ScaleTypes
@@ -38,7 +38,7 @@ public class ScaleTypes
 	public static final ScaleType PROJECTILES = register("projectiles", ScaleModifiers.BASE_MULTIPLIER);
 	public static final ScaleType EXPLOSIONS = register("explosions", ScaleModifiers.BASE_MULTIPLIER);
 	
-	private static ScaleType register(ResourceLocation id, ScaleType.Builder builder)
+	private static ScaleType register(Identifier id, ScaleType.Builder builder)
 	{
 		return ScaleRegistries.register(
 			ScaleRegistries.SCALE_TYPES,
@@ -47,7 +47,7 @@ public class ScaleTypes
 		);
 	}
 	
-	private static ScaleType register(ResourceLocation id)
+	private static ScaleType register(Identifier id)
 	{
 		final ScaleType.Builder builder = ScaleType.Builder.create();
 		

@@ -1,7 +1,5 @@
 package virtuoel.pehkui.util;
 
-import net.minecraft.world.entity.EntityType;
-
 public interface PehkuiEntityRenderStateExtensions
 {
 	float getModelWidthScale();
@@ -11,8 +9,4 @@ public interface PehkuiEntityRenderStateExtensions
 	float getModelHeightScale();
 
 	void setModelHeightScale(float scale);
-
-	EntityType<?> getEntityType();
-
-	void setEntityType(EntityType<?> entityType);
 }

@@ -11,14 +11,14 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import virtuoel.pehkui.Pehkui;
@@ -57,11 +57,11 @@ public class CommandUtils
 	@FunctionalInterface
 	public interface ArgumentTypeConsumer
 	{
-		<T extends ArgumentType<?>> void register(ResourceLocation id, Class<T> argClass, Supplier<T> supplier);
+		<T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T extends ArgumentType<?>> void registerConstantArgumentType(ResourceLocation id, Class<? extends T> argClass, Supplier<T> supplier)
+	public static <T extends ArgumentType<?>> void registerConstantArgumentType(Identifier id, Class<? extends T> argClass, Supplier<T> supplier)
 	{
 		final ArgumentTypeInfo info = SingletonArgumentInfo.contextFree(supplier);
 		COMMAND_ARGUMENT_TYPES.register(id.getPath(), () -> info);
@@ -79,7 +79,7 @@ public class CommandUtils
 		return range.matches((double) value);
 	}
 
-	public static CompletableFuture<Suggestions> suggestIdentifiersIgnoringNamespace(String namespace, Iterable<ResourceLocation> candidates, SuggestionsBuilder builder)
+	public static CompletableFuture<Suggestions> suggestIdentifiersIgnoringNamespace(String namespace, Iterable<Identifier> candidates, SuggestionsBuilder builder)
 	{
 		forEachMatchingIgnoringNamespace(
 			namespace,
@@ -92,11 +92,11 @@ public class CommandUtils
 		return builder.buildFuture();
 	}
 
-	public static <T> void forEachMatchingIgnoringNamespace(String namespace, Iterable<T> candidates, String string, Function<T, ResourceLocation> idFunc, Consumer<T> action)
+	public static <T> void forEachMatchingIgnoringNamespace(String namespace, Iterable<T> candidates, String string, Function<T, Identifier> idFunc, Consumer<T> action)
 	{
 		final boolean hasColon = string.indexOf(':') > -1;
 
-		ResourceLocation id;
+		Identifier id;
 		for (final T object : candidates)
 		{
 			id = idFunc.apply(object);

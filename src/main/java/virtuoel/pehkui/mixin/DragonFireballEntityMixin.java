@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.projectile.DragonFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball;
 import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(DragonFireball.class)

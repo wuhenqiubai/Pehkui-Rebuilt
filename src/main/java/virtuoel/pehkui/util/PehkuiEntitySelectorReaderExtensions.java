@@ -1,6 +1,6 @@
 package virtuoel.pehkui.util;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import virtuoel.pehkui.api.ScaleType;
 
 public interface PehkuiEntitySelectorReaderExtensions

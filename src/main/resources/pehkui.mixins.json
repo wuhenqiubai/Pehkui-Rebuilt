@@ -38,6 +38,7 @@
 		"ProjectileUtilMixin",
 		"ServerPlayNetworkHandlerMixin",
 		"StepHeightMixin",
+		"ThrownEntityMixin",
 		"ThreadSafeScaledEntityMixin",
 		"ThreadUnsafeScaledEntityMixin",
 		"TrackTargetGoalMixin",
@@ -71,7 +72,9 @@
 	"client": [
 		"client.ClientPlayerEntityMixin",
 		"client.ClientWorldMixin",
-		"client.EntityRenderDispatcherMixin",
+		"client.EntityRenderManagerMixin",
+		"client.AbstractClientPlayerEntityMixin",
+		"client.ClientPlayerLikeStateMixin",
 		"client.GameRendererMixin",
 		"client.InventoryScreenMixin",
 		"client.ItemEntityMixin",

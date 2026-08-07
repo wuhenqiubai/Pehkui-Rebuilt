@@ -1,7 +1,7 @@
 package virtuoel.pehkui.api;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
 
 public final class ScaleEasings
@@ -201,7 +201,7 @@ public final class ScaleEasings
 		return register(Pehkui.id(path), easing);
 	}
 	
-	private static Float2FloatFunction register(ResourceLocation id, Float2FloatFunction easing)
+	private static Float2FloatFunction register(Identifier id, Float2FloatFunction easing)
 	{
 		return ScaleRegistries.register(ScaleRegistries.SCALE_EASINGS, id, easing);
 	}

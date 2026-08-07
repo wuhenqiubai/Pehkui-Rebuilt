@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -29,7 +29,7 @@ public class ScaleEasingArgumentType implements ArgumentType<Float2FloatFunction
 	@Override
 	public Float2FloatFunction parse(StringReader stringReader) throws CommandSyntaxException
 	{
-		final ResourceLocation identifier = ResourceLocation.read(stringReader);
+		final Identifier identifier = Identifier.read(stringReader);
 		return Optional.ofNullable(ScaleRegistries.getEntry(ScaleRegistries.SCALE_EASINGS, identifier)).orElseThrow(() -> INVALID_ENTRY_EXCEPTION.create(identifier));
 	}
 	

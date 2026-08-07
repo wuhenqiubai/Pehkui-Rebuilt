@@ -1,7 +1,6 @@
 package virtuoel.pehkui.mixin.client;
 
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.world.entity.EntityType;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,9 +21,6 @@ public class EntityRenderStateMixin
 	@Unique
 	private float pehkui$modelHeightScale = 1.0F;
 
-	@Unique
-	private EntityType<?> pehkui$entityType = null;
-
 	public float pehkui$getModelWidthScale()
 	{
 		return pehkui$modelWidthScale;
@@ -43,15 +39,5 @@ public class EntityRenderStateMixin
 	public void pehkui$setModelHeightScale(float scale)
 	{
 		pehkui$modelHeightScale = scale;
-	}
-
-	public EntityType<?> pehkui$getEntityType()
-	{
-		return pehkui$entityType;
-	}
-
-	public void pehkui$setEntityType(EntityType<?> entityType)
-	{
-		pehkui$entityType = entityType;
 	}
 }
