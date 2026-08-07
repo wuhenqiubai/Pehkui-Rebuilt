@@ -7,15 +7,15 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.projectile.AbstractThrownPotion;
+import net.minecraft.world.entity.projectile.ThrownSplashPotion;
 import net.minecraft.world.phys.AABB;
 import virtuoel.pehkui.util.ScaleUtils;
 
-@Mixin(AbstractThrownPotion.class)
-public class PotionEntityMixin
+@Mixin(ThrownSplashPotion.class)
+public class SplashPotionEntityMixin
 {
-	@WrapOperation(method = "onHitAsWater", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
-	private AABB pehkui$applyWater$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
+	@WrapOperation(method = "onHitAsPotion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+	private AABB pehkui$applySplashPotion$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
@@ -34,11 +34,19 @@ public class PotionEntityMixin
 		return original.call(obj, x, y, z);
 	}
 
-	@ModifyExpressionValue(method = "onHitAsWater", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
-	private double pehkui$applyWater$maxDist(double value)
+	@ModifyExpressionValue(method = "onHitAsPotion", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
+	private double pehkui$applySplashPotion$maxSquaredDist(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 
 		return scale != 1.0F ? scale * scale * value : value;
+	}
+
+	@ModifyExpressionValue(method = "onHitAsPotion", at = @At(value = "CONSTANT", args = "doubleValue=4.0D", ordinal = 0))
+	private double pehkui$applySplashPotion$maxDist(double value)
+	{
+		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
+
+		return scale != 1.0F ? scale * value : value;
 	}
 }

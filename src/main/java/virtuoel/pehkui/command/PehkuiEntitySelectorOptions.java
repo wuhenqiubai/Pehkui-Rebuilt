@@ -61,7 +61,7 @@ public class PehkuiEntitySelectorOptions
 			r ->
 			{
 				final boolean negated = r.shouldInvertValue();
-				final CompoundTag parsed = (new TagParser(r.getReader())).readStruct();
+				final CompoundTag parsed = TagParser.parseCompoundAsArgument(r.getReader());
 				r.addPredicate(entity ->
 				{
 					final CompoundTag nbt = ((PehkuiEntityExtensions) entity).pehkui_writeScaleNbt(new CompoundTag());

@@ -16,8 +16,8 @@ import virtuoel.pehkui.util.ScaleRenderUtils;
 @Mixin(EntityRenderDispatcher.class)
 public class EntityRenderDispatcherMixin
 {
-	@WrapOperation(method = "render(Lnet/minecraft/world/entity/Entity;DDDFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/EntityRenderer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderer;render(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"))
-	private <E extends Entity, S extends EntityRenderState> void pehkui$render(EntityRenderer<?, ? super S> renderer, S state, PoseStack matrices, MultiBufferSource provider, int light, Operation<Void> original)
+	@WrapOperation(method = "render(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;DDDLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/EntityRenderer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderer;render(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V"))
+	private <S extends EntityRenderState> void pehkui$render(EntityRenderer<?, ? super S> renderer, S state, PoseStack matrices, MultiBufferSource provider, int light, Operation<Void> original)
 	{
 		final PehkuiEntityRenderStateExtensions pehkuiState = (PehkuiEntityRenderStateExtensions) state;
 		final float widthScale = pehkuiState.getModelWidthScale();
