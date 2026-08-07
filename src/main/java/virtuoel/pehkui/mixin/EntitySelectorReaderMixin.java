@@ -1,7 +1,7 @@
 package virtuoel.pehkui.mixin;
 
 import java.util.function.Predicate;
-import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.predicates.MinMaxBounds;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;

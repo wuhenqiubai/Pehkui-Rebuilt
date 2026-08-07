@@ -1,7 +1,7 @@
 package virtuoel.pehkui.command;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.predicates.MinMaxBounds;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
