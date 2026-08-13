@@ -42,6 +42,10 @@
 		"client":
 		[
 			"virtuoel.pehkui.PehkuiClient"
+		],
+		"modmenu":
+		[
+			"virtuoel.pehkui.config.ConfigIntegration"
 		]
 	},
 	"mixins":

@@ -4,6 +4,7 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -30,6 +31,8 @@ import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
+import virtuoel.pehkui.data.ScaleRule;
+import virtuoel.pehkui.data.ScaleRules;
 import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -56,7 +59,8 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	private boolean pehkui_shouldSyncScales = false;
 	private boolean pehkui_shouldIgnoreScaleNbt = false;
 	private ScaleData[] pehkui_scaleCache = null;
-	
+	private ScaleType pehkui_ruleScaleType = null;
+
 	@Override
 	public ScaleData pehkui_constructScaleData(ScaleType type)
 	{
@@ -187,6 +191,26 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		{
 			ScaleUtils.tickScale(pehkui_getScaleData(type));
 		}
+
+		final Entity self = (Entity) (Object) this;
+		final int interval = PehkuiConfig.COMMON.scaleRuleCheckInterval.get();
+
+		if (interval > 0 && PehkuiConfig.COMMON.enableScaleRules.get() && !ScaleRules.isEmpty() && self.level() instanceof ServerLevel && self.tickCount % interval == 0)
+		{
+			final ServerLevel world = (ServerLevel) self.level();
+			final ScaleRule rule = ScaleRules.getApplicableRule(self, world);
+
+			if (rule != null)
+			{
+				rule.getScaleType().getScaleData(self).setScale(rule.getValue());
+				pehkui_setRuleScaleType(rule.getScaleType());
+			}
+			else if (pehkui_getRuleScaleType() != null)
+			{
+				pehkui_getRuleScaleType().getScaleData(self).resetScale();
+				pehkui_setRuleScaleType(null);
+			}
+		}
 	}
 	
 	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
@@ -291,6 +315,18 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	public void pehkui_setOnGround(boolean onGround)
 	{
 		this.onGround = onGround;
+	}
+
+	@Override
+	public ScaleType pehkui_getRuleScaleType()
+	{
+		return pehkui_ruleScaleType;
+	}
+
+	@Override
+	public void pehkui_setRuleScaleType(ScaleType type)
+	{
+		pehkui_ruleScaleType = type;
 	}
 
 	@ModifyArg(method = "checkFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;fallOn(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;D)V"))

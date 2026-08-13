@@ -45,6 +45,8 @@
 	"pehkui.configgui.accurateNetherPortals": "Whether the collision of Nether Portals should be adjusted to fit the selection box",
 	"pehkui.configgui.enableCommands": "Whether commands such as /scale should be enabled",
 	"pehkui.configgui.enableDebugCommands": "Whether internal debugging commands should be enabled",
+	"pehkui.configgui.enableScaleRules": "Whether datapack scale rules should be enabled",
+	"pehkui.configgui.scaleRuleCheckInterval": "How often (in ticks) entities should be checked against datapack scale rules",
 	
 	"pehkui.configgui.scale_limits.base.minimum": "Minimum value for the scale type pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Maximum value for the scale type pehkui:base",
