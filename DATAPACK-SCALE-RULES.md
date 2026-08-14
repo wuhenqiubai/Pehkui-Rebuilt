@@ -2,7 +2,7 @@
 
 Pehkui Rebuilt lets **datapacks** define scale rules: entities matching a set of conditions get their scale types set to configured values automatically. This is useful for servers and modpacks that want to resize certain mobs without writing code.
 
-> **Version**: this feature requires Pehkui Rebuilt **3.8.4 or newer** — older versions do not load `pehkui_scale_rules` files.
+> **Version**: this feature requires Pehkui Rebuilt **3.8.5 or newer** — older versions do not load `pehkui_scale_rules` files.
 
 ## Getting Started
 
@@ -22,8 +22,17 @@ A datapack is a folder inside the world's `datapacks/` directory (singleplayer) 
 
 `pack.mcmeta` minimum content:
 
+The pack format can be found in the [Minecraft Wiki - Pack format section](https://minecraft.wiki/w/Pack_format#Data_pack_format_history)
+
 ```json
-{ "pack": { "pack_format": 61, "description": "My scale rules" } }
+{
+	"pack": { 
+		"pack_format": 107, 
+		"description": "My scale rules",
+		"min_format": 48,
+		"max_format": 107
+	}
+}
 ```
 
 ### 2. Understand namespaces
@@ -38,24 +47,28 @@ After creating or editing a rule file, run **`/reload`** in-game (requires opera
 
 ```json
 {
-  "name": "Small Zombies",                          // optional, display name
-  "description": "Zombies are 50% width and height",// optional, description
-  "conditions": { "entity_type": ["minecraft:zombie"] },  // required, what to match
-  "scales": { "pehkui:width": 0.5, "pehkui:height": 0.5 }, // required, what to set
-  "priority": 10,                                   // optional, default 0
-  "fabric:load_conditions": [ ... ]                 // optional, mod-load gating
+	"name": "Small Zombies",                          // optional, display name
+	"description": "Zombies are 50% width and height",// optional, description
+	"conditions": {
+	  "entity_type": ["minecraft:zombie"]  // required, what to match
+	}, 
+	"scales": {
+	  "pehkui:width": 0.5, "pehkui:height": 0.5 // required, what to set
+	},
+	"priority": 10,                                   // optional, default 0
+	"fabric:load_conditions": [ ... ]                 // optional, mod-load gating
 }
 ```
 
-| Field | Required | Description |
-|---|---|---|
-| `name` | no | Display name of the rule (used for logging/tooltips). |
-| `description` | no | Longer description of the rule. |
-| `conditions` | **yes** | An [EntityPredicate](#conditions) matching entities this rule applies to. |
-| `scales` | **yes*** | Map of `pehkui:<scale_type>` to the value to set. |
-| `scale_type` + `value` | *alt* | Legacy single-scale form: `"scale_type": "pehkui:width", "value": 0.5`. |
-| `priority` | no | Higher priority rules win when several match the same entity. Default `0`. |
-| `fabric:load_conditions` | no | Fabric resource conditions; the rule is skipped if not met. |
+| Field                    | Required | Description                                                                |
+|--------------------------|----------|----------------------------------------------------------------------------|
+| `name`                   | no       | Display name of the rule (used for logging/tooltips).                      |
+| `description`            | no       | Longer description of the rule.                                            |
+| `conditions`             | **yes**  | An [EntityPredicate](#conditions) matching entities this rule applies to.  |
+| `scales`                 | **yes*** | Map of `pehkui:<scale_type>` to the value to set.                          |
+| `scale_type` + `value`   | *alt*    | Legacy single-scale form: `"scale_type": "pehkui:width", "value": 0.5`.    |
+| `priority`               | no       | Higher priority rules win when several match the same entity. Default `0`. |
+| `fabric:load_conditions` | no       | Fabric resource conditions; the rule is skipped if not met.                |
 
 \* Either `scales` (multi) or the legacy `scale_type` + `value` pair must be present. A rule with no valid scales is rejected and skipped (see [Troubleshooting](#troubleshooting)).
 
@@ -63,16 +76,16 @@ After creating or editing a rule file, run **`/reload`** in-game (requires opera
 
 `conditions` is a Minecraft **EntityPredicate** (the same object used by advancements). It accepts a number of sub-predicates keyed by name:
 
-| Key | Value | Matches |
-|---|---|---|
-| `entity_type` | id, `#tag`, or array | A specific type (`"minecraft:zombie"`), a tag (`"#minecraft:skeletons"`), or one of a list. |
-| `entity_tags` | `{ "any_of": [...], "all_of": [...], "none_of": [...] }` | Entities in the given tags. |
-| `team` | string | Entities on a scoreboard team. |
-| `gamemode` | object | Player gamemode. |
-| `level` | object | Player experience level. |
-| `scores` | object | Scoreboard scores. |
-| `predicate` | id | Another datapack predicate id. |
-| `flags` / `effects` / `equipment` / `nbt` / `distance` ... | ... | Other vanilla predicate fields. |
+| Key                                                        | Value                                                    | Matches                                                                                     |
+|------------------------------------------------------------|----------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| `entity_type`                                              | id, `#tag`, or array                                     | A specific type (`"minecraft:zombie"`), a tag (`"#minecraft:skeletons"`), or one of a list. |
+| `entity_tags`                                              | `{ "any_of": [...], "all_of": [...], "none_of": [...] }` | Entities in the given tags.                                                                 |
+| `team`                                                     | string                                                   | Entities on a scoreboard team.                                                              |
+| `gamemode`                                                 | object                                                   | Player gamemode.                                                                            |
+| `level`                                                    | object                                                   | Player experience level.                                                                    |
+| `scores`                                                   | object                                                   | Scoreboard scores.                                                                          |
+| `predicate`                                                | id                                                       | Another datapack predicate id.                                                              |
+| `flags` / `effects` / `equipment` / `nbt` / `distance` ... | ...                                                      | Other vanilla predicate fields.                                                             |
 
 ### Examples
 
@@ -89,20 +102,23 @@ After creating or editing a rule file, run **`/reload`** in-game (requires opera
 
 Fabric resource conditions gate whether a rule is loaded. Common ones:
 
-| Condition | Meaning |
-|---|---|
-| `all_mods_loaded` | True if **all** listed mods are installed. |
-| `any_mods_loaded` | True if **at least one** listed mod is installed. |
-| `tags_populated` | True if the given tags are non-empty. |
-| `features_enabled` | True if the given features are enabled. |
-| `registry_contains` | True if the given registry entries exist. |
+| Condition           | Meaning                                           |
+|---------------------|---------------------------------------------------|
+| `all_mods_loaded`   | True if **all** listed mods are installed.        |
+| `any_mods_loaded`   | True if **at least one** listed mod is installed. |
+| `tags_populated`    | True if the given tags are non-empty.             |
+| `features_enabled`  | True if the given features are enabled.           |
+| `registry_contains` | True if the given registry entries exist.         |
 
 ```json
 {
   "conditions": { "entity_type": ["minecraft:zombie"] },
   "scales": { "pehkui:width": 0.5 },
   "fabric:load_conditions": [
-    { "condition": "fabric:any_mods_loaded", "values": ["some_mob_mod", "another_mod"] }
+    { 
+		"condition": "fabric:any_mods_loaded", 
+		"values": ["some_mob_mod", "another_mod"]
+	}
   ]
 }
 ```
@@ -111,22 +127,22 @@ Fabric resource conditions gate whether a rule is loaded. Common ones:
 
 `scales` keys are Pehkui scale type ids. Built-in types (all under the `pehkui:` namespace):
 
-| Scale type | What it scales |
-|---|---|
-| `pehkui:base` | **Root scale** — most other types derive from it |
-| `pehkui:width` / `pehkui:height` | Entity width / height |
-| `pehkui:eye_height` | Camera / eye height |
-| `pehkui:hitbox_width` / `pehkui:hitbox_height` | Actual collision box |
-| `pehkui:model_width` / `pehkui:model_height` | Rendered model size |
-| `pehkui:interaction_box_width` / `pehkui:interaction_box_height` | Interaction box |
-| `pehkui:motion` | Movement speed |
-| `pehkui:reach` / `pehkui:block_reach` / `pehkui:entity_reach` | Interaction distance |
-| `pehkui:attack` / `pehkui:defense` / `pehkui:health` | Combat stats |
-| `pehkui:jump_height` / `pehkui:step_height` / `pehkui:view_bobbing` | Movement feel |
-| `pehkui:projectiles` / `pehkui:explosions` | Projectile / explosion effects |
-| `pehkui:drops` / `pehkui:held_item` | Drops / held item rendering |
-| `pehkui:knockback` / `pehkui:attack_speed` / `pehkui:mining_speed` / `pehkui:flight` | Misc |
-| `pehkui:visibility` | Despawn/visibility radius |
+| Scale type                                                                           | What it scales                                   |
+|--------------------------------------------------------------------------------------|--------------------------------------------------|
+| `pehkui:base`                                                                        | **Root scale** — most other types derive from it |
+| `pehkui:width` / `pehkui:height`                                                     | Entity width / height                            |
+| `pehkui:eye_height`                                                                  | Camera / eye height                              |
+| `pehkui:hitbox_width` / `pehkui:hitbox_height`                                       | Actual collision box                             |
+| `pehkui:model_width` / `pehkui:model_height`                                         | Rendered model size                              |
+| `pehkui:interaction_box_width` / `pehkui:interaction_box_height`                     | Interaction box                                  |
+| `pehkui:motion`                                                                      | Movement speed                                   |
+| `pehkui:reach` / `pehkui:block_reach` / `pehkui:entity_reach`                        | Interaction distance                             |
+| `pehkui:attack` / `pehkui:defense` / `pehkui:health`                                 | Combat stats                                     |
+| `pehkui:jump_height` / `pehkui:step_height` / `pehkui:view_bobbing`                  | Movement feel                                    |
+| `pehkui:projectiles` / `pehkui:explosions`                                           | Projectile / explosion effects                   |
+| `pehkui:drops` / `pehkui:held_item`                                                  | Drops / held item rendering                      |
+| `pehkui:knockback` / `pehkui:attack_speed` / `pehkui:mining_speed` / `pehkui:flight` | Misc                                             |
+| `pehkui:visibility`                                                                  | Despawn/visibility radius                        |
 
 ### `pehkui:base` explained
 
@@ -173,12 +189,12 @@ All knobs live in `config/pehkui/config.json` (editable in-game via **ModMenu �
 }
 ```
 
-| Key | Default | Description |
-|---|---|---|
-| `enableScaleRules` | `true` | Master switch for datapack scale rules. |
-| `scaleRuleCheckInterval` | `10` | Ticks between rule checks. Lower = more responsive but more server overhead. |
-| `scaleRuleMaxScale` | `256` | Maximum value applied by rules. |
-| `scaleRulesAffectPlayers` | `false` | Whether rules may apply to players. |
+| Key                       | Default | Description                                                                  |
+|---------------------------|---------|------------------------------------------------------------------------------|
+| `enableScaleRules`        | `true`  | Master switch for datapack scale rules.                                      |
+| `scaleRuleCheckInterval`  | `10`    | Ticks between rule checks. Lower = more responsive but more server overhead. |
+| `scaleRuleMaxScale`       | `256`   | Maximum value applied by rules.                                              |
+| `scaleRulesAffectPlayers` | `false` | Whether rules may apply to players.                                          |
 
 > **Caution**: raising `scaleRuleMaxScale` to extreme values can produce giant collision boxes that lag or crash the server. Keep it sane unless you know what you are doing.
 
