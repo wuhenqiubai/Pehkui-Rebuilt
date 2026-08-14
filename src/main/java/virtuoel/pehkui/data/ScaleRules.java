@@ -49,7 +49,7 @@ public final class ScaleRules
 	private static volatile HolderLookup.Provider registryLookup = null;
 	private static Map<EntityType<?>, List<ScaleRule>> typeIndex = Map.of();
 	private static List<ScaleRule> generalRules = List.of();
-	private static List<JsonElement> pendingJson = List.of();
+	private static Map<Identifier, JsonElement> pendingJson = Map.of();
 
 	/**
 	 * Called once the server has started and a registry lookup is available.
@@ -62,7 +62,7 @@ public final class ScaleRules
 		if (!pendingJson.isEmpty())
 		{
 			reload(pendingJson);
-			pendingJson = List.of();
+			pendingJson = Map.of();
 		}
 	}
 
@@ -71,7 +71,7 @@ public final class ScaleRules
 	 * rules are decoded immediately, otherwise the raw JSON is kept until
 	 * {@link #setRegistryLookup} is called.
 	 */
-	public static void reload(List<JsonElement> rawJson)
+	public static void reload(Map<Identifier, JsonElement> rawJson)
 	{
 		if (registryLookup == null)
 		{
@@ -83,19 +83,22 @@ public final class ScaleRules
 		buildIndex(parsed);
 	}
 
-	private static List<ScaleRule> parse(List<JsonElement> rawJson)
+	private static List<ScaleRule> parse(Map<Identifier, JsonElement> rawJson)
 	{
 		final List<ScaleRule> parsed = new ArrayList<>();
 
 		final RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registryLookup);
 
-		for (final JsonElement element : rawJson)
+		for (final Map.Entry<Identifier, JsonElement> raw : rawJson.entrySet())
 		{
+			final Identifier fileId = raw.getKey();
+			final JsonElement element = raw.getValue();
+
 			try
 			{
 				if (!element.isJsonObject())
 				{
-					Pehkui.LOGGER.error("Failed to parse pehkui scale rule: root must be a JSON object, got {}", element);
+					Pehkui.LOGGER.error("Expected a JSON object at root of '{}'.", fileId);
 					continue;
 				}
 
@@ -104,22 +107,22 @@ public final class ScaleRules
 
 				if (conditionsElement == null)
 				{
-					Pehkui.LOGGER.error("Failed to parse pehkui scale rule: missing 'conditions' field in {}", element);
+					Pehkui.LOGGER.error("Missing required 'conditions' field in '{}'. Expected an EntityPredicate object (e.g. {{\"entity_type\": [\"minecraft:zombie\"]}}).", fileId);
 					continue;
 				}
 
 				if (!resourceConditionsMatch(json, ops))
 				{
-					Pehkui.LOGGER.info("Skipping pehkui scale rule {} due to fabric:load_conditions", element);
+					Pehkui.LOGGER.info("Skipping '{}' due to fabric:load_conditions.", fileId);
 					continue;
 				}
 
 				final EntityPredicate predicate = EntityPredicate.CODEC.parse(ops, conditionsElement).getOrThrow();
-				final Map<ScaleType, Float> scales = parseScales(json);
+				final Map<ScaleType, Float> scales = parseScales(json, fileId);
 
 				if (scales.isEmpty())
 				{
-					Pehkui.LOGGER.error("Failed to parse pehkui scale rule: no valid scales specified in {}", element);
+					Pehkui.LOGGER.error("No valid scales in '{}'. Provide a 'scales' map (e.g. {{\"pehkui:width\": 0.5}}) or the legacy 'scale_type' + 'value' pair.", fileId);
 					continue;
 				}
 
@@ -132,7 +135,7 @@ public final class ScaleRules
 			}
 			catch (Exception e)
 			{
-				Pehkui.LOGGER.error("Failed to parse pehkui scale rule: {}", element, e);
+				Pehkui.LOGGER.error("Failed to parse pehkui scale rule '{}': {}", fileId, element, e);
 			}
 		}
 
@@ -244,7 +247,7 @@ public final class ScaleRules
 		};
 	}
 
-	private static Map<ScaleType, Float> parseScales(JsonObject json)
+	private static Map<ScaleType, Float> parseScales(JsonObject json, Identifier fileId)
 	{
 		final Map<ScaleType, Float> scales = new LinkedHashMap<>();
 		final float maxScale = (float) (double) PehkuiConfig.COMMON.scaleRuleMaxScale.get();
@@ -257,31 +260,38 @@ public final class ScaleRules
 			{
 				final ScaleType scaleType = getScaleType(entry.getKey());
 
-				if (scaleType != null)
+				if (scaleType == null)
 				{
-					final float raw = entry.getValue().getAsFloat();
-
-					if (!Float.isFinite(raw) || raw <= 0)
-					{
-						Pehkui.LOGGER.error("Failed to parse pehkui scale rule: invalid scale value '{}' for scale type '{}'", raw, entry.getKey());
-						continue;
-					}
-
-					scales.put(scaleType, Math.min(raw, maxScale));
+					Pehkui.LOGGER.error("Unknown scale type '{}' in '{}'. Expected a registered type (e.g. 'pehkui:width').", entry.getKey(), fileId);
+					continue;
 				}
+
+				final float raw = entry.getValue().getAsFloat();
+
+				if (!Float.isFinite(raw) || raw <= 0)
+				{
+					Pehkui.LOGGER.error("Invalid value '{}' for 'scales.{}' in '{}'. Expected a finite value greater than 0 (max {}).", raw, entry.getKey(), fileId, maxScale);
+					continue;
+				}
+
+				scales.put(scaleType, Math.min(raw, maxScale));
 			}
 		}
 		else if (json.has("scale_type") && json.has("value"))
 		{
 			final ScaleType scaleType = getScaleType(json.get("scale_type").getAsString());
 
-			if (scaleType != null)
+			if (scaleType == null)
+			{
+				Pehkui.LOGGER.error("Unknown scale type '{}' in '{}'. Expected a registered type (e.g. 'pehkui:width').", json.get("scale_type").getAsString(), fileId);
+			}
+			else
 			{
 				final float raw = json.get("value").getAsFloat();
 
 				if (!Float.isFinite(raw) || raw <= 0)
 				{
-					Pehkui.LOGGER.error("Failed to parse pehkui scale rule: invalid scale value '{}' for scale type '{}'", raw, json.get("scale_type").getAsString());
+					Pehkui.LOGGER.error("Invalid value '{}' for 'scale_type' '{}' in '{}'. Expected a finite value greater than 0 (max {}).", raw, json.get("scale_type").getAsString(), fileId, maxScale);
 				}
 				else
 				{

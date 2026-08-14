@@ -2,8 +2,7 @@ package virtuoel.pehkui.data;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.gson.JsonElement;
@@ -37,7 +36,7 @@ public class ScaleRuleLoader implements SimpleSynchronousResourceReloadListener
 	@Override
 	public void onResourceManagerReload(ResourceManager manager)
 	{
-		final List<JsonElement> rawJson = new ArrayList<>();
+		final Map<Identifier, JsonElement> rawJson = new LinkedHashMap<>();
 
 		for (final Map.Entry<Identifier, Resource> entry : manager.listResources(DIRECTORY, path -> path.getPath().endsWith(".json")).entrySet())
 		{
@@ -51,7 +50,7 @@ public class ScaleRuleLoader implements SimpleSynchronousResourceReloadListener
 					continue;
 				}
 
-				rawJson.add(JsonParser.parseString(content));
+				rawJson.put(entry.getKey(), JsonParser.parseString(content));
 			}
 			catch (Throwable e)
 			{
