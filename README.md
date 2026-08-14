@@ -55,6 +55,12 @@ Include:
 - steps to reproduce the scale issue
 - `latest.log` or the crash report
 
+## Datapack Scale Rules
+
+Pehkui Rebuilt supports resizing entities through datapacks via `data/<namespace>/pehkui_scale_rules/*.json`. Rules match entities with a vanilla `EntityPredicate` condition and set one or more scale types to configured values, checked periodically on the server (and applied immediately when an entity joins the world on NeoForge).
+
+See [DATAPACK-SCALE-RULES.md](DATAPACK-SCALE-RULES.md) for the full JSON format, conditions, scale types, behavior, and safety limits.
+
 ## Building
 
 ```bash
