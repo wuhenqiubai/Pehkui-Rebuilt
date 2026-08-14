@@ -47,6 +47,8 @@
 	"pehkui.configgui.enableDebugCommands": "Whether internal debugging commands should be enabled",
 	"pehkui.configgui.enableScaleRules": "Whether datapack scale rules should be enabled",
 	"pehkui.configgui.scaleRuleCheckInterval": "How often (in ticks) entities should be checked against datapack scale rules",
+	"pehkui.configgui.scaleRuleMaxScale": "Maximum value for scales applied by datapack scale rules",
+	"pehkui.configgui.scaleRulesAffectPlayers": "Whether datapack scale rules should affect players",
 	
 	"pehkui.configgui.scale_limits.base.minimum": "Minimum value for the scale type pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Maximum value for the scale type pehkui:base",

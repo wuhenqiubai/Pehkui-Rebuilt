@@ -1,6 +1,7 @@
 package virtuoel.pehkui.util;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +43,7 @@ public interface PehkuiEntityExtensions
 	void pehkui_setPosDirectly(BlockPos pos);
 
 	@Nullable
-	ScaleType pehkui_getRuleScaleType();
+	Set<ScaleType> pehkui_getRuleScaleTypes();
 
-	void pehkui_setRuleScaleType(@Nullable ScaleType type);
+	void pehkui_setRuleScaleTypes(@Nullable Set<ScaleType> types);
 }

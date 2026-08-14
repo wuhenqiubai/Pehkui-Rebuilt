@@ -90,11 +90,18 @@ public class PehkuiConfigScreen extends Screen
 		init();
 	}
 
+	private static boolean isEditable()
+	{
+		return Minecraft.getInstance().getCurrentServer() == null;
+	}
+
 	private void save()
 	{
+		final boolean editable = isEditable();
+
 		for (final FieldRow row : rows)
 		{
-			if (!row.synced)
+			if (!row.synced || editable)
 			{
 				row.apply();
 			}
@@ -165,9 +172,10 @@ public class PehkuiConfigScreen extends Screen
 		private void addWidgets(PehkuiConfigScreen screen, int x, int y)
 		{
 			final Object value = entry.getValue();
-			final boolean enabled = !synced;
+			final boolean editable = PehkuiConfigScreen.isEditable();
+			final boolean enabled = !synced || editable;
 			final Component description = Component.translatable(translationKey);
-			final Component label = synced
+			final Component label = synced && !editable
 				? description.copy().append(" [server]")
 				: description;
 			final Tooltip tooltip = Tooltip.create(description);
@@ -194,7 +202,7 @@ public class PehkuiConfigScreen extends Screen
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		private void apply()
 		{
-			if (synced)
+			if (synced && !PehkuiConfigScreen.isEditable())
 			{
 				return;
 			}

@@ -1,6 +1,7 @@
 package virtuoel.pehkui.mixin;
 
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -8,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.storage.ValueInput;
@@ -59,7 +61,7 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	private boolean pehkui_shouldSyncScales = false;
 	private boolean pehkui_shouldIgnoreScaleNbt = false;
 	private ScaleData[] pehkui_scaleCache = null;
-	private ScaleType pehkui_ruleScaleType = null;
+	private Set<ScaleType> pehkui_ruleScaleTypes = null;
 
 	@Override
 	public ScaleData pehkui_constructScaleData(ScaleType type)
@@ -198,17 +200,31 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		if (interval > 0 && PehkuiConfig.COMMON.enableScaleRules.get() && !ScaleRules.isEmpty() && self.level() instanceof ServerLevel && self.tickCount % interval == 0)
 		{
 			final ServerLevel world = (ServerLevel) self.level();
-			final ScaleRule rule = ScaleRules.getApplicableRule(self, world);
+			final boolean affectPlayers = PehkuiConfig.COMMON.scaleRulesAffectPlayers.get();
+			final ScaleRule rule = affectPlayers || !(self instanceof Player) ? ScaleRules.getApplicableRule(self, world) : null;
 
 			if (rule != null)
 			{
-				rule.getScaleType().getScaleData(self).setScale(rule.getValue());
-				pehkui_setRuleScaleType(rule.getScaleType());
+				for (final Map.Entry<ScaleType, Float> scale : rule.getScales().entrySet())
+				{
+					final ScaleData data = scale.getKey().getScaleData(self);
+
+					if (Float.floatToIntBits(data.getBaseScale()) != Float.floatToIntBits(scale.getValue()))
+					{
+						data.setScale(scale.getValue());
+					}
+				}
+
+				pehkui_setRuleScaleTypes(rule.getScales().keySet());
 			}
-			else if (pehkui_getRuleScaleType() != null)
+			else if (pehkui_getRuleScaleTypes() != null)
 			{
-				pehkui_getRuleScaleType().getScaleData(self).resetScale();
-				pehkui_setRuleScaleType(null);
+				for (final ScaleType type : pehkui_getRuleScaleTypes())
+				{
+					type.getScaleData(self).resetScale();
+				}
+
+				pehkui_setRuleScaleTypes(null);
 			}
 		}
 	}
@@ -318,15 +334,15 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	}
 
 	@Override
-	public ScaleType pehkui_getRuleScaleType()
+	public Set<ScaleType> pehkui_getRuleScaleTypes()
 	{
-		return pehkui_ruleScaleType;
+		return pehkui_ruleScaleTypes;
 	}
 
 	@Override
-	public void pehkui_setRuleScaleType(ScaleType type)
+	public void pehkui_setRuleScaleTypes(Set<ScaleType> types)
 	{
-		pehkui_ruleScaleType = type;
+		pehkui_ruleScaleTypes = types;
 	}
 
 	@ModifyArg(method = "checkFallDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;fallOn(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;D)V"))

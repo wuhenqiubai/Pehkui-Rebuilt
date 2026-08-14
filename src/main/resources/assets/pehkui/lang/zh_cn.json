@@ -47,6 +47,8 @@
 	"pehkui.configgui.enableDebugCommands": "启用内部调试命令",
 	"pehkui.configgui.enableScaleRules": "启用数据包缩放规则",
 	"pehkui.configgui.scaleRuleCheckInterval": "实体多少tick检查一次数据包缩放规则",
+	"pehkui.configgui.scaleRuleMaxScale": "数据包缩放规则最大缩放值",
+	"pehkui.configgui.scaleRulesAffectPlayers": "数据包缩放规则影响玩家",
 
 	"pehkui.configgui.scale_limits.base.minimum": "pehkui:base 的最小值",
 	"pehkui.configgui.scale_limits.base.maximum": "pehkui:base 的最大值",

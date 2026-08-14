@@ -47,6 +47,8 @@ public class PehkuiConfig
 
 	public final Supplier<Boolean> enableScaleRules;
 	public final Supplier<Integer> scaleRuleCheckInterval;
+	public final Supplier<Double> scaleRuleMaxScale;
+	public final Supplier<Boolean> scaleRulesAffectPlayers;
 		
 		public final Supplier<Boolean> scaledFallDamage;
 		public final Supplier<Boolean> scaledMotion;
@@ -70,6 +72,9 @@ public class PehkuiConfig
 
 			this.enableScaleRules = builder.booleanConfig("enableScaleRules", true);
 			this.scaleRuleCheckInterval = builder.intConfig("scaleRuleCheckInterval", 10);
+
+			this.scaleRuleMaxScale = builder.doubleConfig("scaleRuleMaxScale", 256);
+			this.scaleRulesAffectPlayers = builder.booleanConfig("scaleRulesAffectPlayers", false);
 			
 			this.scaledFallDamage = builder.booleanConfig(synced("scaledFallDamage", "boolean"), true);
 			this.scaledMotion = builder.booleanConfig(synced("scaledMotion", "boolean"), true);
