@@ -5,13 +5,18 @@ import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.service.MixinService;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleOperations;
 import virtuoel.pehkui.api.ScaleTypes;
 import virtuoel.pehkui.command.PehkuiEntitySelectorOptions;
+import virtuoel.pehkui.data.ScaleRuleLoader;
+import virtuoel.pehkui.data.ScaleRules;
 import virtuoel.pehkui.network.ConfigSyncPayload;
 import virtuoel.pehkui.network.DebugPayload;
 import virtuoel.pehkui.network.ScalePayload;
@@ -72,6 +77,10 @@ public class Pehkui implements ModInitializer
 		GravityChangerCompatibility.INSTANCE.getClass();
 		ImmersivePortalsCompatibility.INSTANCE.getClass();
 		MulticonnectCompatibility.INSTANCE.getClass();
+
+		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new ScaleRuleLoader());
+
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> ScaleRules.setRegistryLookup(server.registryAccess()));
 	}
 	
 	public static ResourceLocation id(String path)
