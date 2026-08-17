@@ -21,6 +21,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ScaffoldingBlock;
 import net.minecraft.world.phys.AABB;
@@ -252,5 +253,13 @@ public abstract class LivingEntityMixin
 		}
 
 		return original;
+	}
+
+	@ModifyReturnValue(method = "entityAttackRange()Lnet/minecraft/world/item/component/AttackRange;", at = @At("RETURN"))
+	private AttackRange pehkui$entityAttackRange(AttackRange original)
+	{
+		final float scale = ScaleUtils.getEntityReachScale((Entity) (Object) this);
+
+		return scale != 1.0F ? ScaleUtils.scaleAttackRange(original, scale) : original;
 	}
 }

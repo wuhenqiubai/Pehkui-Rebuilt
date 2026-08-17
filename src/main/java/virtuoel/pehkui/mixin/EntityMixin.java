@@ -1,13 +1,16 @@
 package virtuoel.pehkui.mixin;
 
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
@@ -29,6 +32,7 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
+import virtuoel.pehkui.data.ScaleRules;
 import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -61,7 +65,8 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	private boolean pehkui_shouldIgnoreScaleNbt = false;
 	@Unique
 	private ScaleData[] pehkui_scaleCache = null;
-	
+	private Set<ScaleType> pehkui_ruleScaleTypes = null;
+
 	@Override
 	public ScaleData pehkui_constructScaleData(ScaleType type)
 	{
@@ -192,8 +197,30 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		{
 			ScaleUtils.tickScale(pehkui_getScaleData(type));
 		}
+
+		final Entity self = (Entity) (Object) this;
+		final int interval = PehkuiConfig.COMMON.scaleRuleCheckInterval.get();
+
+		if (interval > 0 && PehkuiConfig.COMMON.enableScaleRules.get() && !ScaleRules.isEmpty() && self.level() instanceof ServerLevel && self.tickCount % interval == 0)
+		{
+			final boolean affectPlayers = PehkuiConfig.COMMON.scaleRulesAffectPlayers.get();
+
+			ScaleRules.applyRuleToEntity(self, (ServerLevel) self.level(), affectPlayers || !(self instanceof Player));
+		}
 	}
-	
+
+	@Override
+	public Set<ScaleType> pehkui_getRuleScaleTypes()
+	{
+		return pehkui_ruleScaleTypes;
+	}
+
+	@Override
+	public void pehkui_setRuleScaleTypes(Set<ScaleType> types)
+	{
+		pehkui_ruleScaleTypes = types;
+	}
+
 	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{

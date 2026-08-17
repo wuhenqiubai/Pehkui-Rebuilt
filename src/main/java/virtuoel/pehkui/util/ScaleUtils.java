@@ -24,6 +24,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.phys.Vec3;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.api.PehkuiConfig;
@@ -517,6 +518,18 @@ public class ScaleUtils
 		return getConfigurableTypedScale(entity, ScaleTypes.ENTITY_REACH, PehkuiConfig.COMMON.scaledReach::get, tickDelta);
 	}
 	
+	public static AttackRange scaleAttackRange(AttackRange range, float scale)
+	{
+		return new AttackRange(
+			range.minRange() * scale,
+			range.maxRange() * scale,
+			range.minCreativeRange() * scale,
+			range.maxCreativeRange() * scale,
+			range.hitboxMargin(),
+			range.mobFactor()
+		);
+	}
+
 	public static float getMiningSpeedScale(Entity entity)
 	{
 		return getMiningSpeedScale(entity, 1.0F);
