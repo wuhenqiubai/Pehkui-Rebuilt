@@ -1,15 +1,18 @@
 package virtuoel.pehkui.mixin;
 
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,6 +34,8 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
+import virtuoel.pehkui.data.ScaleRule;
+import virtuoel.pehkui.data.ScaleRules;
 import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ScaleUtils;
@@ -63,7 +68,8 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	private boolean pehkui_shouldIgnoreScaleNbt = false;
 	@Unique
 	private ScaleData[] pehkui_scaleCache = null;
-	
+	private Set<ScaleType> pehkui_ruleScaleTypes = null;
+
 	@Override
 	public ScaleData pehkui_constructScaleData(ScaleType type)
 	{
@@ -184,8 +190,54 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		{
 			ScaleUtils.tickScale(pehkui_getScaleData(type));
 		}
+
+		final Entity self = (Entity) (Object) this;
+		final int interval = PehkuiConfig.COMMON.scaleRuleCheckInterval.get();
+
+		if (interval > 0 && PehkuiConfig.COMMON.enableScaleRules.get() && !ScaleRules.isEmpty() && self.level() instanceof ServerLevel && self.tickCount % interval == 0)
+		{
+			final ServerLevel world = (ServerLevel) self.level();
+			final boolean affectPlayers = PehkuiConfig.COMMON.scaleRulesAffectPlayers.get();
+			final ScaleRule rule = affectPlayers || !(self instanceof Player) ? ScaleRules.getApplicableRule(self, world) : null;
+
+			if (rule != null)
+			{
+				for (final Map.Entry<ScaleType, Float> scale : rule.getScales().entrySet())
+				{
+					final ScaleData data = scale.getKey().getScaleData(self);
+
+					if (Float.floatToIntBits(data.getBaseScale()) != Float.floatToIntBits(scale.getValue()))
+					{
+						data.setScale(scale.getValue());
+					}
+				}
+
+				pehkui_setRuleScaleTypes(rule.getScales().keySet());
+			}
+			else if (pehkui_getRuleScaleTypes() != null)
+			{
+				for (final ScaleType type : pehkui_getRuleScaleTypes())
+				{
+					type.getScaleData(self).resetScale();
+				}
+
+				pehkui_setRuleScaleTypes(null);
+			}
+		}
 	}
-	
+
+	@Override
+	public Set<ScaleType> pehkui_getRuleScaleTypes()
+	{
+		return pehkui_ruleScaleTypes;
+	}
+
+	@Override
+	public void pehkui_setRuleScaleTypes(Set<ScaleType> types)
+	{
+		pehkui_ruleScaleTypes = types;
+	}
+
 	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{

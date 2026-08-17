@@ -121,6 +121,15 @@ public abstract class PlayerEntityMixin
 		return scale != 1.0F ? scale * value : value;
 	}
 
+	// 横扫攻击距离（distanceToSqr < 9.0 = 3.0²）不随 reach scale 缩放，这里按 scale² 修正
+	@ModifyExpressionValue(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At(value = "CONSTANT", args = "doubleValue=9.0"))
+	private double pehkui$attack$sweep(double value)
+	{
+		final float scale = ScaleUtils.getEntityReachScale((Entity) (Object) this);
+
+		return scale != 1.0F ? value * scale * scale : value;
+	}
+
 	@ModifyReturnValue(method = "getFlyingSpeed", at = @At(value = "RETURN", ordinal = 0))
 	private float pehkui$getOffGroundSpeed(float original)
 	{
