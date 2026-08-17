@@ -102,6 +102,11 @@ public class ConfigSyncUtils
 			entry.setSyncedValue(null);
 		});
 	}
+
+	public static boolean isSyncedConfig(final String name)
+	{
+		return SYNCED_CONFIGS.get(name) != null;
+	}
 	
 	public static void syncConfigs(final Collection<ServerPlayer> players)
 	{
