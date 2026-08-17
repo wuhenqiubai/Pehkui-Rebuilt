@@ -1,11 +1,17 @@
 package virtuoel.pehkui.mixin.client;
 
+import java.util.function.Predicate;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.component.AttackRange;
+import net.minecraft.world.phys.HitResult;
 import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(LocalPlayer.class)
@@ -44,5 +50,15 @@ public class ClientPlayerEntityMixin
 		final float scale = ScaleUtils.getMotionScale((Entity) (Object) this);
 
 		return scale < 1.0F ? scale * value : value;
+	}
+
+	// 1.21.5+ 攻击距离由物品组件 AttackRange 决定，且 raycastHitResult 直接读组件（不走 entityAttackRange）。
+	// 缩放 getClosesetHit 收到的 AttackRange，使客户端瞄准射线距离与缩放后的服务端攻击判定一致
+	@WrapOperation(method = "raycastHitResult(FLnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/phys/HitResult;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/component/AttackRange;getClosesetHit(Lnet/minecraft/world/entity/Entity;FLjava/util/function/Predicate;)Lnet/minecraft/world/phys/HitResult;"))
+	private HitResult pehkui$raycastHitResult$getClosesetHit(AttackRange range, Entity entity, float f, Predicate<Entity> predicate, Operation<HitResult> original)
+	{
+		final float scale = ScaleUtils.getEntityReachScale(entity);
+
+		return original.call(scale != 1.0F ? ScaleUtils.scaleAttackRange(range, scale) : range, entity, f, predicate);
 	}
 }
