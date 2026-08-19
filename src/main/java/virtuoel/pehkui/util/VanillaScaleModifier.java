@@ -23,7 +23,7 @@ public class VanillaScaleModifier extends ScaleModifier
 	@Override
 	public float modifyScale(final ScaleData scaleData, float modifiedScale, final float delta)
 	{
-		if (PehkuiConfig.COMMON.applyVanillaScale.get())
+		if (PehkuiConfig.COMMON.applyVanillaScale.get() && !PehkuiConfig.COMMON.vanillaScaleSyncBack.get())
 		{
 			final Entity entity = scaleData.getEntity();
 
@@ -39,7 +39,7 @@ public class VanillaScaleModifier extends ScaleModifier
 	@Override
 	public float modifyPrevScale(final ScaleData scaleData, float modifiedScale)
 	{
-		if (PehkuiConfig.COMMON.applyVanillaScale.get())
+		if (PehkuiConfig.COMMON.applyVanillaScale.get() && !PehkuiConfig.COMMON.vanillaScaleSyncBack.get())
 		{
 			final Entity entity = scaleData.getEntity();
 

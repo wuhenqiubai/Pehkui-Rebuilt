@@ -27,6 +27,7 @@ import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
 import virtuoel.pehkui.util.ModLoaderUtils;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.ReflectionUtils;
+import virtuoel.pehkui.util.VanillaScaleSyncBack;
 
 @ApiStatus.Internal
 public class Pehkui implements ModInitializer
@@ -77,6 +78,8 @@ public class Pehkui implements ModInitializer
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new ScaleRuleLoader());
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> ScaleRules.setRegistryLookup(server.registryAccess()));
+
+		VanillaScaleSyncBack.register();
 	}
 	
 	public static Identifier id(String path)
