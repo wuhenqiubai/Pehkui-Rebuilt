@@ -6,7 +6,7 @@ import virtuoel.pehkui.Pehkui;
 public class ScaleTypes
 {
 	public static final ScaleType INVALID = register(ScaleRegistries.getDefaultId(ScaleRegistries.SCALE_TYPES));
-	public static final ScaleType BASE = registerDimensionScale("base", null, ScaleModifiers.BASE_MULTIPLIER, ScaleModifiers.BASE_DIVISOR);
+	public static final ScaleType BASE = registerBase();
 	public static final ScaleType WIDTH = registerDimensionScale("width", ScaleModifiers.BASE_MULTIPLIER, ScaleModifiers.WIDTH_MULTIPLIER);
 	public static final ScaleType HEIGHT = registerDimensionScale("height", ScaleModifiers.BASE_MULTIPLIER, ScaleModifiers.HEIGHT_MULTIPLIER);
 	public static final ScaleType EYE_HEIGHT = registerDimensionScale("eye_height", ScaleModifiers.HEIGHT_MULTIPLIER);
@@ -76,21 +76,31 @@ public class ScaleTypes
 		return register(Pehkui.id(path), builder);
 	}
 	
+	private static ScaleType registerBase()
+	{
+		final ScaleType base = registerDimensionScale("base", null, ScaleModifiers.BASE_MULTIPLIER, ScaleModifiers.BASE_DIVISOR);
+
+		// 原版 scale 属性折入 BASE：BASE.getScale = Pehkui baseScale × 原版 scale
+		base.getDefaultBaseValueModifiers().add(ScaleModifiers.VANILLA_SCALE);
+
+		return base;
+	}
+
 	private static ScaleType registerDimensionScale(String path, ScaleModifier valueModifier, ScaleModifier... dependentModifiers)
 	{
 		final ScaleType.Builder builder = ScaleType.Builder.create()
 			.affectsDimensions();
-		
+
 		if (valueModifier != null)
 		{
 			builder.addBaseValueModifier(valueModifier);
 		}
-		
+
 		for (ScaleModifier scaleModifier : dependentModifiers)
 		{
 			builder.addDependentModifier(scaleModifier);
 		}
-		
+
 		return register(Pehkui.id(path), builder);
 	}
 }

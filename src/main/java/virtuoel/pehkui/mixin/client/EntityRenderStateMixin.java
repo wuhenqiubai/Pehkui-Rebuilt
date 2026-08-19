@@ -21,6 +21,9 @@ public class EntityRenderStateMixin
 	@Unique
 	private float pehkui$modelHeightScale = 1.0F;
 
+	@Unique
+	private float pehkui$vanillaScale = 1.0F;
+
 	public float pehkui$getModelWidthScale()
 	{
 		return pehkui$modelWidthScale;
@@ -39,5 +42,15 @@ public class EntityRenderStateMixin
 	public void pehkui$setModelHeightScale(float scale)
 	{
 		pehkui$modelHeightScale = scale;
+	}
+
+	public float pehkui$getVanillaScale()
+	{
+		return pehkui$vanillaScale;
+	}
+
+	public void pehkui$setVanillaScale(float scale)
+	{
+		pehkui$vanillaScale = scale;
 	}
 }

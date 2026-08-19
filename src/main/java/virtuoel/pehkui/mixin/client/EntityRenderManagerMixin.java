@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.util.PehkuiEntityRenderStateExtensions;
 import virtuoel.pehkui.util.ScaleRenderUtils;
 
@@ -22,11 +23,21 @@ public class EntityRenderManagerMixin
 		final PehkuiEntityRenderStateExtensions pehkuiState = (PehkuiEntityRenderStateExtensions) state;
 		final float widthScale = pehkuiState.getModelWidthScale();
 		final float heightScale = pehkuiState.getModelHeightScale();
+		final float vanillaScale = pehkuiState.getVanillaScale();
 
 		ScaleRenderUtils.logIfEntityRenderCancelled();
 
 		matrices.pushPose();
-		matrices.scale(widthScale, heightScale, widthScale);
+		if (vanillaScale != 1.0F && PehkuiConfig.COMMON.applyVanillaScale.get())
+		{
+			// vanilla 在 LivingEntityRenderer.submit 里又按 state.scale（= 原版 scale）缩放了一次，
+			// 而 Pehkui 的 MODEL scale 已折入原版 scale，这里抵消避免双重
+			matrices.scale(widthScale / vanillaScale, heightScale / vanillaScale, widthScale / vanillaScale);
+		}
+		else
+		{
+			matrices.scale(widthScale, heightScale, widthScale);
+		}
 		matrices.pushPose();
 
 		ScaleRenderUtils.saveLastRenderedEntity(state.entityType);

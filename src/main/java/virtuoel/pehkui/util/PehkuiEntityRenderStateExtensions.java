@@ -9,4 +9,8 @@ public interface PehkuiEntityRenderStateExtensions
 	float getModelHeightScale();
 
 	void setModelHeightScale(float scale);
+
+	float getVanillaScale();
+
+	void setVanillaScale(float scale);
 }
