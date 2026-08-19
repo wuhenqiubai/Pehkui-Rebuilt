@@ -20,6 +20,7 @@ import virtuoel.pehkui.util.GravityChangerCompatibility;
 import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.ReflectionUtils;
+import virtuoel.pehkui.util.VanillaScaleSyncBack;
 
 @ApiStatus.Internal
 @Mod(Pehkui.MOD_ID)
@@ -44,6 +45,8 @@ public class Pehkui
 
 		NeoForge.EVENT_BUS.register(this);
 		NeoForge.EVENT_BUS.register(PehkuiEvents.class);
+
+		VanillaScaleSyncBack.register();
 
 		GravityChangerCompatibility.INSTANCE.getClass();
 		ImmersivePortalsCompatibility.INSTANCE.getClass();

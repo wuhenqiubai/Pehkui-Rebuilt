@@ -50,6 +50,8 @@
 	"pehkui.configgui.scaleRuleMaxScale": "Maximum value for scales applied by datapack scale rules",
 	"pehkui.configgui.scaleRulesAffectPlayers": "Whether datapack scale rules should affect players",
 	"pehkui.configgui.applyVanillaScale": "Whether the vanilla scale attribute should be folded into pehkui:base",
+	"pehkui.configgui.vanillaScaleAffectsGameplay": "Whether the vanilla scale attribute should also affect gameplay scale types (motion, reach, drops, projectiles, explosions)",
+	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute",
 	
 	"pehkui.configgui.scale_limits.base.minimum": "Minimum value for the scale type pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Maximum value for the scale type pehkui:base",

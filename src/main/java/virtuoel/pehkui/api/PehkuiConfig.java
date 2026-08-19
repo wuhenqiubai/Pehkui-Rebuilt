@@ -51,6 +51,8 @@ public class PehkuiConfig
 	public final Supplier<Double> scaleRuleMaxScale;
 	public final Supplier<Boolean> scaleRulesAffectPlayers;
 	public final Supplier<Boolean> applyVanillaScale;
+	public final Supplier<Boolean> vanillaScaleAffectsGameplay;
+	public final Supplier<Boolean> vanillaScaleSyncBack;
 		
 		public final Supplier<Boolean> scaledFallDamage;
 		public final Supplier<Boolean> scaledMotion;
@@ -77,6 +79,8 @@ public class PehkuiConfig
 			this.scaleRuleMaxScale = builder.doubleConfig("scaleRuleMaxScale", 256);
 			this.scaleRulesAffectPlayers = builder.booleanConfig("scaleRulesAffectPlayers", false);
 			this.applyVanillaScale = builder.booleanConfig("applyVanillaScale", true);
+			this.vanillaScaleAffectsGameplay = builder.booleanConfig("vanillaScaleAffectsGameplay", false);
+			this.vanillaScaleSyncBack = builder.booleanConfig("vanillaScaleSyncBack", false);
 			
 			this.scaledFallDamage = builder.booleanConfig(synced("scaledFallDamage", "boolean"), true);
 			this.scaledMotion = builder.booleanConfig(synced("scaledMotion", "boolean"), true);

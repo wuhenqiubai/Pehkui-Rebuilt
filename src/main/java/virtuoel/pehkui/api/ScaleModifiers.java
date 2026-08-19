@@ -2,6 +2,7 @@ package virtuoel.pehkui.api;
 
 import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
+import virtuoel.pehkui.util.VanillaScaleDivisorModifier;
 import virtuoel.pehkui.util.VanillaScaleModifier;
 
 public class ScaleModifiers
@@ -15,6 +16,7 @@ public class ScaleModifiers
 	public static final ScaleModifier HEIGHT_MULTIPLIER = register("height_multiplier", new TypedScaleModifier(() -> ScaleTypes.HEIGHT));
 	public static final ScaleModifier REACH_MULTIPLIER = register("reach_multiplier", new TypedScaleModifier(() -> ScaleTypes.REACH));
 	public static final ScaleModifier VANILLA_SCALE = register("vanilla_scale", new VanillaScaleModifier());
+	public static final ScaleModifier VANILLA_SCALE_DIVISOR = register("vanilla_scale_divisor", new VanillaScaleDivisorModifier());
 	
 	private static ScaleModifier register(String path, ScaleModifier scaleModifier)
 	{

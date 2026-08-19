@@ -36,6 +36,7 @@ import virtuoel.pehkui.data.ScaleRules;
 import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ScaleUtils;
+import virtuoel.pehkui.util.VanillaScaleSyncBack;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements PehkuiEntityExtensions
@@ -199,6 +200,9 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		}
 
 		final Entity self = (Entity) (Object) this;
+
+		VanillaScaleSyncBack.tick(self);
+
 		final int interval = PehkuiConfig.COMMON.scaleRuleCheckInterval.get();
 
 		if (interval > 0 && PehkuiConfig.COMMON.enableScaleRules.get() && !ScaleRules.isEmpty() && self.level() instanceof ServerLevel && self.tickCount % interval == 0)
