@@ -49,6 +49,7 @@
 	"pehkui.configgui.scaleRuleCheckInterval": "实体多少tick检查一次数据包缩放规则",
 	"pehkui.configgui.scaleRuleMaxScale": "数据包缩放规则最大缩放值",
 	"pehkui.configgui.scaleRulesAffectPlayers": "数据包缩放规则影响玩家",
+	"pehkui.configgui.applyVanillaScale": "是否将原版 scale 属性折入 pehkui:base",
 
 	"pehkui.configgui.scale_limits.base.minimum": "pehkui:base 最小值",
 	"pehkui.configgui.scale_limits.base.maximum": "pehkui:base 最大值",

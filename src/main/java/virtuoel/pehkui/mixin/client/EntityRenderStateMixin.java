@@ -13,7 +13,22 @@ public class EntityRenderStateMixin implements PehkuiEntityRenderStateExtensions
 	
 	@Unique
 	private float pehkui$modelHeightScale = 1.0F;
-	
+
+	@Unique
+	private float pehkui$vanillaScale = 1.0F;
+
+	@Override
+	public float pehkui$getVanillaScale()
+	{
+		return pehkui$vanillaScale;
+	}
+
+	@Override
+	public void pehkui$setVanillaScale(float scale)
+	{
+		pehkui$vanillaScale = scale;
+	}
+
 	@Override
 	public float pehkui$getModelWidthScale()
 	{

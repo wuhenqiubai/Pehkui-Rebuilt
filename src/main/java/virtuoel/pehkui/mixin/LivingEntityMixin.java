@@ -21,11 +21,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ScaffoldingBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
@@ -200,6 +202,16 @@ public abstract class LivingEntityMixin
 	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{
+		final LivingEntity self = (LivingEntity) (Object) this;
+		final float vanillaScale = ScaleUtils.getVanillaScale(self);
+
+		if (vanillaScale != 1.0F && PehkuiConfig.COMMON.applyVanillaScale.get() && self.getPose() != Pose.SLEEPING && !original.fixed())
+		{
+			// vanilla 已把原版 scale 属性应用到 getDimensions（getDefaultDimensions(pose).scale(getScale())），
+			// 而 Pehkui 的 BASE 已折入原版 scale，这里抵消以避免双重叠加
+			original = original.scale(1.0F / vanillaScale, 1.0F / vanillaScale);
+		}
+
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
 		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
 

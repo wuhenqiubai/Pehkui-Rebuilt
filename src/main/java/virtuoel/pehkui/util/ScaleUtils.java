@@ -22,6 +22,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.phys.Vec3;
@@ -514,6 +515,11 @@ public class ScaleUtils
 		return getConfigurableTypedScale(entity, ScaleTypes.ENTITY_REACH, PehkuiConfig.COMMON.scaledReach::get, tickDelta);
 	}
 	
+	public static float getVanillaScale(Entity entity)
+	{
+		return entity instanceof LivingEntity living ? living.getScale() : 1.0F;
+	}
+
 	public static AttackRange scaleAttackRange(AttackRange range, float scale)
 	{
 		return new AttackRange(

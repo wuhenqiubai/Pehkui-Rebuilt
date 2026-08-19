@@ -7,6 +7,10 @@ public interface PehkuiEntityRenderStateExtensions
 	void pehkui$setModelWidthScale(float scale);
 	
 	float pehkui$getModelHeightScale();
-	
+
 	void pehkui$setModelHeightScale(float scale);
+
+	float pehkui$getVanillaScale();
+
+	void pehkui$setVanillaScale(float scale);
 }
