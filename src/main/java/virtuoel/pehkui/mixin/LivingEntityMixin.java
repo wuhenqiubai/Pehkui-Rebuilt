@@ -211,6 +211,14 @@ public abstract class LivingEntityMixin
 		return original;
 	}
 
+	@ModifyReturnValue(method = "getJumpPower(F)F", at = @At("RETURN"))
+	private float pehkui$getJumpPower(float original)
+	{
+		final float scale = ScaleUtils.getJumpHeightScale((Entity) (Object) this);
+
+		return scale != 1.0F ? original * scale : original;
+	}
+
 	@ModifyReturnValue(method = "onClimbable()Z", at = @At("RETURN"))
 	private boolean pehkui$isClimbing(boolean original)
 	{
