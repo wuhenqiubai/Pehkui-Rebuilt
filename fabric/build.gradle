@@ -1,0 +1,60 @@
+plugins {
+	id 'com.gradleup.shadow'
+}
+
+architectury {
+	platformSetupLoomIde()
+	fabric()
+}
+
+configurations {
+	common
+	shadowBundle
+	thirdparty
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentFabric.extendsFrom common
+}
+
+dependencies {
+	implementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+	implementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+	implementation "com.terraformersmc:modmenu:$rootProject.modmenu_version"
+
+	common(project(path: ':common', configuration: 'apiElements')) { transitive = false }
+	shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
+
+	// KanosConfig：编译期依赖（源码 import virtuoel.kanos_config.api），shadowJar 经 thirdparty config 打进 fabric jar
+	implementation "com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag"
+	thirdparty "com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag"
+}
+
+processResources {
+	inputs.property 'version', project.version
+	filesMatching('fabric.mod.json') {
+		expand version: inputs.properties.version, minecraft_version: project.minecraft_version
+	}
+}
+
+// 26.2 未混淆，无 remapJar 任务；shadowJar 是物化产物
+jar {
+	archiveClassifier = 'dev'
+}
+
+shadowJar {
+	configurations = [project.configurations.shadowBundle, project.configurations.thirdparty]
+	archiveClassifier = null
+}
+
+assemble.dependsOn shadowJar
+
+configurations {
+	apiElements {
+		outgoing.artifacts.clear()
+		outgoing.artifact(shadowJar)
+	}
+	runtimeElements {
+		outgoing.artifacts.clear()
+		outgoing.artifact(shadowJar)
+	}
+}

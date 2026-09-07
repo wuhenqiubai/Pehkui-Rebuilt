@@ -45,3 +45,4 @@ changelog*.txt
 /_dev/
 /docs/
 /build-all-logs/
+/.claude/

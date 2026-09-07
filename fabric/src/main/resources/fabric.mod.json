@@ -1,0 +1,65 @@
+{
+	"schemaVersion": 1,
+	"id": "pehkui",
+	"name": "Pehkui Rebuilt",
+	"version": "${version}",
+	"description": "Allows resizing of most entities. Pehkui Rebuilt is an independent rebuild of Pehkui.",
+	"authors":
+	[
+		"Virtuoel",
+		"wuhenqiubai"
+	],
+	"contributors":
+	[
+		"Draylar",
+		"haykam821",
+		"Leximon",
+		"MerchantPug",
+		"TheGrimsey"
+	],
+	"contact":
+	{
+		"homepage": "https://github.com/wuhenqiubai/Pehkui-Rebuilt",
+		"issues": "https://github.com/wuhenqiubai/Pehkui-Rebuilt/issues",
+		"sources": "https://github.com/wuhenqiubai/Pehkui-Rebuilt"
+	},
+	"license": "MIT",
+	"icon": "assets/pehkui/icon.png",
+	"environment": "*",
+	"depends":
+	{
+		"minecraft": "${minecraft_version}",
+		"fabricloader": ">=0.14.0",
+		"fabric-api-base": "*"
+	},
+	"entrypoints":
+	{
+		"main":
+		[
+			"virtuoel.pehkui.fabric.PehkuiFabric"
+		],
+		"client":
+		[
+			"virtuoel.pehkui.fabric.PehkuiClientFabric"
+		],
+		"modmenu":
+		[
+			"virtuoel.pehkui.config.ConfigIntegration"
+		]
+	},
+	"mixins":
+	[
+		"pehkui.mixins.json",
+		"pehkui-fabric.mixins.json"
+	],
+	"custom":
+	{
+		"multiconnect":
+		{
+			"custom_payloads":
+			{
+				"allowed_clientbound": "pehkui:*"
+			}
+		}
+	}
+}

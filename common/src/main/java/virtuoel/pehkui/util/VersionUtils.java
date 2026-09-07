@@ -1,0 +1,34 @@
+package virtuoel.pehkui.util;
+
+import org.jetbrains.annotations.Nullable;
+
+public class VersionUtils
+{
+	@Nullable
+	public static final String MINECRAFT_VERSION = Platform.INSTANCE.getMinecraftVersion();
+	public static final int MAJOR = getVersionComponent(0);
+	public static final int MINOR = MAJOR > 21 ? 100 : getVersionComponent(1);
+	public static final int PATCH = getVersionComponent(2);
+
+	private static int getVersionComponent(int pos)
+	{
+		if (MINECRAFT_VERSION != null)
+		{
+			final String[] parts = MINECRAFT_VERSION.split("\\.");
+
+			if (parts.length > pos)
+			{
+				try
+				{
+					return Integer.parseInt(parts[pos]);
+				}
+				catch (NumberFormatException e)
+				{
+					// ignore
+				}
+			}
+		}
+
+		return -1;
+	}
+}
