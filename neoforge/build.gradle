@@ -31,9 +31,11 @@ dependencies {
 	}
 }
 
-// 展开 src/main/templates 里的 ${} 占位符（neoforge.mods.toml）
-var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+// neoforge.mods.toml 直接放在 src/main/resources/META-INF/ 下（不使用 MDK 示例模组的 templates 约定目录），
+// 由 processResources 展开其中的 ${} 占位符
+processResources {
 	var replaceProperties = [
+		version                 : project.version,
 		minecraft_version       : project.minecraft_version,
 		minecraft_version_range : project.minecraft_version_range,
 		neo_version             : project.neoforge_version,
@@ -44,16 +46,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 		mod_version             : project.mod_version,
 	]
 	inputs.properties replaceProperties
-	expand replaceProperties
-	from "src/main/templates"
-	into "build/generated/sources/modMetadata"
-}
-sourceSets.main.resources.srcDir generateModMetadata
-
-processResources {
-	inputs.property 'version', project.version
 	filesMatching('META-INF/neoforge.mods.toml') {
-		expand version: inputs.properties.version
+		expand replaceProperties
 	}
 }
 

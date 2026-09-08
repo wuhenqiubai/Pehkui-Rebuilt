@@ -78,7 +78,7 @@ public class PehkuiConfig
 
 			this.scaleRuleMaxScale = builder.doubleConfig("scaleRuleMaxScale", 256);
 			this.scaleRulesAffectPlayers = builder.booleanConfig("scaleRulesAffectPlayers", false);
-			this.applyVanillaScale = builder.booleanConfig("applyVanillaScale", true);
+			this.applyVanillaScale = builder.booleanConfig("applyVanillaScale", false);
 			this.vanillaScaleAffectsGameplay = builder.booleanConfig("vanillaScaleAffectsGameplay", false);
 			this.vanillaScaleSyncBack = builder.booleanConfig("vanillaScaleSyncBack", false);
 
