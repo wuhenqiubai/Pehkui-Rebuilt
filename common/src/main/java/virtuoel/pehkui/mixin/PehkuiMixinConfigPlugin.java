@@ -14,10 +14,21 @@ public class PehkuiMixinConfigPlugin implements IMixinConfigPlugin
 {
 	private static final String MIXIN_PACKAGE = "virtuoel.pehkui.mixin";
 
+	/**
+	 * 允许 common 的 {@code virtuoel.pehkui.mixin} 与平台专属包（如
+	 * {@code virtuoel.pehkui.neoforge.mixin}）。平台 mixin 必须放在平台子包：
+	 * NeoForge 的 JPMS 下，common 的 jar 与平台 jar 若导出同一个包，模块解析会直接失败。
+	 */
+	private static boolean isInMixinPackage(final String value)
+	{
+		return value.startsWith("virtuoel.pehkui.")
+			&& (value.endsWith(".mixin") || value.contains(".mixin."));
+	}
+
 	@Override
 	public void onLoad(String mixinPackage)
 	{
-		if (!mixinPackage.startsWith(MIXIN_PACKAGE))
+		if (!isInMixinPackage(mixinPackage))
 		{
 			throw new IllegalArgumentException(
 				String.format("Invalid package: Expected \"%s\", but found \"%s\".", MIXIN_PACKAGE, mixinPackage)
@@ -37,7 +48,7 @@ public class PehkuiMixinConfigPlugin implements IMixinConfigPlugin
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName)
 	{
-		if (!mixinClassName.startsWith(MIXIN_PACKAGE))
+		if (!isInMixinPackage(mixinClassName))
 		{
 			throw new IllegalArgumentException(
 				String.format("Invalid package for class \"%s\": Expected \"%s\", but found \"%s\".", targetClassName, MIXIN_PACKAGE, mixinClassName)

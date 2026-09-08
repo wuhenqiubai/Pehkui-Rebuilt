@@ -1,4 +1,6 @@
-package virtuoel.pehkui;
+package virtuoel.pehkui.neoforge;
+
+import virtuoel.pehkui.Pehkui;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,8 +18,8 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
-import virtuoel.pehkui.data.ScaleRuleLoader;
-import virtuoel.pehkui.data.ScaleRules;
+import virtuoel.pehkui.neoforge.data.ScaleRuleLoader;
+import virtuoel.pehkui.neoforge.data.ScaleRules;
 import virtuoel.pehkui.util.ScaleUtils;
 
 /**

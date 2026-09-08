@@ -1,4 +1,4 @@
-package virtuoel.pehkui.mixin;
+package virtuoel.pehkui.neoforge.mixin;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +32,7 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
-import virtuoel.pehkui.data.ScaleRules;
+import virtuoel.pehkui.neoforge.data.ScaleRules;
 import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ScaleUtils;

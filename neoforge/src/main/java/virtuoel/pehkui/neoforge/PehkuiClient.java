@@ -1,4 +1,4 @@
-package virtuoel.pehkui;
+package virtuoel.pehkui.neoforge;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.asm.mixin.MixinEnvironment;

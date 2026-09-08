@@ -1,4 +1,4 @@
-package virtuoel.pehkui.mixin.client;
+package virtuoel.pehkui.neoforge.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

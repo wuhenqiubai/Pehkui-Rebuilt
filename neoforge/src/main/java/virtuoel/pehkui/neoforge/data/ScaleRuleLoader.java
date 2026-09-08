@@ -1,4 +1,4 @@
-package virtuoel.pehkui.data;
+package virtuoel.pehkui.neoforge.data;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

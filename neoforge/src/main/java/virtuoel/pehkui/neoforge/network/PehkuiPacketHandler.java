@@ -1,8 +1,12 @@
-package virtuoel.pehkui.network;
+package virtuoel.pehkui.neoforge.network;
+
+import virtuoel.pehkui.neoforge.PehkuiClient;
+import virtuoel.pehkui.network.ConfigSyncPayload;
+import virtuoel.pehkui.network.DebugPayload;
+import virtuoel.pehkui.network.ScalePayload;
 
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import virtuoel.pehkui.PehkuiClient;
 
 public class PehkuiPacketHandler
 {

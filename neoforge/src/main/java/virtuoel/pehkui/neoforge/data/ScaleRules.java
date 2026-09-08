@@ -1,4 +1,6 @@
-package virtuoel.pehkui.data;
+package virtuoel.pehkui.neoforge.data;
+
+import virtuoel.pehkui.data.ScaleRule;
 
 import java.util.ArrayList;
 import java.util.HashMap;

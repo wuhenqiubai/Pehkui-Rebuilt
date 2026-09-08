@@ -1,4 +1,4 @@
-package virtuoel.pehkui.mixin.client;
+package virtuoel.pehkui.neoforge.mixin.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Hud;

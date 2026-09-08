@@ -1,4 +1,4 @@
-package virtuoel.pehkui.mixin;
+package virtuoel.pehkui.neoforge.mixin;
 
 import java.util.Map;
 import net.minecraft.world.entity.Entity;
