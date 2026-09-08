@@ -8,9 +8,18 @@ architectury {
 }
 
 configurations {
-	common
-	shadowBundle
-	thirdparty
+	common {
+		canBeResolved = true
+		canBeConsumed = false
+	}
+	shadowBundle {
+		canBeResolved = true
+		canBeConsumed = false
+	}
+	thirdparty {
+		canBeResolved = true
+		canBeConsumed = false
+	}
 	compileClasspath.extendsFrom common
 	runtimeClasspath.extendsFrom common
 	developmentNeoForge.extendsFrom common
@@ -19,7 +28,9 @@ configurations {
 dependencies {
 	neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
 
-	common(project(path: ':common', configuration: 'apiElements')) { transitive = false }
+	// 不指定 configuration：让 Gradle 按消费方属性自动选变体（compileClasspath→apiElements、
+	// runtimeClasspath→runtimeElements）。硬编码 apiElements 会导致 runClient 解析 runtimeClasspath 失败。
+	common(project(path: ':common')) { transitive = false }
 	shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 
 	// KanosConfig：编译期依赖（源码 import virtuoel.kanos_config.api），shadowJar 经 thirdparty config 打进 neoforge jar
