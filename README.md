@@ -11,24 +11,24 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 ## Current Branch Status
 
 - Minecraft target: `26.2`
-- Mod version: `3.8.5+26.2`
-- Fabric: Loader `0.19.3`, Fabric API `0.156.0+26.2` (loadable by Quilt via its Fabric compatibility)
-- NeoForge: `26.2.0.49-beta`
+- Mod version: `3.8.6+26.2`
+- Fabric: Loader `0.19.5`, Fabric API `0.160.0+26.2` (loadable by Quilt via its Fabric compatibility)
+- NeoForge: `26.2.0.83`
 - Project layout: Architectury multi-platform (`common` / `fabric` / `neoforge`)
 
 ## Version support status
 
-| MC version range |Mod version tag |Update conditions        |Version positioning |Support status |
-| ---------------- |--------------- |------------------------ |------------------- |-------------- |
-| 1.21 / 1.21.1    |3.8.5‑Beta-HF   |Active updates           |Mainstream          |Active         |
-| 1.21.2‑1.21.4    |3.8.5‑Beta      |Update as needed         |Transitional        |Passive        |
-| 1.21.5           |3.8.4‑Beta      |Update as needed         |Transitional        |Passive        |
-| 1.21.6‑1.21.8    |3.8.4‑Beta      |Update as needed         |Transitional        |Passive        |
-| 1.21.9           |3.8.4‑Beta      |Update as needed         |Transitional        |Passive        |
-| 1.21.10          |3.8.4‑Beta      |Update as needed         |Transitional        |Passive        |
-| 1.21.11          |3.8.5‑Beta      |Active updates           |Mainstream          |Active         |
-| 26.1.x           |3.8.5‑Beta-HF   |Active updates           |Mainstream          |Active         |
-| 26.2             |3.8.5‑Beta-HF2  |Highest‑priority updates |Primary baseline    |Active         |
+| MC version range | Mod version tag | Update conditions        | Version positioning | Support status |
+|------------------|-----------------|--------------------------|---------------------|----------------|
+| 1.21 / 1.21.1    | 3.8.5‑Beta-HF   | Active updates           | Mainstream          | Active         |
+| 1.21.2‑1.21.4    | 3.8.5‑Beta      | Update as needed         | Transitional        | Passive        |
+| 1.21.5           | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
+| 1.21.6‑1.21.8    | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
+| 1.21.9           | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
+| 1.21.10          | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
+| 1.21.11          | 3.8.5‑Beta      | Active updates           | Mainstream          | Active         |
+| 26.1.x           | 3.8.5‑Beta-HF   | Active updates           | Mainstream          | Active         |
+| 26.2             | 3.8.5‑Beta-HF2  | Highest‑priority updates | Primary baseline    | Active         |
 
 ## Origin
 
