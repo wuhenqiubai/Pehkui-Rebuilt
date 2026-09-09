@@ -45,6 +45,13 @@
 	"pehkui.configgui.accurateNetherPortals": "Indique si la collision des portails Nether doit être ajustée pour s'adapter à la boîte de sélection.",
 	"pehkui.configgui.enableCommands": "Indique si les commandes telles que /scale doivent être activées.",
 	"pehkui.configgui.enableDebugCommands": "Indique si les commandes de débogage internes doivent être activées.",
+	"pehkui.configgui.enableScaleRules": "Whether datapack scale rules should be enabled",
+	"pehkui.configgui.scaleRuleCheckInterval": "How often (in ticks) entities should be checked against datapack scale rules",
+	"pehkui.configgui.scaleRuleMaxScale": "Maximum value for scales applied by datapack scale rules",
+	"pehkui.configgui.scaleRulesAffectPlayers": "Whether datapack scale rules should affect players",
+	"pehkui.configgui.applyVanillaScale": "Whether the vanilla scale attribute should be folded into pehkui:base",
+	"pehkui.configgui.vanillaScaleAffectsGameplay": "Whether the vanilla scale attribute should also affect gameplay scale types (motion, reach, drops, projectiles, explosions)",
+	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute",
 	
 	"pehkui.configgui.scale_limits.base.minimum": "Valeur minimale pour le type d'échelle pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Valeur maximale pour le type d'échelle pehkui:base",

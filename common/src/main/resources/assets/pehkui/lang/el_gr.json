@@ -45,6 +45,13 @@
 	"pehkui.configgui.accurateNetherPortals": "Αν η σύγκρουση των πύλων Nether πρέπει να μεταβάλλεται για να χωράει στο selection box",
 	"pehkui.configgui.enableCommands": "Αν εντολές όπως το /scale πρέπει να είναι ενεργοποιημένες",
 	"pehkui.configgui.enableDebugCommands": "Αν εσωτερικές debugging εντολές πρέπει να είναι ενεργοποιημένες",
+	"pehkui.configgui.enableScaleRules": "Whether datapack scale rules should be enabled",
+	"pehkui.configgui.scaleRuleCheckInterval": "How often (in ticks) entities should be checked against datapack scale rules",
+	"pehkui.configgui.scaleRuleMaxScale": "Maximum value for scales applied by datapack scale rules",
+	"pehkui.configgui.scaleRulesAffectPlayers": "Whether datapack scale rules should affect players",
+	"pehkui.configgui.applyVanillaScale": "Whether the vanilla scale attribute should be folded into pehkui:base",
+	"pehkui.configgui.vanillaScaleAffectsGameplay": "Whether the vanilla scale attribute should also affect gameplay scale types (motion, reach, drops, projectiles, explosions)",
+	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute",
 	
 	"pehkui.configgui.scale_limits.base.minimum": "Ελάχιστη τιμή για τον τύπο κλίμακας pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Μέγιστη τιμή για τον τύπο κλίμακας pehkui:base",
