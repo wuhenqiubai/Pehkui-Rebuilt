@@ -28,7 +28,7 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 | 1.21.10          | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
 | 1.21.11          | 3.8.5‑Beta      | Active updates           | Mainstream          | Active         |
 | 26.1.x           | 3.8.5‑Beta-HF   | Active updates           | Mainstream          | Active         |
-| 26.2             | 3.8.5‑Beta-HF2  | Highest‑priority updates | Primary baseline    | Active         |
+| 26.2             | 3.8.6  | Highest‑priority updates | Primary baseline    | Active         |
 
 ## Origin
 
