@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import virtuoel.pehkui.util.ScaleRenderUtils;
@@ -29,13 +28,13 @@ public class GameRendererMixin
 	boolean pehkui$isBobbing = false;
 	
 	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.BEFORE, target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;)V"))
-	private void pehkui$renderWorld$before(DeltaTracker tickCounter, CallbackInfo info)
+	private void pehkui$renderWorld$before(CallbackInfo ci)
 	{
 		pehkui$isBobbing = true;
 	}
 	
 	@Inject(method = "renderLevel", at = @At(value = "INVOKE", shift = Shift.AFTER, target = "Lnet/minecraft/client/renderer/GameRenderer;bobView(Lnet/minecraft/client/renderer/state/level/CameraRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;)V"))
-	private void pehkui$renderWorld$after(DeltaTracker tickCounter, CallbackInfo info)
+	private void pehkui$renderWorld$after(CallbackInfo ci)
 	{
 		pehkui$isBobbing = false;
 	}

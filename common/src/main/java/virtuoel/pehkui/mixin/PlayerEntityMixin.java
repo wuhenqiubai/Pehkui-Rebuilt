@@ -2,8 +2,6 @@ package virtuoel.pehkui.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -11,36 +9,13 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import virtuoel.pehkui.util.ScaleUtils;
 
 @Mixin(Player.class)
 public abstract class PlayerEntityMixin
 {
-	@Inject(at = @At("RETURN"), method = "drop(Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/world/entity/item/ItemEntity;")
-	private void pehkui$dropItem(ItemStack stack, boolean throwRandomly, CallbackInfoReturnable<ItemEntity> info)
-	{
-		final ItemEntity entity = info.getReturnValue();
-		
-		if (entity != null)
-		{
-			ScaleUtils.setScaleOfDrop(entity, (Entity) (Object) this);
-			
-			final float scale = ScaleUtils.getEyeHeightScale((Entity) (Object) this);
-			
-			if (scale != 1.0F)
-			{
-				final Vec3 pos = entity.position();
-				
-				entity.setPos(pos.x, pos.y + ((1.0F - scale) * 0.3D), pos.z);
-			}
-		}
-	}
-	
 	@WrapOperation(method = "aiStep()V", at = @At(value = "INVOKE", ordinal = 1, target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
 	private AABB pehkui$tickMovement$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
 	{

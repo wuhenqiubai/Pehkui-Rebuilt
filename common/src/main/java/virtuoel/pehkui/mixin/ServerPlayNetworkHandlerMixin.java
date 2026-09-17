@@ -29,7 +29,9 @@ public class ServerPlayNetworkHandlerMixin
 		return scale != 1.0F ? movement.scale(1.0F / scale) : movement;
 	}
 	
-	@ModifyArg(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V"))
+	// 26.3 起位置变更逻辑从 handleMovePlayer 抽成私有方法 handlePlayerPositionChange，
+	// ServerPlayer.move 的 INVOKE 随之迁移（全类仅此一处）
+	@ModifyArg(method = "handlePlayerPositionChange(DDDFFZZ)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;move(Lnet/minecraft/world/entity/MoverType;Lnet/minecraft/world/phys/Vec3;)V"))
 	private Vec3 pehkui$onPlayerMove$move(MoverType type, Vec3 movement)
 	{
 		final float scale = ScaleUtils.getMotionScale(player);

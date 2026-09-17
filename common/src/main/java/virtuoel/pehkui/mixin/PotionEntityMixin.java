@@ -14,7 +14,7 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(AbstractThrownPotion.class)
 public class PotionEntityMixin
 {
-	@WrapOperation(method = "onHitAsWater(Lnet/minecraft/server/level/ServerLevel;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
+	@WrapOperation(method = "affectEntitiesAround(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/alchemy/PotionContents;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/AABB;inflate(DDD)Lnet/minecraft/world/phys/AABB;"))
 	private AABB pehkui$applyWater$expand(AABB obj, double x, double y, double z, Operation<AABB> original)
 	{
 		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
@@ -34,7 +34,7 @@ public class PotionEntityMixin
 		return original.call(obj, x, y, z);
 	}
 	
-	@ModifyExpressionValue(method = "onHitAsWater(Lnet/minecraft/server/level/ServerLevel;)V", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
+	@ModifyExpressionValue(method = "affectEntitiesAround(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/alchemy/PotionContents;)V", at = @At(value = "CONSTANT", args = "doubleValue=16.0D"))
 	private double pehkui$applyWater$maxDist(double value)
 	{
 		final float scale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);

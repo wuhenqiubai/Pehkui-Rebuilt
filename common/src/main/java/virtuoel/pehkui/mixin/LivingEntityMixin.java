@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -17,11 +18,14 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ScaffoldingBlock;
@@ -170,6 +174,28 @@ public abstract class LivingEntityMixin
 		return entity;
 	}
 
+	// 26.3 起 drop 由 Player 下移到 LivingEntity，且第 3 参由 boolean 变为 Prediction
+	// （Player.drop(ItemStack, boolean) 已删除）。故该注入从 PlayerEntityMixin 迁到这里。
+	@Inject(at = @At("RETURN"), method = "drop(Lnet/minecraft/world/item/ItemStack;ZLnet/minecraft/util/Prediction;)Lnet/minecraft/world/entity/item/ItemEntity;")
+	private void pehkui$dropItem(ItemStack stack, boolean thrownFromHand, Prediction prediction, CallbackInfoReturnable<ItemEntity> info)
+	{
+		final ItemEntity entity = info.getReturnValue();
+
+		if (entity != null)
+		{
+			ScaleUtils.setScaleOfDrop(entity, (Entity) (Object) this);
+
+			final float scale = ScaleUtils.getEyeHeightScale((Entity) (Object) this);
+
+			if (scale != 1.0F)
+			{
+				final Vec3 pos = entity.position();
+
+				entity.setPos(pos.x, pos.y + ((1.0F - scale) * 0.3D), pos.z);
+			}
+		}
+	}
+
 	@ModifyExpressionValue(method = "dealDefaultKnockback(Lnet/minecraft/world/damagesource/DamageSource;FZ)V", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
 	private double pehkui$damage$knockback(double value, DamageSource source, float amount)
 	{
@@ -178,7 +204,8 @@ public abstract class LivingEntityMixin
 		return scale != 1.0F ? scale * value : value;
 	}
 
-	@ModifyExpressionValue(method = "blockedByItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;F)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
+	// 26.3 起 blockedByItem 增加第 4 个参数 boolean
+	@ModifyExpressionValue(method = "blockedByItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;FZ)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
 	private double pehkui$knockback$knockback(double value, LivingEntity target)
 	{
 		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
