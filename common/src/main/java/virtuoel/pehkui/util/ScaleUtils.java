@@ -21,7 +21,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.phys.Vec3;
@@ -403,7 +405,38 @@ public class ScaleUtils
 	{
 		return getTypedScale(entity, ScaleTypes.HITBOX_HEIGHT, tickDelta);
 	}
-	
+
+	/**
+	 * 按 Pehkui 缩放计算实体的 {@link EntityDimensions}，供各处 {@code getDimensions} 注入复用。
+	 *
+	 * <p>MC 的 {@link EntityDimensions#scale(float, float)} 会把 eyeHeight 一并按高度因子缩放
+	 * （{@code this.eyeHeight * heightScaleFactor}），直接用它会让眼高被 hitbox_height 带动、
+	 * 而 eye_height 本身完全不生效。这里显式覆写 eyeHeight，使其只由 {@code pehkui:eye_height} 决定
+	 * —— 该类型定义里已含 HEIGHT/BASE 依赖（HEIGHT_MULTIPLIER），所以 base / height 仍正常带动眼高。
+	 */
+	public static EntityDimensions getScaledDimensions(EntityDimensions original, Entity entity)
+	{
+		final float widthScale = getBoundingBoxWidthScale(entity);
+		final float heightScale = getBoundingBoxHeightScale(entity);
+		final float eyeHeightScale = getEyeHeightScale(entity);
+
+		if (widthScale == 1.0F && heightScale == 1.0F && eyeHeightScale == 1.0F)
+		{
+			return original;
+		}
+
+		final EntityDimensions scaled = original.scale(widthScale, heightScale);
+
+		// fixed() 的尺寸按 scale() 的约定完全不参与缩放，眼高同样不动；
+		// 睡眠姿势下原版眼高另有语义，沿用上游 compat1204minus 的处理，不缩放
+		if (original.fixed() || entity.getPose() == Pose.SLEEPING)
+		{
+			return scaled;
+		}
+
+		return scaled.withEyeHeight(original.eyeHeight() * eyeHeightScale);
+	}
+
 	public static float getInteractionBoxWidthScale(Entity entity)
 	{
 		return getInteractionBoxWidthScale(entity, 1.0F);

@@ -199,7 +199,7 @@ public abstract class LivingEntityMixin
 		return scale == 1.0F ? value : value * scale;
 	}
 
-	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
+	@ModifyReturnValue(method = "getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;", at = @At("RETURN"))
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{
 		final LivingEntity self = (LivingEntity) (Object) this;
@@ -212,15 +212,7 @@ public abstract class LivingEntityMixin
 			original = original.scale(1.0F / vanillaScale, 1.0F / vanillaScale);
 		}
 
-		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
-		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
-
-		if (widthScale != 1.0F || heightScale != 1.0F)
-		{
-			return original.scale(widthScale, heightScale);
-		}
-
-		return original;
+		return ScaleUtils.getScaledDimensions(original, self);
 	}
 
 	@ModifyReturnValue(method = "getJumpPower(F)F", at = @At("RETURN"))

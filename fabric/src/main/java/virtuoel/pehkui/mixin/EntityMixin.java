@@ -233,18 +233,10 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		}
 	}
 	
-	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
+	@ModifyReturnValue(method = "getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;", at = @At("RETURN"))
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{
-		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
-		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
-		
-		if (widthScale != 1.0F || heightScale != 1.0F)
-		{
-			return original.scale(widthScale, heightScale);
-		}
-		
-		return original;
+		return ScaleUtils.getScaledDimensions(original, (Entity) (Object) this);
 	}
 	
 	@Inject(at = @At("HEAD"), method = "startSeenByPlayer")
