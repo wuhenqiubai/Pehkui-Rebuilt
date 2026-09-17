@@ -35,9 +35,16 @@ dependencies {
 	common(project(path: ':common')) { transitive = false }
 	shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
-	// KanosConfig：编译期依赖（源码 import virtuoel.kanos_config.api），shadowJar 经 thirdparty config 打进 fabric jar
-	implementation "com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag"
-	thirdparty "com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag"
+	// KanosConfig：编译期依赖（源码 import virtuoel.kanos_config.api），shadowJar 经 thirdparty config 打进 fabric jar。
+	// 必须排除它传递带进来的 fabric-loader（KanosConfig 的 POM 声明了 runtime 版 0.14.17）：
+	// 否则 shadow 会把旧版 net.fabricmc.loader.* 打进 jar，遮蔽真实 loader 的类，导致
+	// FabricLoader 初始化 language adapter 时 NoClassDefFoundError（AccessWidenerVisitor 等）。
+	implementation("com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag") {
+		exclude group: 'net.fabricmc', module: 'fabric-loader'
+	}
+	thirdparty("com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag") {
+		exclude group: 'net.fabricmc', module: 'fabric-loader'
+	}
 }
 
 processResources {
