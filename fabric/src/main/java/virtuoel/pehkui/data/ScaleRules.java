@@ -18,6 +18,7 @@ import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.advancements.predicates.entity.EntityPredicate;
 import net.minecraft.advancements.predicates.entity.EntityTypePredicate;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -238,11 +239,12 @@ public final class ScaleRules
 		{
 			@SuppressWarnings("unchecked")
 			@Override
-			public <T> Optional<RegistryOps.RegistryInfo<T>> lookup(ResourceKey<? extends Registry<? extends T>> key)
+			public <T> Optional<HolderGetter<T>> lookup(ResourceKey<? extends Registry<? extends T>> key)
 			{
-				final Optional<? extends HolderLookup.RegistryLookup<T>> registryLookup = provider.lookup((ResourceKey<? extends Registry<T>>) (ResourceKey<?>) key);
-
-				return registryLookup.map(RegistryOps.RegistryInfo::fromRegistryLookup);
+				// 26.3 起 RegistryOps.RegistryInfo 被移除，lookup 直接返回 HolderGetter
+				// （HolderLookup.RegistryLookup 传递继承自 HolderGetter）
+				return provider.lookup((ResourceKey<? extends Registry<T>>) (ResourceKey<?>) key)
+					.<HolderGetter<T>>map(registryLookup -> registryLookup);
 			}
 		};
 	}
