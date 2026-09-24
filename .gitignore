@@ -48,3 +48,6 @@ changelog*.txt
 
 # 本地运行日志
 *.log
+
+# claude code 本地配置
+.claude/
