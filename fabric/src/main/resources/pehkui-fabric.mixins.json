@@ -1,0 +1,33 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "virtuoel.pehkui.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"plugin": "virtuoel.pehkui.mixin.PehkuiMixinConfigPlugin",
+	"mixins": [
+		"AnimalEntityMixin",
+		"BoatEntityMixin",
+		"ChestBoatEntityMixin",
+		"EntityMixin",
+		"FoxEntityMateGoalMixin",
+		"PlayerManagerMixin",
+		"PreEntityTickMixin",
+		"ServerPlayerEntityMixin",
+		"SlimeEntityMixin",
+		"SplashPotionEntityMixin",
+		"ThreadSafeScaledEntityMixin",
+		"ThreadUnsafeScaledEntityMixin"
+	],
+	"client": [
+		"client.CameraMixin",
+		"client.EntityRenderStateMixin",
+		"client.InGameHudMixin",
+		"client.InGameOverlayRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
