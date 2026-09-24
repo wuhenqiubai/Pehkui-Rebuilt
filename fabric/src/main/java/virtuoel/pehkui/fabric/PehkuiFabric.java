@@ -1,12 +1,18 @@
 package virtuoel.pehkui.fabric;
 
-import org.jetbrains.annotations.ApiStatus;
+import java.util.function.Supplier;
+
+import com.mojang.brigadier.arguments.ArgumentType;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleOperations;
@@ -24,11 +30,8 @@ import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
 import virtuoel.pehkui.util.ModLoaderUtils;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.Platform;
+import virtuoel.pehkui.util.VanillaScaleSyncBack;
 
-/**
- * Fabric 平台入口。常量与 id 辅助在 {@code virtuoel.pehkui.Pehkui}（common）。
- */
-@ApiStatus.Internal
 public class PehkuiFabric implements ModInitializer
 {
 	public PehkuiFabric()
@@ -43,11 +46,19 @@ public class PehkuiFabric implements ModInitializer
 	@Override
 	public void onInitialize()
 	{
-		CommandUtils.registerArgumentTypes();
+		CommandUtils.registerArgumentTypes(new CommandUtils.ArgumentTypeConsumer()
+		{
+			@Override
+			public <T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier)
+			{
+				ArgumentTypeRegistry.registerArgumentType(id, argClass, SingletonArgumentInfo.contextFree(supplier));
+			}
+		});
 
 		PehkuiEntitySelectorOptions.register();
 
-		CommandUtils.registerCommands();
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) ->
+			CommandUtils.registerCommands(dispatcher));
 
 		if (ModLoaderUtils.isModLoaded("fabric-networking-api-v1"))
 		{
@@ -75,5 +86,7 @@ public class PehkuiFabric implements ModInitializer
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new ScaleRuleLoader());
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> ScaleRules.setRegistryLookup(server.registryAccess()));
+
+		VanillaScaleSyncBack.register();
 	}
 }

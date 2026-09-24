@@ -8,8 +8,8 @@ import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.util.ReflectionUtils;
 
 /**
- * common 常量和 id 辅助。平台入口（fabric / neoforge）各自持有其入口类
- * （{@code PehkuiFabric} / {@code PehkuiNeoForge}），本站不含任何加载器初始化逻辑。
+ * common 常量和 id 辅助。平台入口（fabric / neoforge）各自持有其入口类（{@code PehkuiFabric} / {@code PehkuiNeoforge}），
+ * 本站不含任何加载器初始化逻辑。
  */
 @ApiStatus.Internal
 public class Pehkui

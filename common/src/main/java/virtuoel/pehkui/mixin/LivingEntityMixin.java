@@ -21,11 +21,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ScaffoldingBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
@@ -168,15 +170,15 @@ public abstract class LivingEntityMixin
 		return entity;
 	}
 
-	@ModifyExpressionValue(method = "hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
-	private double pehkui$damage$knockback(double value, ServerLevel world, DamageSource source, float amount)
+	@ModifyExpressionValue(method = "dealDefaultKnockback(Lnet/minecraft/world/damagesource/DamageSource;FZ)V", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
+	private double pehkui$damage$knockback(double value, DamageSource source, float amount)
 	{
 		final float scale = ScaleUtils.getKnockbackScale(source.getEntity());
 
 		return scale != 1.0F ? scale * value : value;
 	}
 
-	@ModifyExpressionValue(method = "blockedByItem(Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
+	@ModifyExpressionValue(method = "blockedByItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;F)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
 	private double pehkui$knockback$knockback(double value, LivingEntity target)
 	{
 		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
@@ -197,18 +199,20 @@ public abstract class LivingEntityMixin
 		return scale == 1.0F ? value : value * scale;
 	}
 
-	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
+	@ModifyReturnValue(method = "getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;", at = @At("RETURN"))
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{
-		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
-		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
+		final LivingEntity self = (LivingEntity) (Object) this;
+		final float vanillaScale = ScaleUtils.getVanillaScale(self);
 
-		if (widthScale != 1.0F || heightScale != 1.0F)
+		if (vanillaScale != 1.0F && PehkuiConfig.COMMON.applyVanillaScale.get() && self.getPose() != Pose.SLEEPING && !original.fixed())
 		{
-			return original.scale(widthScale, heightScale);
+			// vanilla 已把原版 scale 属性应用到 getDimensions（getDefaultDimensions(pose).scale(getScale())），
+			// 而 Pehkui 的 BASE 已折入原版 scale，这里抵消以避免双重叠加
+			original = original.scale(1.0F / vanillaScale, 1.0F / vanillaScale);
 		}
 
-		return original;
+		return ScaleUtils.getScaledDimensions(original, self);
 	}
 
 	@ModifyReturnValue(method = "getJumpPower(F)F", at = @At("RETURN"))

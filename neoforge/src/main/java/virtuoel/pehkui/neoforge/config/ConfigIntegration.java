@@ -1,5 +1,7 @@
 package virtuoel.pehkui.neoforge.config;
 
+import virtuoel.pehkui.config.PehkuiConfigScreen;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;

@@ -62,7 +62,7 @@ processResources {
 	}
 }
 
-// 26.x 未混淆，无 remapJar 任务；shadowJar 是物化产物
+// 26.2 未混淆，无 remapJar 任务；shadowJar 是物化产物
 jar {
 	archiveClassifier = 'dev'
 }

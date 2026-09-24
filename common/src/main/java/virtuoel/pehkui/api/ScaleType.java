@@ -9,8 +9,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ReflectionUtils;
@@ -283,40 +281,30 @@ public class ScaleType
 		}
 	}
 	
-	private final Event<ScaleEventCallback> scaleChangedEvent = createScaleEvent();
+	private final ScaleEvent scaleChangedEvent = createScaleEvent();
 	
-	public Event<ScaleEventCallback> getScaleChangedEvent()
+	public ScaleEvent getScaleChangedEvent()
 	{
 		return scaleChangedEvent;
 	}
 	
-	private final Event<ScaleEventCallback> preTickEvent = createScaleEvent();
+	private final ScaleEvent preTickEvent = createScaleEvent();
 	
-	public Event<ScaleEventCallback> getPreTickEvent()
+	public ScaleEvent getPreTickEvent()
 	{
 		return preTickEvent;
 	}
 	
-	private final Event<ScaleEventCallback> postTickEvent = createScaleEvent();
+	private final ScaleEvent postTickEvent = createScaleEvent();
 	
-	public Event<ScaleEventCallback> getPostTickEvent()
+	public ScaleEvent getPostTickEvent()
 	{
 		return postTickEvent;
 	}
 	
-	private static Event<ScaleEventCallback> createScaleEvent()
+	private static ScaleEvent createScaleEvent()
 	{
-		return EventFactory.createArrayBacked(
-			ScaleEventCallback.class,
-			data -> {},
-			(callbacks) -> (data) ->
-			{
-				for (ScaleEventCallback callback : callbacks)
-				{
-					callback.onEvent(data);
-				}
-			}
-		);
+		return new ScaleEvent();
 	}
 	
 }

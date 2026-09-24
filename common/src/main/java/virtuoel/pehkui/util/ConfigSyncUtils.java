@@ -23,12 +23,10 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import io.netty.buffer.ByteBuf;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import virtuoel.kanos_config.api.JsonConfigHandler;
@@ -43,26 +41,26 @@ public class ConfigSyncUtils
 	private static final Map<String, SyncableConfigEntry<?>> SYNCED_CONFIGS = new HashMap<>();
 	private static final Map<String, ConfigEntryCodec<?>> SYNCED_CONFIG_CODECS = new HashMap<>();
 	private static final Map<String, ConfigEntryCodec<?>> CODECS = new HashMap<>();
-	
+
 	static
 	{
-		CODECS.put("double", new ConfigEntryCodec<Double>(
+		CODECS.put("double", new ConfigEntryCodec<>(
 			(b, e) -> ((ByteBuf) b).writeDouble(e.getValue()),
 			(b, e) ->
 			{
 				final double v = b.readDouble();
-				
+
 				return () -> e.setSyncedValue(v);
 			},
 			DoubleArgumentType::doubleArg,
 			DoubleArgumentType::getDouble
 		));
-		CODECS.put("boolean", new ConfigEntryCodec<Boolean>(
+		CODECS.put("boolean", new ConfigEntryCodec<>(
 			(b, e) -> ((ByteBuf) b).writeBoolean(e.getValue()),
 			(b, e) ->
 			{
 				final boolean v = b.readBoolean();
-				
+
 				return () -> e.setSyncedValue(v);
 			},
 			BoolArgumentType::bool,
@@ -72,7 +70,7 @@ public class ConfigSyncUtils
 			(b, e) ->
 			{
 				final List<String> list = e.getValue();
-				
+
 				b.writeVarInt(list.size());
 				for (final String v : list)
 				{
@@ -82,31 +80,29 @@ public class ConfigSyncUtils
 			(b, e) ->
 			{
 				final List<String> v = new ArrayList<>();
-				
+
 				final int size = b.readVarInt();
 				for (int i = 0; i < size; i++)
 				{
 					v.add(b.readUtf());
 				}
-				
+
 				return () -> e.setSyncedValue(v);
 			}
 		));
 	}
-	
+
 	public static void resetSyncedConfigs()
 	{
 		SYNCED_CONFIGS.values().forEach((entry) ->
-		{
-			entry.setSyncedValue(null);
-		});
+			entry.setSyncedValue(null));
 	}
 
 	public static boolean isSyncedConfig(final String name)
 	{
 		return SYNCED_CONFIGS.get(name) != null;
 	}
-	
+
 	public static void syncConfigs(final Collection<ServerPlayer> players)
 	{
 		for (final ServerPlayer player : players)
@@ -114,16 +110,16 @@ public class ConfigSyncUtils
 			syncConfigs(player.connection, SYNCED_CONFIGS.values());
 		}
 	}
-	
+
 	public static void syncConfigs(final ServerGamePacketListenerImpl networkHandler)
 	{
 		syncConfigs(networkHandler, SYNCED_CONFIGS.values());
 	}
-	
+
 	public static void syncConfigs(final ServerGamePacketListenerImpl networkHandler, final String... configEntryKeys)
 	{
 		final List<SyncableConfigEntry<?>> entries = new ArrayList<>();
-		
+
 		SyncableConfigEntry<?> entry;
 		for (final String key : configEntryKeys)
 		{
@@ -132,27 +128,26 @@ public class ConfigSyncUtils
 				entries.add(entry);
 			}
 		}
-		
+
 		syncConfigs(networkHandler, entries);
 	}
-	
-	private static final boolean NETWORKING_API_LOADED = ModLoaderUtils.isModLoaded("fabric-networking-api-v1");
-	
+
+	// fabric / neoforge 原生都支持 payload 系统，恒视为已加载
+	private static final boolean NETWORKING_API_LOADED = true;
+
 	public static void syncConfigs(final ServerGamePacketListenerImpl networkHandler, final Collection<SyncableConfigEntry<?>> configEntries)
 	{
 		if (NETWORKING_API_LOADED)
 		{
-			// canSend 是 Fabric netty 专有的能力探测，Platform 抽象里没有等价物；
-			// 统一走 createClientboundPacket，不再逐个客户端探测（与 26.3 的重构保持一致）
 			ReflectionUtils.sendPacket(networkHandler, createConfigSyncPacket(configEntries));
 		}
 	}
-	
+
 	public static Packet<?> createConfigSyncPacket(final Collection<SyncableConfigEntry<?>> configEntries)
 	{
 		return Platform.INSTANCE.createClientboundPacket(new ConfigSyncPayload(configEntries));
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void write(final Collection<SyncableConfigEntry<?>> configEntries, final FriendlyByteBuf buffer)
 	{
@@ -163,21 +158,21 @@ public class ConfigSyncUtils
 			((ConfigEntryCodec) SYNCED_CONFIG_CODECS.get(entry.getName())).write(buffer, entry);
 		}
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Runnable readConfigs(final FriendlyByteBuf buffer)
 	{
 		final int qty = buffer.readVarInt();
-		
+
 		final List<Runnable> tasks = new ArrayList<>();
-		
+
 		String name;
 		ConfigEntryCodec codec;
 		SyncableConfigEntry entry;
 		for (int i = 0; i < qty; i++)
 		{
 			name = buffer.readUtf();
-			
+
 			entry = SYNCED_CONFIGS.get(name);
 			codec = SYNCED_CONFIG_CODECS.get(name);
 			if (entry == null)
@@ -190,25 +185,25 @@ public class ConfigSyncUtils
 				Pehkui.LOGGER.warn("Codec \"{}\" not found. Could not parse config \"{}\" from server.", codec, name);
 				break;
 			}
-			
+
 			tasks.add(codec.read(buffer, entry));
 		}
-		
+
 		return () -> tasks.forEach(Runnable::run);
 	}
-	
+
 	private static class ConfigEntryCodec<T>
 	{
 		final BiConsumer<FriendlyByteBuf, SyncableConfigEntry<T>> writer;
 		final BiFunction<FriendlyByteBuf, SyncableConfigEntry<T>, Runnable> reader;
 		final Supplier<ArgumentType<T>> argumentGetter;
 		final BiFunction<CommandContext<?>, String, T> argumentFunction;
-		
+
 		public ConfigEntryCodec(final BiConsumer<FriendlyByteBuf, SyncableConfigEntry<T>> writer, final BiFunction<FriendlyByteBuf, SyncableConfigEntry<T>, Runnable> reader)
 		{
 			this(writer, reader, () -> null, (c, n) -> null);
 		}
-		
+
 		public ConfigEntryCodec(final BiConsumer<FriendlyByteBuf, SyncableConfigEntry<T>> writer, final BiFunction<FriendlyByteBuf, SyncableConfigEntry<T>, Runnable> reader, final Supplier<ArgumentType<T>> argumentGetter, final BiFunction<CommandContext<?>, String, T> argumentFunction)
 		{
 			this.writer = writer;
@@ -216,28 +211,28 @@ public class ConfigSyncUtils
 			this.argumentGetter = argumentGetter;
 			this.argumentFunction = argumentFunction;
 		}
-		
+
 		public void write(final FriendlyByteBuf buffer, final SyncableConfigEntry<T> entry)
 		{
 			writer.accept(buffer, entry);
 		}
-		
+
 		public Runnable read(final FriendlyByteBuf buffer, final SyncableConfigEntry<T> entry)
 		{
 			return reader.apply(buffer, entry);
 		}
-		
+
 		public @Nullable ArgumentType<T> getArgumentType()
 		{
 			return argumentGetter.get();
 		}
-		
+
 		public T getArgument(final CommandContext<?> context, final String name)
 		{
 			return argumentFunction.apply(context, name);
 		}
 	}
-	
+
 	public static <T> MutableConfigEntry<T> createConfigEntry(final String name, final T defaultValue, final Supplier<T> supplier, final Consumer<T> consumer)
 	{
 		if (SYNCED_CONFIGS.containsKey(name))
@@ -246,58 +241,58 @@ public class ConfigSyncUtils
 			SyncableConfigEntry<T> entry = (SyncableConfigEntry<T>) SYNCED_CONFIGS.get(name);
 			if (entry == null)
 			{
-				SYNCED_CONFIGS.put(name, entry = new SyncableConfigEntry<T>(name, defaultValue, supplier, consumer));
+				SYNCED_CONFIGS.put(name, entry = new SyncableConfigEntry<>(name, defaultValue, supplier, consumer));
 				CONFIGS.put(name, entry);
 			}
-			
+
 			return entry;
 		}
-		
-		final MutableConfigEntry<T> entry = new NamedConfigEntry<T>(name, defaultValue, supplier, consumer);
-		
+
+		final MutableConfigEntry<T> entry = new NamedConfigEntry<>(name, defaultValue, supplier, consumer);
+
 		CONFIGS.put(name, entry);
-		
+
 		return entry;
 	}
-	
+
 	public static void setupSyncableConfig(final String name, final String codecKey)
 	{
 		SYNCED_CONFIGS.put(name, null);
 		SYNCED_CONFIG_CODECS.put(name, Objects.requireNonNull(CODECS.get(codecKey), String.format("Codec \"%s\" not found for config \"%s\"", codecKey, name)));
 	}
-	
+
 	public static ArgumentBuilder<CommandSourceStack, ?> registerConfigCommands()
 	{
 		final boolean splitConfigs = true;
-		
+
 		final ArgumentBuilder<CommandSourceStack, ?> builder = Commands.literal("config");
-		
+
 		ConfigSyncUtils.registerConfigSyncCommands(builder);
 		ConfigSyncUtils.registerConfigFileCommands(builder);
 		ConfigSyncUtils.registerConfigGetterCommands(builder, splitConfigs);
 		ConfigSyncUtils.registerConfigSetterCommands(builder, splitConfigs);
 		ConfigSyncUtils.registerConfigResetCommands(builder, splitConfigs);
-		
+
 		return builder;
 	}
-	
+
 	public static void registerConfigSyncCommands(final ArgumentBuilder<CommandSourceStack, ?> configBuilder)
 	{
 		final ArgumentBuilder<CommandSourceStack, ?> builder = Commands.literal("sync")
 			.executes(context ->
 			{
 				syncConfigs(context.getSource().getLevel().getServer().getPlayerList().getPlayers());
-				
+
 				return 1;
 			});
-		
+
 		configBuilder.then(builder);
 	}
-	
+
 	public static void registerConfigFileCommands(final ArgumentBuilder<CommandSourceStack, ?> configBuilder)
 	{
 		final JsonConfigHandler config = PehkuiConfig.BUILDER.config;
-		
+
 		configBuilder
 			.then(Commands.literal("save")
 				.executes(context ->
@@ -306,7 +301,7 @@ public class ConfigSyncUtils
 					{
 						config.save();
 					}
-					
+
 					return 1;
 				})
 			)
@@ -317,10 +312,10 @@ public class ConfigSyncUtils
 					{
 						config.invalidate();
 						config.get();
-						
+
 						syncConfigs(context.getSource().getLevel().getServer().getPlayerList().getPlayers());
 					}
-					
+
 					return 1;
 				})
 			)
@@ -332,33 +327,33 @@ public class ConfigSyncUtils
 						config.onConfigChanged();
 						try
 						{
-							Files.deleteIfExists(FabricLoader.getInstance().getConfigDir().resolve(Pehkui.MOD_ID).resolve("config.json").normalize());
+							Files.deleteIfExists(Platform.INSTANCE.getConfigDir().resolve(Pehkui.MOD_ID).resolve("config.json").normalize());
 							config.get();
 							syncConfigs(context.getSource().getLevel().getServer().getPlayerList().getPlayers());
-							
+
 							return 1;
 						}
 						catch (IOException e)
 						{
 							Pehkui.LOGGER.catching(e);
-							
+
 							return 0;
 						}
 					}
 				})
 			);
 	}
-	
+
 	public static void registerConfigGetterCommands(final ArgumentBuilder<CommandSourceStack, ?> configBuilder, final boolean splitKeys)
 	{
 		final ArgumentBuilder<CommandSourceStack, ?> builder = Commands.literal("get");
-		
+
 		String[] keys;
 		ArgumentBuilder<CommandSourceStack, ?> root, temp;
 		for (final String key : CONFIGS.keySet())
 		{
 			keys = splitKeys ? key.split("\\.") : new String[] { key };
-			
+
 			root = Commands.literal(keys[keys.length - 1])
 				.executes(context ->
 				{
@@ -371,45 +366,45 @@ public class ConfigSyncUtils
 						),
 						false
 					);
-					
+
 					return 1;
 				});
-			
+
 			for (int i = keys.length - 2; i >= 0; i--)
 			{
 				temp = Commands.literal(keys[i]);
 				temp.then(root);
 				root = temp;
 			}
-			
+
 			builder.then(root);
 		}
-		
+
 		configBuilder.then(builder);
 	}
-	
+
 	public static void registerConfigSetterCommands(final ArgumentBuilder<CommandSourceStack, ?> configBuilder, final boolean splitKeys)
 	{
 		final ArgumentBuilder<CommandSourceStack, ?> builder = Commands.literal("set");
-		
+
 		registerConfigModificationCommands(builder, true, splitKeys);
-		
+
 		configBuilder.then(builder);
 	}
-	
+
 	public static void registerConfigResetCommands(final ArgumentBuilder<CommandSourceStack, ?> configBuilder, final boolean splitKeys)
 	{
 		final ArgumentBuilder<CommandSourceStack, ?> builder = Commands.literal("reset");
-		
+
 		registerConfigModificationCommands(builder, false, splitKeys);
-		
+
 		builder.executes(context ->
 		{
 			for (final Map.Entry<String, SyncableConfigEntry<?>> entry : SYNCED_CONFIGS.entrySet())
 			{
 				entry.getValue().reset();
 			}
-			
+
 			CommandUtils.sendFeedback(
 				context.getSource(),
 				() -> I18nUtils.translate(
@@ -419,18 +414,18 @@ public class ConfigSyncUtils
 				),
 				false
 			);
-			
+
 			for (final ServerPlayer p : context.getSource().getLevel().getServer().getPlayerList().getPlayers())
 			{
 				syncConfigs(p.connection);
 			}
-			
+
 			return 1;
 		});
-		
+
 		configBuilder.then(builder);
 	}
-	
+
 	private static void registerConfigModificationCommands(final ArgumentBuilder<CommandSourceStack, ?> builder, final boolean asSetterCommands, final boolean splitKeys)
 	{
 		ArgumentType<?> argType;
@@ -441,21 +436,21 @@ public class ConfigSyncUtils
 			final String key = entry.getKey();
 			final ConfigEntryCodec<?> codec = SYNCED_CONFIG_CODECS.get(key);
 			argType = codec.getArgumentType();
-			
+
 			if (argType == null)
 			{
 				continue;
 			}
-			
+
 			keys = splitKeys ? key.split("\\.") : new String[] { key };
-			
+
 			root = (asSetterCommands ? Commands.argument("value", argType) : Commands.literal(keys[keys.length - 1]))
 				.executes(context ->
 				{
 					final SyncableConfigEntry<?> cfg = entry.getValue();
-					
+
 					final String oldValue = String.valueOf(cfg.getValue());
-					
+
 					if (asSetterCommands)
 					{
 						setConfigValue(cfg, codec.getArgument(context, "value"));
@@ -464,9 +459,9 @@ public class ConfigSyncUtils
 					{
 						cfg.reset();
 					}
-					
+
 					final String newValue = String.valueOf(cfg.getValue());
-					
+
 					CommandUtils.sendFeedback(
 						context.getSource(),
 						() -> I18nUtils.translate(
@@ -476,89 +471,89 @@ public class ConfigSyncUtils
 						),
 						false
 					);
-					
+
 					final Collection<SyncableConfigEntry<?>> cfgs = Collections.singleton(cfg);
-					
+
 					for (final ServerPlayer p : context.getSource().getLevel().getServer().getPlayerList().getPlayers())
 					{
 						syncConfigs(p.connection, cfgs);
 					}
-					
+
 					return 1;
 				});
-			
+
 			for (int i = keys.length - (asSetterCommands ? 1 : 2); i >= 0; i--)
 			{
 				temp = Commands.literal(keys[i]);
 				temp.then(root);
 				root = temp;
 			}
-			
+
 			builder.then(root);
 		}
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void setConfigValue(final MutableConfigEntry cfg, final Object value)
 	{
 		cfg.setValue(value);
 	}
-	
+
 	public static class SyncableConfigEntry<T> extends NamedConfigEntry<T>
 	{
 		protected T syncedValue = null;
-		
+
 		public SyncableConfigEntry(final String name, final T defaultValue, final Supplier<T> supplier, final Consumer<T> consumer)
 		{
 			super(name, defaultValue, supplier, consumer);
 		}
-		
+
 		public void setSyncedValue(final T value)
 		{
 			syncedValue = value;
 		}
-		
+
 		public boolean isSynced()
 		{
 			return syncedValue != null;
 		}
-		
+
 		@Override
 		public T get()
 		{
 			return isSynced() ? syncedValue : super.get();
 		}
-		
+
 		@Override
 		public void accept(T t)
 		{
 			setSyncedValue(null);
-			
+
 			super.accept(t);
 		}
-		
+
 		@Override
 		public T getValue()
 		{
 			return isSynced() ? syncedValue : super.getValue();
 		}
-		
+
 		@Override
 		public void setValue(T t)
 		{
 			setSyncedValue(null);
-			
+
 			super.setValue(t);
 		}
 	}
-	
+
 	private static class NamedConfigEntry<T> implements MutableConfigEntry<T>
 	{
 		protected final String name;
 		protected final Supplier<T> supplier;
 		protected final Consumer<T> consumer;
 		protected final T defaultValue;
-		
+
 		public NamedConfigEntry(final String name, final T defaultValue, final Supplier<T> supplier, final Consumer<T> consumer)
 		{
 			this.name = name;
@@ -566,35 +561,35 @@ public class ConfigSyncUtils
 			this.consumer = consumer;
 			this.defaultValue = defaultValue;
 		}
-		
+
 		public String getName()
 		{
 			return name;
 		}
-		
+
 		public void reset()
 		{
 			setValue(defaultValue);
 		}
-		
+
 		@Override
 		public T get()
 		{
 			return supplier.get();
 		}
-		
+
 		@Override
 		public void accept(final T t)
 		{
 			consumer.accept(t);
 		}
-		
+
 		@Override
 		public T getValue()
 		{
 			return supplier.get();
 		}
-		
+
 		@Override
 		public void setValue(final T t)
 		{

@@ -5,7 +5,6 @@ import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.spongepowered.asm.mixin.Unique;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
@@ -15,7 +14,6 @@ import virtuoel.pehkui.util.ScaleCachingUtils;
 @Mixin(Entity.class)
 public abstract class ThreadUnsafeScaledEntityMixin implements PehkuiEntityExtensions
 {
-	@Unique
 	private Map<ScaleType, ScaleData> pehkui_scaleTypes = new Object2ObjectOpenHashMap<>();
 	
 	@Override

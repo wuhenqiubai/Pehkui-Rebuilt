@@ -40,18 +40,18 @@ public class PehkuiClientFabric implements ClientModInitializer
 			handleDebugPacket(context.client(), payload.type);
 		});
 	}
-	
+
 	public static void handleScalePacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
 	{
 		handleScalePacket(client, new ScalePacket(buf));
 	}
-	
+
 	protected static void handleScalePacket(Minecraft client, ScalePacket packet)
 	{
 		client.execute(() ->
 		{
 			final Entity e = client.level.getEntity(packet.entityId);
-			
+
 			if (e != null)
 			{
 				packet.syncedScales.forEach((typeId, scaleData) ->
@@ -64,17 +64,17 @@ public class PehkuiClientFabric implements ClientModInitializer
 			}
 		});
 	}
-	
+
 	public static void handleConfigSyncPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
 	{
 		client.execute(new ConfigSyncPacket(buf).action);
 	}
-	
+
 	public static void handleDebugPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, Object responseSender)
 	{
 		handleDebugPacket(client, new DebugPacket(buf).type);
 	}
-	
+
 	protected static void handleDebugPacket(Minecraft client, DebugCommand.PacketType type)
 	{
 		client.execute(() ->
@@ -85,7 +85,7 @@ public class PehkuiClientFabric implements ClientModInitializer
 					client.player.sendSystemMessage(I18nUtils.translate("commands.pehkui.debug.audit.start.client", "Starting Mixin environment audit (client)..."));
 					MixinEnvironment.getCurrentEnvironment().audit();
 					client.player.sendSystemMessage(I18nUtils.translate("commands.pehkui.debug.audit.end.client", "Mixin environment audit (client) complete!"));
-					
+
 					break;
 				case GARBAGE_COLLECT:
 					System.gc();

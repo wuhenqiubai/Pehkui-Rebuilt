@@ -11,11 +11,8 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
@@ -28,26 +25,6 @@ import virtuoel.pehkui.server.command.ScaleCommand;
 
 public class CommandUtils
 {
-	public static void registerCommands()
-	{
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, dedicated) ->
-		{
-			registerCommands(dispatcher);
-		});
-	}
-
-	public static void registerArgumentTypes()
-	{
-		CommandUtils.registerArgumentTypes(new ArgumentTypeConsumer()
-		{
-			@Override
-			public <T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier)
-			{
-				ArgumentTypeRegistry.registerArgumentType(id, argClass, SingletonArgumentInfo.contextFree(supplier));
-			}
-		});
-	}
-
 	public static void registerCommands(final CommandDispatcher<CommandSourceStack> dispatcher)
 	{
 		ScaleCommand.register(dispatcher);

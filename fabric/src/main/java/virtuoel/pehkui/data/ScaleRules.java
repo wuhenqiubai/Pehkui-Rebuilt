@@ -1,13 +1,11 @@
 package virtuoel.pehkui.data;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,8 +14,6 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.EntityTypePredicate;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -27,12 +23,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import virtuoel.pehkui.Pehkui;
-import virtuoel.pehkui.api.PehkuiConfig;
-import virtuoel.pehkui.api.ScaleRegistries;
+import virtuoel.pehkui.api.ScaleModifier;
 import virtuoel.pehkui.api.ScaleType;
 
 /**
- * Holds the loaded datapack scale rules and applies them to entities.
+ * Holds the loaded datapack scale rules and matches them against entities.
  *
  * Rules are parsed lazily: the reload listener stores the raw JSON and the
  * actual {@link EntityPredicate} values are decoded once a registry lookup
@@ -40,12 +35,14 @@ import virtuoel.pehkui.api.ScaleType;
  * need a {@link HolderLookup}.
  *
  * Safety: values are clamped to {@code scaleRuleMaxScale} (default 256) to
- * prevent absurd hitboxes, non-finite/negative values are rejected, and
- * rules are indexed by entity type so matching does not scan every rule for
- * every entity.
+ * prevent absurd hitboxes, non-finite values are rejected, and rules are
+ * indexed by entity type so matching does not scan every rule for every
+ * entity.
  */
 public final class ScaleRules
 {
+	private static final Comparator<ScaleRule> BY_ASCENDING_PRIORITY = Comparator.comparingInt(ScaleRule::getPriority);
+
 	private static volatile HolderLookup.Provider registryLookup = null;
 	private static Map<EntityType<?>, List<ScaleRule>> typeIndex = Map.of();
 	private static List<ScaleRule> generalRules = List.of();
@@ -79,8 +76,7 @@ public final class ScaleRules
 			return;
 		}
 
-		final List<ScaleRule> parsed = parse(rawJson);
-		buildIndex(parsed);
+		buildIndex(parse(rawJson));
 	}
 
 	private static List<ScaleRule> parse(Map<Identifier, JsonElement> rawJson)
@@ -107,7 +103,7 @@ public final class ScaleRules
 
 				if (conditionsElement == null)
 				{
-					Pehkui.LOGGER.error("Missing required 'conditions' field in '{}'. Expected an EntityPredicate object (e.g. {{\"type\": [\"minecraft:zombie\"]}}).", fileId);
+					Pehkui.LOGGER.error("Missing required 'conditions' field in '{}'. Expected an EntityPredicate object (e.g. {{\"entity_type\": [\"minecraft:zombie\"]}}).", fileId);
 					continue;
 				}
 
@@ -117,32 +113,22 @@ public final class ScaleRules
 					continue;
 				}
 
-				JsonElement predicateJson = conditionsElement;
+				final EntityPredicate predicate = EntityPredicate.CODEC.parse(ops, conditionsElement).getOrThrow();
+				final Map<ScaleType, List<ScaleRuleOp>> scales = ScaleRuleParser.parseScales(json, fileId);
+				final Map<ScaleType, List<ScaleModifier>> modifiers = ScaleRuleParser.parseModifiers(json, fileId);
 
-				if (predicateJson.isJsonObject() && !predicateJson.getAsJsonObject().has("components"))
+				if (scales.isEmpty() && modifiers.isEmpty())
 				{
-					// 26.1.x 的 EntityPredicate record 有必填 components 字段（DataComponentMatchers）。
-					// 缺省时补空对象，保持数据包 JSON 跨版本一致
-					final JsonObject withComponents = predicateJson.getAsJsonObject().deepCopy();
-					withComponents.add("components", new JsonObject());
-					predicateJson = withComponents;
-				}
-
-				final EntityPredicate predicate = EntityPredicate.CODEC.parse(ops, predicateJson).getOrThrow();
-				final Map<ScaleType, Float> scales = parseScales(json, fileId);
-
-				if (scales.isEmpty())
-				{
-					Pehkui.LOGGER.error("No valid scales in '{}'. Provide a 'scales' map (e.g. {{\"pehkui:width\": 0.5}}) or the legacy 'scale_type' + 'value' pair.", fileId);
+					Pehkui.LOGGER.error("No valid scales or modifiers in '{}'. Provide a 'scales' map (e.g. {{\"pehkui:width\": 0.5}}) or the legacy 'scale_type' + 'value' pair.", fileId);
 					continue;
 				}
 
 				final int priority = json.has("priority") ? json.get("priority").getAsInt() : 0;
 				final String name = json.has("name") ? json.get("name").getAsString() : null;
 				final String description = json.has("description") ? json.get("description").getAsString() : null;
-				final List<EntityType<?>> entityTypes = parseEntityTypes(ops, conditionsElement);
+				final List<EntityType<?>> entityTypes = ScaleRuleParser.parseEntityTypes(ops, conditionsElement);
 
-				parsed.add(new ScaleRule(predicate, scales, priority, name, description, entityTypes));
+				parsed.add(new ScaleRule(predicate, scales, modifiers, priority, name, description, entityTypes));
 			}
 			catch (Exception e)
 			{
@@ -150,7 +136,8 @@ public final class ScaleRules
 			}
 		}
 
-		parsed.sort((a, b) -> Integer.compare(b.getPriority(), a.getPriority()));
+		// Ascending: the fold applies lower priority rules first so higher priority ones win.
+		parsed.sort(BY_ASCENDING_PRIORITY);
 
 		return parsed;
 	}
@@ -179,39 +166,6 @@ public final class ScaleRules
 
 		typeIndex = index;
 		generalRules = general;
-	}
-
-	@Nullable
-	private static List<EntityType<?>> parseEntityTypes(RegistryOps<JsonElement> ops, JsonElement conditions)
-	{
-		if (!conditions.isJsonObject())
-		{
-			return null;
-		}
-
-		final JsonObject conditionsObj = conditions.getAsJsonObject();
-
-		if (!conditionsObj.has("type"))
-		{
-			return null;
-		}
-
-		try
-		{
-			final EntityTypePredicate typePredicate = EntityTypePredicate.CODEC.parse(ops, conditionsObj.get("type")).getOrThrow();
-			final List<EntityType<?>> types = new ArrayList<>();
-
-			for (final Holder<EntityType<?>> holder : typePredicate.types())
-			{
-				types.add(holder.value());
-			}
-
-			return types;
-		}
-		catch (Exception e)
-		{
-			return null;
-		}
 	}
 
 	private static boolean resourceConditionsMatch(JsonObject json, RegistryOps<JsonElement> ops)
@@ -258,107 +212,48 @@ public final class ScaleRules
 		};
 	}
 
-	private static Map<ScaleType, Float> parseScales(JsonObject json, Identifier fileId)
-	{
-		final Map<ScaleType, Float> scales = new LinkedHashMap<>();
-		final float maxScale = (float) (double) PehkuiConfig.COMMON.scaleRuleMaxScale.get();
-
-		if (json.has("scales") && json.get("scales").isJsonObject())
-		{
-			final JsonObject scalesJson = json.getAsJsonObject("scales");
-
-			for (final Map.Entry<String, JsonElement> entry : scalesJson.entrySet())
-			{
-				final ScaleType scaleType = getScaleType(entry.getKey());
-
-				if (scaleType == null)
-				{
-					Pehkui.LOGGER.error("Unknown scale type '{}' in '{}'. Expected a registered type (e.g. 'pehkui:width').", entry.getKey(), fileId);
-					continue;
-				}
-
-				final float raw = entry.getValue().getAsFloat();
-
-				if (!Float.isFinite(raw) || raw <= 0)
-				{
-					Pehkui.LOGGER.error("Invalid value '{}' for 'scales.{}' in '{}'. Expected a finite value greater than 0 (max {}).", raw, entry.getKey(), fileId, maxScale);
-					continue;
-				}
-
-				scales.put(scaleType, Math.min(raw, maxScale));
-			}
-		}
-		else if (json.has("scale_type") && json.has("value"))
-		{
-			final ScaleType scaleType = getScaleType(json.get("scale_type").getAsString());
-
-			if (scaleType == null)
-			{
-				Pehkui.LOGGER.error("Unknown scale type '{}' in '{}'. Expected a registered type (e.g. 'pehkui:width').", json.get("scale_type").getAsString(), fileId);
-			}
-			else
-			{
-				final float raw = json.get("value").getAsFloat();
-
-				if (!Float.isFinite(raw) || raw <= 0)
-				{
-					Pehkui.LOGGER.error("Invalid value '{}' for 'scale_type' '{}' in '{}'. Expected a finite value greater than 0 (max {}).", raw, json.get("scale_type").getAsString(), fileId, maxScale);
-				}
-				else
-				{
-					scales.put(scaleType, Math.min(raw, maxScale));
-				}
-			}
-		}
-
-		return scales;
-	}
-
-	@Nullable
-	private static ScaleType getScaleType(String id)
-	{
-		final Identifier typeId = Identifier.tryParse(id);
-
-		return typeId == null ? null : ScaleRegistries.getEntry(ScaleRegistries.SCALE_TYPES, typeId);
-	}
-
 	/**
-	 * Returns the highest priority rule matching the given entity, or null.
+	 * Returns every rule matching the given entity, sorted by ascending priority.
+	 * <p>
+	 * All matches are returned rather than just the winner: the operations of every matching rule
+	 * are folded in order, so a rule using {@code multiply} / {@code add} composes with the rest.
+	 * With plain {@code set} rules the highest priority one still wins outright.
 	 */
-	@Nullable
-	public static ScaleRule getApplicableRule(Entity entity, ServerLevel world)
+	public static List<ScaleRule> getMatchingRules(Entity entity, ServerLevel world)
 	{
 		final List<ScaleRule> typeRules = typeIndex.get(entity.getType());
 		final int typeSize = typeRules == null ? 0 : typeRules.size();
 		final int generalSize = generalRules.size();
 
-		if (typeSize == 0)
+		if (typeSize == 0 && generalSize == 0)
 		{
-			for (final ScaleRule rule : generalRules)
-			{
-				if (rule.getPredicate().matches(world, entity.position(), entity))
-				{
-					return rule;
-				}
-			}
-
-			return null;
+			return List.of();
 		}
 
 		final List<ScaleRule> candidates = new ArrayList<>(typeSize + generalSize);
-		candidates.addAll(typeRules);
-		candidates.addAll(generalRules);
-		candidates.sort((a, b) -> Integer.compare(b.getPriority(), a.getPriority()));
+
+		if (typeSize > 0)
+		{
+			candidates.addAll(typeRules);
+		}
+
+		if (generalSize > 0)
+		{
+			candidates.addAll(generalRules);
+			candidates.sort(BY_ASCENDING_PRIORITY);
+		}
+
+		final List<ScaleRule> matching = new ArrayList<>();
 
 		for (final ScaleRule rule : candidates)
 		{
 			if (rule.getPredicate().matches(world, entity.position(), entity))
 			{
-				return rule;
+				matching.add(rule);
 			}
 		}
 
-		return null;
+		return matching;
 	}
 
 	public static boolean isEmpty()

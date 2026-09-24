@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import org.jspecify.annotations.NonNull;
 import virtuoel.pehkui.Pehkui;
 
 /**
@@ -27,7 +28,7 @@ public class ScaleRuleLoader implements SimpleSynchronousResourceReloadListener
 	private static final int MAX_FILE_SIZE = 1_000_000;
 
 	@Override
-	public Identifier getFabricId()
+	public @NonNull Identifier getFabricId()
 	{
 		return Pehkui.id("scale_rules");
 	}

@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.spongepowered.asm.mixin.Unique;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
@@ -16,7 +15,6 @@ import virtuoel.pehkui.util.ScaleCachingUtils;
 @Mixin(Entity.class)
 public abstract class ThreadSafeScaledEntityMixin implements PehkuiEntityExtensions
 {
-	@Unique
 	private volatile Map<ScaleType, ScaleData> pehkui_scaleTypes = Object2ObjectMaps.synchronize(new Object2ObjectOpenHashMap<>());
 	
 	@Override

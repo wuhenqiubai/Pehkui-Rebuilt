@@ -1,4 +1,5 @@
 package virtuoel.pehkui.server.command;
+import virtuoel.pehkui.util.Platform;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,18 +16,17 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -37,7 +37,6 @@ import virtuoel.pehkui.network.DebugPayload;
 import virtuoel.pehkui.util.CommandUtils;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.I18nUtils;
-import virtuoel.pehkui.util.Platform;
 import virtuoel.pehkui.util.ReflectionUtils;
 
 public class DebugCommand
@@ -52,7 +51,7 @@ public class DebugCommand
 			.then(ConfigSyncUtils.registerConfigCommands())
 		);
 		
-		if (FabricLoader.getInstance().isDevelopmentEnvironment() || PehkuiConfig.COMMON.enableCommands.get())
+		if (Platform.INSTANCE.isDevelopmentEnvironment() || PehkuiConfig.COMMON.enableCommands.get())
 		{
 			builder
 				.then(Commands.literal("debug")
@@ -105,7 +104,7 @@ public class DebugCommand
 				);
 		}
 		
-		if (FabricLoader.getInstance().isDevelopmentEnvironment() || PehkuiConfig.COMMON.enableDebugCommands.get())
+		if (Platform.INSTANCE.isDevelopmentEnvironment() || PehkuiConfig.COMMON.enableDebugCommands.get())
 		{
 			builder
 				.then(Commands.literal("debug")

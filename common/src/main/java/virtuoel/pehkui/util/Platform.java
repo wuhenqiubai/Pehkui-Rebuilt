@@ -31,7 +31,7 @@ public abstract class Platform
 	public abstract boolean isDevelopmentEnvironment();
 
 	/**
-	 * 当前 Minecraft 版本字符串。
+	 * 当前 Minecraft 版本字符串（如 "26.2"）。
 	 */
 	public abstract String getMinecraftVersion();
 
