@@ -10,10 +10,10 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 ## Current Branch Status
 
-- Minecraft target: `26.2`
-- Mod version: `3.8.6+26.2`
-- Fabric: Loader `0.19.5`, Fabric API `0.160.0+26.2` (loadable by Quilt via its Fabric compatibility)
-- NeoForge: `26.2.0.83`
+- Minecraft target: `26.3`
+- Mod version: `3.8.7+26.3`
+- Fabric: Loader `0.19.5`, Fabric API `0.160.7+26.3` (loadable by Quilt via its Fabric compatibility)
+- NeoForge: `26.3.0.16-Beta`
 - Project layout: Architectury multi-platform (`common` / `fabric` / `neoforge`)
 
 ## Version support status
@@ -28,7 +28,8 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 | 1.21.10          | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
 | 1.21.11          | 3.8.5‑Beta      | Active updates           | Mainstream          | Active         |
 | 26.1.x           | 3.8.5‑Beta-HF   | Active updates           | Mainstream          | Active         |
-| 26.2             | 3.8.6  | Highest‑priority updates | Primary baseline    | Active         |
+| 26.2             | 3.8.6           | Active updates           | Mainstream          | Active         |
+| 26.3             | 3.8.7-Alpha     | Highest‑priority updates | Primary baseline    | Active         |
 
 ## Origin
 
@@ -40,7 +41,7 @@ Each supported Minecraft version lives on its own branch. Branches are **single-
 
 Two branch layouts exist:
 
-- **Multi-platform (Architectury)** — e.g. `26.2`: one branch builds both Fabric and NeoForge from `common` / `fabric` / `neoforge` submodules. `common` holds platform-agnostic code only (no loader imports); platform differences are bridged through `virtuoel.pehkui.util.Platform` and implemented per platform. Platform-specific classes and mixins live under `virtuoel.pehkui.<platform>.*` — required because NeoForge's JPMS rejects two modules exporting the same package.
+- **Multi-platform (Architectury)** — e.g. `26.3`: one branch builds both Fabric and NeoForge from `common` / `fabric` / `neoforge` submodules. `common` holds platform-agnostic code only (no loader imports); platform differences are bridged through `virtuoel.pehkui.util.Platform` and implemented per platform. Platform-specific classes and mixins live under `virtuoel.pehkui.<platform>.*` — required because NeoForge's JPMS rejects two modules exporting the same package.
 - **Single-loader (legacy)** — e.g. `fabric/1.21.11`, `neoforge/26.2`: one branch per loader, mixins flattened into `mixin/` (server) and `mixin/client/`.
 
 To port to a new Minecraft version, copy this skeleton to a new branch and adjust the mixin injection-point method descriptors for the new mappings. Version differences are isolated by branches rather than by in-tree compat code.
