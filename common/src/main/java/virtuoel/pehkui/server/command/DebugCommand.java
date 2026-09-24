@@ -15,7 +15,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -38,6 +37,7 @@ import virtuoel.pehkui.network.DebugPayload;
 import virtuoel.pehkui.util.CommandUtils;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.I18nUtils;
+import virtuoel.pehkui.util.Platform;
 import virtuoel.pehkui.util.ReflectionUtils;
 
 public class DebugCommand
@@ -93,7 +93,7 @@ public class DebugCommand
 						{
 							final Packet<?> packet;
 							
-							packet = ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new DebugPayload(PacketType.GARBAGE_COLLECT));
+							packet = Platform.INSTANCE.createClientboundPacket(new DebugPayload(PacketType.GARBAGE_COLLECT));
 							
 							ReflectionUtils.sendPacket(context.getSource().getPlayerOrException().connection, packet);
 							
@@ -206,7 +206,7 @@ public class DebugCommand
 		{
 			final Packet<?> packet;
 			
-			packet = ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new DebugPayload(PacketType.MIXIN_AUDIT));
+			packet = Platform.INSTANCE.createClientboundPacket(new DebugPayload(PacketType.MIXIN_AUDIT));
 			
 			ReflectionUtils.sendPacket(((ServerPlayer) executor).connection, packet);
 		}

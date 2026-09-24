@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -254,7 +253,7 @@ public class ScaleUtils
 		{
 			if (NETWORKING_API_LOADED)
 			{
-				packetSender.accept(ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new ScalePayload(entity, syncedScales)));
+				packetSender.accept(Platform.INSTANCE.createClientboundPacket(new ScalePayload(entity, syncedScales)));
 			}
 			
 			syncedScales.clear();

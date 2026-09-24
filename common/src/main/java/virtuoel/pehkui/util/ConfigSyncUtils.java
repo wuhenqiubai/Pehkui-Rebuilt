@@ -23,7 +23,6 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import io.netty.buffer.ByteBuf;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -143,16 +142,15 @@ public class ConfigSyncUtils
 	{
 		if (NETWORKING_API_LOADED)
 		{
-			if (ServerPlayNetworking.canSend(networkHandler, Pehkui.CONFIG_SYNC_PACKET))
-			{
-				ReflectionUtils.sendPacket(networkHandler, createConfigSyncPacket(configEntries));
-			}
+			// canSend 是 Fabric netty 专有的能力探测，Platform 抽象里没有等价物；
+			// 统一走 createClientboundPacket，不再逐个客户端探测（与 26.3 的重构保持一致）
+			ReflectionUtils.sendPacket(networkHandler, createConfigSyncPacket(configEntries));
 		}
 	}
 	
 	public static Packet<?> createConfigSyncPacket(final Collection<SyncableConfigEntry<?>> configEntries)
 	{
-		return ServerPlayNetworking.createClientboundPacket((CustomPacketPayload) (Object) new ConfigSyncPayload(configEntries));
+		return Platform.INSTANCE.createClientboundPacket(new ConfigSyncPayload(configEntries));
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
