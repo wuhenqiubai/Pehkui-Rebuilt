@@ -170,15 +170,15 @@ public abstract class LivingEntityMixin
 		return entity;
 	}
 
-	@ModifyExpressionValue(method = "dealDefaultKnockback(Lnet/minecraft/world/damagesource/DamageSource;FZ)V", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
-	private double pehkui$damage$knockback(double value, DamageSource source, float amount)
+	@ModifyExpressionValue(method = "hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z", at = @At(value = "CONSTANT", args = "doubleValue=0.4000000059604645D"))
+	private double pehkui$damage$knockback(double value, ServerLevel world, DamageSource source, float amount)
 	{
 		final float scale = ScaleUtils.getKnockbackScale(source.getEntity());
 
 		return scale != 1.0F ? scale * value : value;
 	}
 
-	@ModifyExpressionValue(method = "blockedByItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;F)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
+	@ModifyExpressionValue(method = "blockedByItem(Lnet/minecraft/world/entity/LivingEntity;)V", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
 	private double pehkui$knockback$knockback(double value, LivingEntity target)
 	{
 		final float scale = ScaleUtils.getKnockbackScale((Entity) (Object) this);
@@ -199,7 +199,7 @@ public abstract class LivingEntityMixin
 		return scale == 1.0F ? value : value * scale;
 	}
 
-	@ModifyReturnValue(method = "getDimensions(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/entity/EntityDimensions;", at = @At("RETURN"))
+	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{
 		final LivingEntity self = (LivingEntity) (Object) this;
@@ -212,6 +212,8 @@ public abstract class LivingEntityMixin
 			original = original.scale(1.0F / vanillaScale, 1.0F / vanillaScale);
 		}
 
+		// eye_height 由 getScaledDimensions 单独处理：EntityDimensions.scale 会连带缩放 eyeHeight，
+		// 导致 hitbox 缩放把眼高一起带走，所以那里会按 eyeHeightScale 重新算眼高
 		return ScaleUtils.getScaledDimensions(original, self);
 	}
 
