@@ -212,9 +212,32 @@ Rules not applying? Work through this checklist:
 **Logs**: on the server, open `latest.log` and search for **`pehkui`**. Skipped/rejected rules are logged with the **file name** and a reason, e.g.:
 
 ```
-Unknown scale type 'pehkui:foo' in 'data/example/pehkui_scale_rules/zombies.json'. Expected a registered type (e.g. 'pehkui:width').
-Invalid value 'Infinity' for 'scales.pehkui:width' in 'data/example/pehkui_scale_rules/zombies.json'. Expected a finite value greater than 0 (max 256.0).
-Missing required 'conditions' field in 'data/example/pehkui_scale_rules/zombies.json'. Expected an EntityPredicate object (e.g. { "entity_type": ["minecraft:zombie"] }).
+Unknown scale type 'pehkui:foo' for 'scales' in 'example:pehkui_scale_rules/zombies.json'. Expected a registered type (e.g. 'pehkui:width').
+Invalid value 'Infinity' for 'scales.pehkui:width' in 'example:pehkui_scale_rules/zombies.json'. Expected a finite number.
+Unknown operation 'multply' for 'scales.pehkui:width' in 'example:pehkui_scale_rules/zombies.json'. Expected a registered operation (e.g. 'set', 'multiply', 'pehkui:add').
+Unknown easing 'pehkui:quadraticout' for 'scales.pehkui:width' in 'example:pehkui_scale_rules/zombies.json'. Expected a registered easing (e.g. 'pehkui:quadratic_out').
+Missing required 'conditions' field in 'example:pehkui_scale_rules/zombies.json'. Expected an EntityPredicate object (e.g. { "entity_type": ["minecraft:zombie"] }).
+```
+
+The id in these messages is the rule's resource id (`<namespace>:pehkui_scale_rules/<file>.json`), not the path on disk.
+
+A rule whose operations *parse* but **fold to a value that is not a usable scale** is caught twice.
+
+**At load time**, once per rule, folding from that scale type's default scale. This is the one that
+names the file, so it is what to look for when a rule seems to do nothing:
+
+```
+Rule in 'example:pehkui_scale_rules/zombies.json' folds to -4.0 for scale type 'pehkui:width' starting from that type's default scale, which is not a usable scale. Affected entities keep their existing value for that type.
+```
+
+**At runtime**, folded from the entity's real scale. This is the authoritative check — a rule can be
+fine at the default and still fail on a differently-sized mob. Only that scale type is left alone;
+the rest of the rule still applies. It is reported **once per scale type per server session**, not
+once per entity per check cycle, so one bad rule cannot flood the console no matter how many mobs
+are loaded:
+
+```
+Scale rule folds to the unusable value -4.0 for scale type 'pehkui:width' (baseline 1.0). Leaving that scale type untouched. Further reports for this scale type are suppressed for the rest of this session.
 ```
 
 ## Advanced Examples
