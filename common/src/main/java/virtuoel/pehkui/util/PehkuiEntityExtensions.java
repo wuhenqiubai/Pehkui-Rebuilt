@@ -1,7 +1,6 @@
 package virtuoel.pehkui.util;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -9,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleType;
+import virtuoel.pehkui.data.RuleApplicationState;
 
 public interface PehkuiEntityExtensions
 {
@@ -43,7 +43,7 @@ public interface PehkuiEntityExtensions
 	void pehkui_setPosDirectly(BlockPos pos);
 
 	@Nullable
-	Set<ScaleType> pehkui_getRuleScaleTypes();
+	RuleApplicationState pehkui_getRuleState();
 
-	void pehkui_setRuleScaleTypes(@Nullable Set<ScaleType> types);
+	void pehkui_setRuleState(@Nullable RuleApplicationState state);
 }

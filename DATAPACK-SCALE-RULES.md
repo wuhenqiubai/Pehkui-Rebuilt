@@ -308,11 +308,23 @@ Missing required 'conditions' field in 'example:pehkui_scale_rules/zombies.json'
 
 The id in these messages is the rule's resource id (`<namespace>:pehkui_scale_rules/<file>.json`), not the path on disk.
 
-A rule whose operations *parse* but fold to a value that is not a usable scale is reported
-separately, and only that scale type is left alone — the rest of the rule still applies:
+A rule whose operations *parse* but **fold to a value that is not a usable scale** is caught twice.
+
+**At load time**, once per rule, folding from that scale type's default scale. This is the one that
+names the file, so it is what to look for when a rule seems to do nothing:
 
 ```
-Scale rule produced an invalid value -1.0 for scale type 'pehkui:width' (baseline 1.0). Leaving that scale type untouched.
+Rule in 'example:pehkui_scale_rules/zombies.json' folds to -4.0 for scale type 'pehkui:width' starting from that type's default scale, which is not a usable scale. Affected entities keep their existing value for that type.
+```
+
+**At runtime**, folded from the entity's real scale. This is the authoritative check — a rule can be
+fine at the default and still fail on a differently-sized mob. Only that scale type is left alone;
+the rest of the rule still applies. It is reported **once per scale type per server session**, not
+once per entity per check cycle, so one bad rule cannot flood the console no matter how many mobs
+are loaded:
+
+```
+Scale rule folds to the unusable value -4.0 for scale type 'pehkui:width' (baseline 1.0). Leaving that scale type untouched. Further reports for this scale type are suppressed for the rest of this session.
 ```
 
 ## Advanced Examples
