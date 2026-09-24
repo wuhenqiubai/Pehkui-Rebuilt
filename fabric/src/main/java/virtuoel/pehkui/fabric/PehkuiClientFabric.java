@@ -1,4 +1,4 @@
-package virtuoel.pehkui;
+package virtuoel.pehkui.fabric;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -20,7 +20,7 @@ import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.I18nUtils;
 
 @ApiStatus.Internal
-public class PehkuiClient implements ClientModInitializer
+public class PehkuiClientFabric implements ClientModInitializer
 {
 	@Override
 	public void onInitializeClient()

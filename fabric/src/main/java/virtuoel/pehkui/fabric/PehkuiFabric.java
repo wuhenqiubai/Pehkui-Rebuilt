@@ -1,15 +1,12 @@
-package virtuoel.pehkui;
+package virtuoel.pehkui.fabric;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.spongepowered.asm.logging.ILogger;
-import org.spongepowered.asm.service.MixinService;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleOperations;
@@ -26,31 +23,32 @@ import virtuoel.pehkui.util.GravityChangerCompatibility;
 import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
 import virtuoel.pehkui.util.ModLoaderUtils;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
-import virtuoel.pehkui.util.ReflectionUtils;
+import virtuoel.pehkui.util.Platform;
 
+/**
+ * Fabric 平台入口。常量与 id 辅助在 {@code virtuoel.pehkui.Pehkui}（common）。
+ */
 @ApiStatus.Internal
-public class Pehkui implements ModInitializer
+public class PehkuiFabric implements ModInitializer
 {
-	public static final String MOD_ID = "pehkui";
-	
-	public static final ILogger LOGGER = MixinService.getService().getLogger(MOD_ID);
-	
-	public Pehkui()
+	public PehkuiFabric()
 	{
+		Platform.setInstance(new PlatformImpl());
+
 		ScaleTypes.INVALID.getClass();
 		ScaleOperations.NOOP.getClass();
 		PehkuiConfig.BUILDER.config.get();
 	}
-	
+
 	@Override
 	public void onInitialize()
 	{
 		CommandUtils.registerArgumentTypes();
-		
+
 		PehkuiEntitySelectorOptions.register();
-		
+
 		CommandUtils.registerCommands();
-		
+
 		if (ModLoaderUtils.isModLoaded("fabric-networking-api-v1"))
 		{
 			ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
@@ -64,12 +62,12 @@ public class Pehkui implements ModInitializer
 					ConfigSyncUtils.resetSyncedConfigs();
 				}
 			});
-			
+
 			PayloadTypeRegistry.clientboundPlay().register(ScalePayload.ID, ScalePayload.CODEC);
 			PayloadTypeRegistry.clientboundPlay().register(ConfigSyncPayload.ID, ConfigSyncPayload.CODEC);
 			PayloadTypeRegistry.clientboundPlay().register(DebugPayload.ID, DebugPayload.CODEC);
 		}
-		
+
 		GravityChangerCompatibility.INSTANCE.getClass();
 		ImmersivePortalsCompatibility.INSTANCE.getClass();
 		MulticonnectCompatibility.INSTANCE.getClass();
@@ -78,18 +76,4 @@ public class Pehkui implements ModInitializer
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> ScaleRules.setRegistryLookup(server.registryAccess()));
 	}
-	
-	public static Identifier id(String path)
-	{
-		return ReflectionUtils.constructIdentifier(MOD_ID, path);
-	}
-	
-	public static Identifier id(String path, String... paths)
-	{
-		return id(paths.length == 0 ? path : path + "/" + String.join("/", paths));
-	}
-	
-	public static final Identifier SCALE_PACKET = id("scale");
-	public static final Identifier CONFIG_SYNC_PACKET = id("config_sync");
-	public static final Identifier DEBUG_PACKET = id("debug");
 }

@@ -1,0 +1,75 @@
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.internal.NativeLibraryLoader in an unnamed module (file:/D:/Java/GradleWarehouse/wrapper/dists/gradle-9.6.1-bin/4ticwg1pgcbps2hj28r8so764/gradle-9.6.1/lib/native-platform-0.22-milestone-29.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+
+> Configure project :
+Architect Plugin: 3.5.170
+Architectury Loom: 1.17.493
+
+> Task :fabric:processResources UP-TO-DATE
+> Task :fabric:generateLog4jConfig UP-TO-DATE
+> Task :fabric:generateDLIConfig
+> Task :common:compileJava UP-TO-DATE
+> Task :common:processResources UP-TO-DATE
+> Task :common:classes UP-TO-DATE
+> Task :common:processIncludeJars UP-TO-DATE
+> Task :common:jar UP-TO-DATE
+> Task :fabric:prepareArchitecturyTransformer
+> Task :fabric:compileJava UP-TO-DATE
+> Task :fabric:classes UP-TO-DATE
+> Task :fabric:configureLaunch
+> Task :fabric:downloadAssets UP-TO-DATE
+> Task :fabric:configureClientLaunch
+
+> Task :fabric:runClient
+[Architectury Transformer] Architectury Runtime 5.2.92
+[Architectury Transformer] Read classpath in 1.334 s
+[Architectury Transformer] Listening at D:\Minecraft\Shape-Shifter-Curse_Unofficial-Port\_dev\1.21.11-source\Pehkui-Continuation\common\build\libs\pehkui-rebuilt-common-3.8.6+26.3-dev.jar
+[23:32:22] [main/INFO] (FabricLoader/GameProvider) Loading Minecraft 26.3 with Fabric Loader 0.19.5
+[23:32:22] [main/INFO] (FabricLoader/Mappings) Mappings not present!
+[23:32:22] [main/WARN] (FabricLoader/Resolution) Mod resolution failed
+[23:32:22] [main/INFO] (FabricLoader/Resolution) Immediate reason: [HARD_DEP_INCOMPATIBLE_PRESELECTED modmenu 20.0.1 {depends minecraft @ [>=26.2 <26.3-alpha.3]}, ROOT_FORCELOAD_SINGLE modmenu 20.0.1]
+[23:32:22] [main/INFO] (FabricLoader/Resolution) Reason: [HARD_DEP modmenu 20.0.1 {depends minecraft @ [>=26.2 <26.3-alpha.3]}]
+[23:32:22] [main/INFO] (FabricLoader/Resolution) Fix: add [], remove [], replace [[modmenu 20.0.1] -> add:modmenu 1 ([(-∞,∞)])]
+[23:32:22] [main/ERROR] (FabricLoader) Incompatible mods found!
+
+net.fabricmc.loader.impl.FormattedException: Some of your mods are incompatible with the game or each other!
+确定了一种可能的解决方法，这样做可能会解决你的问题：
+	 - 将 模组 'Mod Menu' (modmenu) 20.0.1 替换为与这一模组兼容的 任意版本：
+		 - minecraft 26.3
+更多信息：
+	 - 模组 'Mod Menu' (modmenu) 20.0.1 需要 'Minecraft' (minecraft) 的 从 26.2（含）到 26.3-alpha.3（不含）的任意版本，但已经安装了的版本 26.3 不对！
+	at net.fabricmc.loader.impl.FormattedException.ofLocalized(FormattedException.java:51)
+	at net.fabricmc.loader.impl.FabricLoaderImpl.load(FabricLoaderImpl.java:202)
+	at net.fabricmc.loader.impl.launch.knot.Knot.init(Knot.java:142)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:66)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+	at net.fabricmc.devlaunchinjector.Main.main(Main.java:86)
+	at dev.architectury.transformer.TransformerRuntime.main(TransformerRuntime.java:220)
+
+> Task :fabric:runClient FAILED
+
+[Incubating] Problems report is available at: file:///D:/Minecraft/Shape-Shifter-Curse_Unofficial-Port/_dev/1.21.11-source/Pehkui-Continuation/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':fabric:runClient' (registered by plugin 'dev.architectury.loom').
+> Process 'command 'D:\Java\jdk-25.0.3\bin\java.exe'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.6.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 37s
+11 actionable tasks: 3 executed, 8 up-to-date
