@@ -45,3 +45,6 @@ changelog*.txt
 /_dev/
 /docs/
 /build-all-logs/
+
+# 本地运行日志
+*.log
