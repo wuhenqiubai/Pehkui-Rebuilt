@@ -43,7 +43,7 @@ body:
     attributes:
       label: Minecraft version details
       description: "Fill in if you selected \"Other\" above."
-      placeholder: (e.g. 1.17 Snapshot 21w21a, e.g. 1.18 Experimental Snapshot 1)
+      placeholder: (e.g. 1.21.11 Snapshot 25w46a, e.g. 26.3-snapshot-10)
     validations:
       required: false
   - type: dropdown
@@ -60,8 +60,8 @@ body:
     id: mod_loader_version
     attributes:
       label: Mod loader version
-      description: What Forge version, NeoForge version, Fabric Loader version (not Fabric API), or Quilt Loader version (not QSL) were you using?
-      placeholder: (e.g. Fabric Loader 0.14.24, e.g. Quilt Loader 0.22.0, e.g. NeoForge 20.2.88, e.g. Forge 36.1.62)
+      description: What NeoForge version or Fabric Loader version (not Fabric API) were you using?
+      placeholder: (e.g. Fabric Loader 0.19.5, e.g. NeoForge 26.2.0.88)
     validations:
       required: true
   - type: input
@@ -70,7 +70,7 @@ body:
       label: Fabric API version
       description: "What Fabric API version (not Fabric Loader) were you using?\n
       (Fill in only if you selected Fabric as your mod loader and a mod you're using requires Fabric API)"
-      placeholder: (e.g. Fabric API 0.37.0)
+      placeholder: (e.g. Fabric API 0.161.0)
     validations:
       required: false
   - type: dropdown
