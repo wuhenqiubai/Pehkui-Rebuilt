@@ -5,7 +5,7 @@ description: Send a bug report
 title: "[Bug]: Untitled bug report"
 labels: [bug]
 assignees:
-  - Virtuoel
+  - wuhenqiubai
 body:
   - type: markdown
     attributes:
