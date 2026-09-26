@@ -21,7 +21,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_version"
 	modImplementation "com.terraformersmc:modmenu:$rootProject.modmenu_version"
 
-	common(project(path: ':common')) { transitive = false }
+	common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
 	shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
 	// KanosConfig：shadowJar 经 thirdparty 打进 fabric jar。

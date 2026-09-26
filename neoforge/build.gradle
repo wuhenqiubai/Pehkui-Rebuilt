@@ -19,7 +19,7 @@ configurations {
 dependencies {
 	neoForge "net.neoforged:neoforge:$rootProject.neo_version"
 
-	common(project(path: ':common')) { transitive = false }
+	common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
 	shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 
 	// KanosConfig：shadowJar 经 thirdparty 打进 neoforge jar；排除其 POM 声明的 fabric-loader 传递依赖
