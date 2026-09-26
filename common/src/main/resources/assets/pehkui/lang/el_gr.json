@@ -5,7 +5,6 @@
 	"argument.pehkui.modifier.invalid": "Άγνωστη μεταβολή μεγέθους '%s'",
 	"argument.pehkui.type.invalid": "Άγνωστος τύπος μεγέθους '%s'",
 	"argument.pehkui.easing.invalid": "Unknown easing '%s'",
-	
 	"commands.pehkui.debug.audit.end": "Έλεγχος Mixin περιβάλλοντος ολοκληρομένος!",
 	"commands.pehkui.debug.audit.end.client": "Έλεγχος Mixin περιβάλλοντος (χρήστη) ολοκληρομένος!",
 	"commands.pehkui.debug.audit.start": "Έναρξη έλεγχου Mixin περιβάλλοντος...",
@@ -16,7 +15,6 @@
 	"commands.pehkui.debug.config.changed.value": "Ρύθμηση \"%s\" αλλάχτηκε από \"%s\" στο \"%s\"",
 	"commands.pehkui.debug.config.reset.value": "Ρύθμηση \"%s\" επανήλθε από \"%s\" στο αρχικό \"%s\"",
 	"commands.pehkui.debug.config.reset": "%s ρυθμίσεις έχουν τεθεί στις αρχικές τους τιμές",
-	
 	"commands.pehkui.scale.delay.get.message": "Καθυστέρηση: %s ticks",
 	"commands.pehkui.scale.get.message": "Μέγεθος: %s",
 	"commands.pehkui.scale.get.fraction.message": "Μέγεθος: %s (1/%s)",
@@ -29,7 +27,6 @@
 	"commands.pehkui.scale.persist.true": "Αποθήκευση μεγέθους: true",
 	"commands.pehkui.scale.easing.default": "Ομαλότητα: default (%s)",
 	"commands.pehkui.scale.easing": "Ομαλότητα: %s",
-	
 	"pehkui.configgui.minimumCameraDepth": "Ελάχιστη τιμή για τον πίνακα βάθους της κάμερας. Το vanilla είναι στο 0,05",
 	"pehkui.configgui.scaledFallDamage": "Whether fall damage should scale based on the motion scale Αν η ζημιά ύψους πρέπει να μεταβάλλεται ανάλογα με τη κλίμακα κίνησης",
 	"pehkui.configgui.scaledMotion": "Αν η κλίμακα κίνησης πρέπει να είναι ενεργοποιημένη",
@@ -45,7 +42,6 @@
 	"pehkui.configgui.accurateNetherPortals": "Αν η σύγκρουση των πύλων Nether πρέπει να μεταβάλλεται για να χωράει στο selection box",
 	"pehkui.configgui.enableCommands": "Αν εντολές όπως το /scale πρέπει να είναι ενεργοποιημένες",
 	"pehkui.configgui.enableDebugCommands": "Αν εσωτερικές debugging εντολές πρέπει να είναι ενεργοποιημένες",
-	
 	"pehkui.configgui.scale_limits.base.minimum": "Ελάχιστη τιμή για τον τύπο κλίμακας pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Μέγιστη τιμή για τον τύπο κλίμακας pehkui:base",
 	"pehkui.configgui.scale_limits.width.minimum": "Ελάχιστη τιμή για τον τύπο κλίμακας pehkui:width",
@@ -107,5 +103,12 @@
 	"pehkui.configgui.scale_limits.projectiles.minimum": "Ελάχιστη τιμή για τον τύπο κλίμακας pehkui:projectiles",
 	"pehkui.configgui.scale_limits.projectiles.maximum": "Μέγιστη τιμή για τον τύπο κλίμακας pehkui:projectiles",
 	"pehkui.configgui.scale_limits.explosions.minimum": "Ελάχιστη τιμή για τον τύπο κλίμακας pehkui:explosions",
-	"pehkui.configgui.scale_limits.explosions.maximum": "Μέγιστη τιμή για τον τύπο κλίμακας pehkui:explosions"
+	"pehkui.configgui.scale_limits.explosions.maximum": "Μέγιστη τιμή για τον τύπο κλίμακας pehkui:explosions",
+	"pehkui.configgui.enableScaleRules": "Whether datapack scale rules should be enabled",
+	"pehkui.configgui.scaleRuleCheckInterval": "How often (in ticks) entities should be checked against datapack scale rules",
+	"pehkui.configgui.scaleRuleMaxScale": "Maximum value for scales applied by datapack scale rules",
+	"pehkui.configgui.scaleRulesAffectPlayers": "Whether datapack scale rules should affect players",
+	"pehkui.configgui.applyVanillaScale": "Whether the vanilla scale attribute should be folded into pehkui:base",
+	"pehkui.configgui.vanillaScaleAffectsGameplay": "Whether the vanilla scale attribute should also affect gameplay scale types (motion, reach, drops, projectiles, explosions)",
+	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute"
 }

@@ -5,7 +5,6 @@
 	"argument.pehkui.modifier.invalid": "Modificateur d'échelle '%s' inconnu",
 	"argument.pehkui.type.invalid": "Type d'échelle '%s' inconnu",
 	"argument.pehkui.easing.invalid": "Fonction d'interpolation '%s' inconnue",
-	
 	"commands.pehkui.debug.audit.end": "Audit de l'environnement de mixin terminé !",
 	"commands.pehkui.debug.audit.end.client": "Audit de l'environnement de mixin (client) terminé !",
 	"commands.pehkui.debug.audit.start": "Démarrage de l'audit de l'environnement de mixin...",
@@ -16,7 +15,6 @@
 	"commands.pehkui.debug.config.changed.value": "La configuration \"%s\" a été modifiée de \"%s\" à \"%s\"",
 	"commands.pehkui.debug.config.reset.value": "La configuration \"%s\" a été réinitialisée de \"%s\" à la valeur par défaut \"%s\"",
 	"commands.pehkui.debug.config.reset": "%s entrées de configuration ont été réinitialisées à leurs valeurs par défaut",
-	
 	"commands.pehkui.scale.delay.get.message": "Délai : %s ticks",
 	"commands.pehkui.scale.get.message": "Échelle : %s",
 	"commands.pehkui.scale.get.fraction.message": "Échelle : %s (1/%s)",
@@ -29,7 +27,6 @@
 	"commands.pehkui.scale.persist.true": "Persistant : vrai",
 	"commands.pehkui.scale.easing.default": "Fonction d'interpolation : par défaut (%s)",
 	"commands.pehkui.scale.easing": "Fonction d'interpolation : %s",
-	
 	"pehkui.configgui.minimumCameraDepth": "Valeur minimale pour la profondeur de la caméra de la matrice de projection. La valeur par défaut de Vanilla est de 0,05.",
 	"pehkui.configgui.scaledFallDamage": "Indique si les dégâts de chute doivent être mis à l'échelle en fonction de l'échelle de mouvement.",
 	"pehkui.configgui.scaledMotion": "Indique si l'échelle de mouvement doit être activée.",
@@ -45,7 +42,6 @@
 	"pehkui.configgui.accurateNetherPortals": "Indique si la collision des portails Nether doit être ajustée pour s'adapter à la boîte de sélection.",
 	"pehkui.configgui.enableCommands": "Indique si les commandes telles que /scale doivent être activées.",
 	"pehkui.configgui.enableDebugCommands": "Indique si les commandes de débogage internes doivent être activées.",
-	
 	"pehkui.configgui.scale_limits.base.minimum": "Valeur minimale pour le type d'échelle pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Valeur maximale pour le type d'échelle pehkui:base",
 	"pehkui.configgui.scale_limits.width.minimum": "Valeur minimale pour le type d'échelle pehkui:width",
@@ -107,5 +103,12 @@
 	"pehkui.configgui.scale_limits.projectiles.minimum": "Valeur minimale pour le type d'échelle pehkui:projectiles",
 	"pehkui.configgui.scale_limits.projectiles.maximum": "Valeur maximale pour le type d'échelle pehkui:projectiles",
 	"pehkui.configgui.scale_limits.explosions.minimum": "Valeur minimale pour le type d'échelle pehkui:explosions",
-	"pehkui.configgui.scale_limits.explosions.maximum": "Valeur maximale pour le type d'échelle pehkui:explosions"
+	"pehkui.configgui.scale_limits.explosions.maximum": "Valeur maximale pour le type d'échelle pehkui:explosions",
+	"pehkui.configgui.enableScaleRules": "Whether datapack scale rules should be enabled",
+	"pehkui.configgui.scaleRuleCheckInterval": "How often (in ticks) entities should be checked against datapack scale rules",
+	"pehkui.configgui.scaleRuleMaxScale": "Maximum value for scales applied by datapack scale rules",
+	"pehkui.configgui.scaleRulesAffectPlayers": "Whether datapack scale rules should affect players",
+	"pehkui.configgui.applyVanillaScale": "Whether the vanilla scale attribute should be folded into pehkui:base",
+	"pehkui.configgui.vanillaScaleAffectsGameplay": "Whether the vanilla scale attribute should also affect gameplay scale types (motion, reach, drops, projectiles, explosions)",
+	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute"
 }
