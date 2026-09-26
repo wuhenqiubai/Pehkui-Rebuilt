@@ -22,6 +22,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.AttackRange;
@@ -356,6 +358,36 @@ public class ScaleUtils
 	/**
 	 * 原版 minecraft:scale 属性值（非 LivingEntity 恒为 1）。
 	 */
+	/**
+	 * 统一计算缩放后的 EntityDimensions。
+	 *
+	 * <p>不能简单地 original.scale(w, h)：那会连带把 eyeHeight 也乘上 heightScale，
+	 * 导致 pehkui:eye_height 无法脱离 hitbox 独立设置。这里改为先 scale 宽高，
+	 * 再用 eyeHeightScale 单独设眼高。
+	 */
+	public static EntityDimensions getScaledDimensions(EntityDimensions original, Entity entity)
+	{
+		final float widthScale = getBoundingBoxWidthScale(entity);
+		final float heightScale = getBoundingBoxHeightScale(entity);
+		final float eyeHeightScale = getEyeHeightScale(entity);
+
+		if (widthScale == 1.0F && heightScale == 1.0F && eyeHeightScale == 1.0F)
+		{
+			return original;
+		}
+
+		final EntityDimensions scaled = original.scale(widthScale, heightScale);
+
+		// fixed() 的尺寸按 scale() 的约定完全不参与缩放，眼高同样不动；
+		// 睡眠姿势下原版眼高另有语义，沿用上游 compat1204minus 的处理，不缩放
+		if (original.fixed() || entity.getPose() == Pose.SLEEPING)
+		{
+			return scaled;
+		}
+
+		return scaled.withEyeHeight(original.eyeHeight() * eyeHeightScale);
+	}
+
 	public static float getVanillaScale(Entity entity)
 	{
 		return entity instanceof LivingEntity living ? living.getScale() : 1.0F;

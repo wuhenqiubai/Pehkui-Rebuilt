@@ -227,15 +227,7 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{
-		final float widthScale = ScaleUtils.getBoundingBoxWidthScale((Entity) (Object) this);
-		final float heightScale = ScaleUtils.getBoundingBoxHeightScale((Entity) (Object) this);
-		
-		if (widthScale != 1.0F || heightScale != 1.0F)
-		{
-			return original.scale(widthScale, heightScale);
-		}
-		
-		return original;
+		return ScaleUtils.getScaledDimensions(original, (Entity) (Object) this);
 	}
 
 	@ModifyReturnValue(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At("RETURN"))

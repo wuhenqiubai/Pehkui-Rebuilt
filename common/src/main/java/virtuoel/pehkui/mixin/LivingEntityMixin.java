@@ -212,15 +212,8 @@ public abstract class LivingEntityMixin
 			original = original.scale(1.0F / vanillaScale, 1.0F / vanillaScale);
 		}
 		
-		final float widthScale = ScaleUtils.getBoundingBoxWidthScale(self);
-		final float heightScale = ScaleUtils.getBoundingBoxHeightScale(self);
-
-		if (widthScale != 1.0F || heightScale != 1.0F)
-		{
-			return original.scale(widthScale, heightScale);
-		}
-
-		return original;
+		// eye_height 由 getScaledDimensions 单独处理：EntityDimensions.scale 会连带缩放 eyeHeight
+		return ScaleUtils.getScaledDimensions(original, self);
 	}
 
 	@ModifyReturnValue(method = "getJumpPower(F)F", at = @At("RETURN"))
