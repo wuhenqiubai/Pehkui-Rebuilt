@@ -26,11 +26,11 @@ The pack format can be found in the [Minecraft Wiki - Pack format section](https
 
 ```json
 {
-	"pack": { 
-		"pack_format": 107, 
+	"pack": {
+		"pack_format": 121,
 		"description": "My scale rules",
-		"min_format": 48,
-		"max_format": 107
+		"min_format": 121,
+		"max_format": 121
 	}
 }
 ```

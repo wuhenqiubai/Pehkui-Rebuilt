@@ -1,7 +1,6 @@
 package virtuoel.pehkui.neoforge.mixin;
 
 import java.util.Map;
-import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -32,6 +31,7 @@ import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
+import virtuoel.pehkui.data.RuleApplicationState;
 import virtuoel.pehkui.neoforge.data.ScaleRules;
 import virtuoel.pehkui.server.command.DebugCommand;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
@@ -66,7 +66,7 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	private boolean pehkui_shouldIgnoreScaleNbt = false;
 	@Unique
 	private ScaleData[] pehkui_scaleCache = null;
-	private Set<ScaleType> pehkui_ruleScaleTypes = null;
+	private RuleApplicationState pehkui_ruleState = null;
 
 	@Override
 	public ScaleData pehkui_constructScaleData(ScaleType type)
@@ -113,12 +113,18 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	@Inject(at = @At("HEAD"), method = "load")
 	private void pehkui$readData(ValueInput view, CallbackInfo info)
 	{
+		final CompoundTag tag = new CompoundTag();
+
 		view.read(Pehkui.MOD_ID + ":scale_data_types", CompoundTag.CODEC).ifPresent(typeData ->
+			tag.put(Pehkui.MOD_ID + ":scale_data_types", typeData));
+
+		view.read(Pehkui.MOD_ID + ":scale_rule_state", CompoundTag.CODEC).ifPresent(ruleState ->
+			tag.put(Pehkui.MOD_ID + ":scale_rule_state", ruleState));
+
+		if (!tag.isEmpty())
 		{
-			final CompoundTag tag = new CompoundTag();
-			tag.put(Pehkui.MOD_ID + ":scale_data_types", typeData);
 			pehkui_readScaleNbt(tag);
-		});
+		}
 	}
 	
 	@Override
@@ -129,6 +135,14 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 			return;
 		}
 		
+		// 规则快照必须随实体存档：丢了它，重载后会把规则写进去的值当成基准，下一轮就开始累积
+		if (nbt.contains(Pehkui.MOD_ID + ":scale_rule_state"))
+		{
+			final RuleApplicationState state = new RuleApplicationState();
+			state.readNbt(nbt.getCompoundOrEmpty(Pehkui.MOD_ID + ":scale_rule_state"));
+			pehkui_setRuleState(state.isEmpty() ? null : state);
+		}
+
 		if (nbt.contains(Pehkui.MOD_ID + ":scale_data_types") && !DebugCommand.unmarkEntityForScaleReset((Entity) (Object) this, nbt))
 		{
 			final CompoundTag typeData = nbt.getCompoundOrEmpty(Pehkui.MOD_ID + ":scale_data_types");
@@ -156,6 +170,11 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		if (tag.contains(Pehkui.MOD_ID + ":scale_data_types"))
 		{
 			view.store(Pehkui.MOD_ID + ":scale_data_types", CompoundTag.CODEC, tag.getCompoundOrEmpty(Pehkui.MOD_ID + ":scale_data_types"));
+		}
+
+		if (tag.contains(Pehkui.MOD_ID + ":scale_rule_state"))
+		{
+			view.store(Pehkui.MOD_ID + ":scale_rule_state", CompoundTag.CODEC, tag.getCompoundOrEmpty(Pehkui.MOD_ID + ":scale_rule_state"));
 		}
 	}
 	
@@ -187,7 +206,14 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 		{
 			nbt.put(Pehkui.MOD_ID + ":scale_data_types", typeData);
 		}
-		
+
+		final RuleApplicationState ruleState = pehkui_getRuleState();
+
+		if (ruleState != null && !ruleState.isEmpty())
+		{
+			nbt.put(Pehkui.MOD_ID + ":scale_rule_state", ruleState.writeNbt());
+		}
+
 		return nbt;
 	}
 	
@@ -213,15 +239,15 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	}
 
 	@Override
-	public Set<ScaleType> pehkui_getRuleScaleTypes()
+	public RuleApplicationState pehkui_getRuleState()
 	{
-		return pehkui_ruleScaleTypes;
+		return pehkui_ruleState;
 	}
 
 	@Override
-	public void pehkui_setRuleScaleTypes(Set<ScaleType> types)
+	public void pehkui_setRuleState(RuleApplicationState state)
 	{
-		pehkui_ruleScaleTypes = types;
+		pehkui_ruleState = state;
 	}
 
 	@ModifyReturnValue(method = "getDimensions", at = @At("RETURN"))
