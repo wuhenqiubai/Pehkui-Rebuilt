@@ -9,6 +9,8 @@
 		"BoatEntityMixin",
 		"ChestBoatEntityMixin",
 		"EntityMixin",
+		"EntitySelectorMixin",
+		"EntitySelectorOptionsMixin",
 		"FoxEntityMateGoalMixin",
 		"PlayerManagerMixin",
 		"PreEntityTickMixin",

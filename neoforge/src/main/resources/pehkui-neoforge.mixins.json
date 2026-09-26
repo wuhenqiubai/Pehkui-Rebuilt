@@ -8,6 +8,8 @@
 		"BoatEntityMixin",
 		"ChestBoatEntityMixin",
 		"EntityMixin",
+		"EntitySelectorMixin",
+		"EntitySelectorOptionsMixin",
 		"PreEntityTickMixin",
 		"SplashPotionEntityMixin",
 		"ThreadSafeScaledEntityMixin",
