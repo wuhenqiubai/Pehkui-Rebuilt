@@ -1,0 +1,66 @@
+plugins {
+	id 'com.gradleup.shadow'
+}
+
+architectury {
+	platformSetupLoomIde()
+	fabric()
+}
+
+configurations {
+	common { canBeResolved = true; canBeConsumed = false }
+	shadowBundle { canBeResolved = true; canBeConsumed = false }
+	thirdparty { canBeResolved = true; canBeConsumed = false }
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentFabric.extendsFrom common
+}
+
+dependencies {
+	modImplementation "net.fabricmc:fabric-loader:$rootProject.loader_version"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_version"
+	modImplementation "com.terraformersmc:modmenu:$rootProject.modmenu_version"
+
+	common(project(path: ':common')) { transitive = false }
+	shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
+
+	// KanosConfig：shadowJar 经 thirdparty 打进 fabric jar。
+	// 必须排除它 POM 里声明的 fabric-loader 传递依赖，否则 shadow 会把旧版 loader 类打进 jar，
+	// 遮蔽真实 loader，导致启动时 NoClassDefFoundError（AccessWidenerVisitor 等）。
+	modImplementation("com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag") {
+		exclude group: 'net.fabricmc', module: 'fabric-loader'
+	}
+	thirdparty("com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag") {
+		exclude group: 'net.fabricmc', module: 'fabric-loader'
+	}
+}
+
+processResources {
+	inputs.property 'version', project.version
+	filesMatching('fabric.mod.json') {
+		expand version: inputs.properties.version, minecraft_version: project.minecraft_version
+	}
+}
+
+shadowJar {
+	exclude 'architectury.common.json'
+	configurations = [project.configurations.shadowBundle, project.configurations.thirdparty]
+	archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+	input.set shadowJar.archiveFile
+	dependsOn shadowJar
+}
+
+sourcesJar {
+	def commonSources = project(':common').sourcesJar
+	dependsOn commonSources
+	from commonSources.archiveFile.map { zipTree(it) }
+}
+
+components.java {
+	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+		skip()
+	}
+}

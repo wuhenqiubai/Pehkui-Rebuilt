@@ -1,0 +1,73 @@
+plugins {
+	id 'com.gradleup.shadow'
+}
+
+architectury {
+	platformSetupLoomIde()
+	neoForge()
+}
+
+configurations {
+	common { canBeResolved = true; canBeConsumed = false }
+	shadowBundle { canBeResolved = true; canBeConsumed = false }
+	thirdparty { canBeResolved = true; canBeConsumed = false }
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentNeoForge.extendsFrom common
+}
+
+dependencies {
+	neoForge "net.neoforged:neoforge:$rootProject.neo_version"
+
+	common(project(path: ':common')) { transitive = false }
+	shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
+
+	// KanosConfig：shadowJar 经 thirdparty 打进 neoforge jar；排除其 POM 声明的 fabric-loader 传递依赖
+	implementation("com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag") {
+		exclude group: 'net.fabricmc', module: 'fabric-loader'
+	}
+	thirdparty("com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag") {
+		exclude group: 'net.fabricmc', module: 'fabric-loader'
+	}
+}
+
+processResources {
+	var replaceProperties = [
+		version                 : project.version,
+		minecraft_version       : project.minecraft_version,
+		minecraft_version_range : project.minecraft_version_range,
+		neo_version             : project.neo_version,
+		loader_version_range    : project.loader_version_range,
+		mod_id                  : project.mod_id,
+		mod_name                : project.mod_name,
+		mod_license             : project.mod_license,
+	]
+	inputs.properties replaceProperties
+	filesMatching('META-INF/neoforge.mods.toml') {
+		expand replaceProperties
+	}
+}
+
+shadowJar {
+	exclude 'fabric.mod.json'
+	exclude 'architectury.common.json'
+	configurations = [project.configurations.shadowBundle, project.configurations.thirdparty]
+	archiveClassifier = 'dev-shadow'
+}
+
+remapJar {
+	input.set shadowJar.archiveFile
+	dependsOn shadowJar
+}
+
+sourcesJar {
+	def commonSources = project(':common').sourcesJar
+	dependsOn commonSources
+	from commonSources.archiveFile.map { zipTree(it) }
+}
+
+components.java {
+	withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+		skip()
+	}
+}

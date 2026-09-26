@@ -7,8 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      BUILD_NUMBER: ${{ github.run_number }}  # Pehkui 的 build.gradle 用 BUILD_NUMBER 生成唯一 jar 名（build.N- 前缀）
     steps:
       - name: 从仓库拉取代码
         uses: actions/checkout@v4
@@ -36,8 +34,13 @@ jobs:
       - name: 构建Mod # 如果失败请检查代码是否有错误
         run: ./gradlew build
 
-      - name: 发布构建产物 # jar 名带 build.<run_number> 每次构建唯一
+      # Architectury 三模块：产物分别在 fabric/ 与 neoforge/ 的 build/libs 下
+      - name: 发布构建产物
         uses: actions/upload-artifact@v4.3.3
         with:
           name: "${{ steps.properties.outputs.archives_base_name }}-${{ steps.properties.outputs.mod_version }}+build.${{ github.run_number }}-${{ steps.properties.outputs.minecraft_version }}"
-          path: build/libs/${{ steps.properties.outputs.archives_base_name }}-${{ steps.properties.outputs.mod_version }}+build.${{ github.run_number }}-${{ steps.properties.outputs.minecraft_version }}.jar
+          path: |
+            fabric/build/libs/${{ steps.properties.outputs.archives_base_name }}-fabric-*.jar
+            neoforge/build/libs/${{ steps.properties.outputs.archives_base_name }}-neoforge-*.jar
+            !**/*-sources.jar
+            !**/*-dev-shadow.jar
