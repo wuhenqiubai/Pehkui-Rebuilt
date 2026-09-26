@@ -31,6 +31,7 @@ import virtuoel.pehkui.util.GravityChangerCompatibility;
 import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.Platform;
+import virtuoel.pehkui.util.VanillaScaleSyncBack;
 
 @ApiStatus.Internal
 public class PehkuiFabric implements ModInitializer
@@ -86,5 +87,7 @@ public class PehkuiFabric implements ModInitializer
 		ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new ScaleRuleLoader());
 
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> ScaleRules.setRegistryLookup(server.registryAccess()));
+		
+		VanillaScaleSyncBack.register();
 	}
 }

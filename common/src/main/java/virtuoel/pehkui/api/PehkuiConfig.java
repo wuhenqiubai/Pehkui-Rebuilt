@@ -59,6 +59,10 @@ public class PehkuiConfig
 		public final Supplier<Boolean> scaledItemDrops;
 		public final Supplier<Boolean> scaledProjectiles;
 		public final Supplier<Boolean> scaledExplosions;
+		// 原版 minecraft:scale 属性兼容
+		public final Supplier<Boolean> applyVanillaScale;
+		public final Supplier<Boolean> vanillaScaleAffectsGameplay;
+		public final Supplier<Boolean> vanillaScaleSyncBack;
 		
 		private Common(final JsonConfigBuilder builder)
 		{
@@ -84,6 +88,10 @@ public class PehkuiConfig
 			this.scaledItemDrops = builder.booleanConfig(synced("scaledItemDrops", "boolean"), true);
 			this.scaledProjectiles = builder.booleanConfig(synced("scaledProjectiles", "boolean"), true);
 			this.scaledExplosions = builder.booleanConfig(synced("scaledExplosions", "boolean"), true);
+			
+			this.applyVanillaScale = builder.booleanConfig("applyVanillaScale", false);
+			this.vanillaScaleAffectsGameplay = builder.booleanConfig("vanillaScaleAffectsGameplay", false);
+			this.vanillaScaleSyncBack = builder.booleanConfig("vanillaScaleSyncBack", false);
 			
 			Identifier id;
 			String namespace, path;

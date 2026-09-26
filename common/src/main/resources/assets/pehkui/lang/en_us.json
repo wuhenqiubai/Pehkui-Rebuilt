@@ -5,7 +5,6 @@
 	"argument.pehkui.modifier.invalid": "Unknown scale modifier '%s'",
 	"argument.pehkui.type.invalid": "Unknown scale type '%s'",
 	"argument.pehkui.easing.invalid": "Unknown easing '%s'",
-	
 	"commands.pehkui.debug.audit.end": "Mixin environment audit complete!",
 	"commands.pehkui.debug.audit.end.client": "Mixin environment audit (client) complete!",
 	"commands.pehkui.debug.audit.start": "Starting Mixin environment audit...",
@@ -16,7 +15,6 @@
 	"commands.pehkui.debug.config.changed.value": "Config \"%s\" was changed from \"%s\" to \"%s\"",
 	"commands.pehkui.debug.config.reset.value": "Config \"%s\" was reset from \"%s\" to default \"%s\"",
 	"commands.pehkui.debug.config.reset": "%s config entries have been reset to their default values",
-	
 	"commands.pehkui.scale.delay.get.message": "Delay: %s ticks",
 	"commands.pehkui.scale.get.message": "Scale: %s",
 	"commands.pehkui.scale.get.fraction.message": "Scale: %s (1/%s)",
@@ -29,7 +27,6 @@
 	"commands.pehkui.scale.persist.true": "Persistent: true",
 	"commands.pehkui.scale.easing.default": "Easing: default (%s)",
 	"commands.pehkui.scale.easing": "Easing: %s",
-	
 	"pehkui.configgui.minimumCameraDepth": "Minimum value for the projection matrix's camera depth. Vanilla defaults to 0.05",
 	"pehkui.configgui.scaledFallDamage": "Whether fall damage should scale based on the motion scale",
 	"pehkui.configgui.scaledMotion": "Whether the motion scale should be enabled",
@@ -49,7 +46,6 @@
 	"pehkui.configgui.scaleRuleCheckInterval": "How often (in ticks) entities should be checked against datapack scale rules",
 	"pehkui.configgui.scaleRuleMaxScale": "Maximum value for scales applied by datapack scale rules",
 	"pehkui.configgui.scaleRulesAffectPlayers": "Whether datapack scale rules should affect players",
-	
 	"pehkui.configgui.scale_limits.base.minimum": "Minimum value for the scale type pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Maximum value for the scale type pehkui:base",
 	"pehkui.configgui.scale_limits.width.minimum": "Minimum value for the scale type pehkui:width",
@@ -111,5 +107,8 @@
 	"pehkui.configgui.scale_limits.projectiles.minimum": "Minimum value for the scale type pehkui:projectiles",
 	"pehkui.configgui.scale_limits.projectiles.maximum": "Maximum value for the scale type pehkui:projectiles",
 	"pehkui.configgui.scale_limits.explosions.minimum": "Minimum value for the scale type pehkui:explosions",
-	"pehkui.configgui.scale_limits.explosions.maximum": "Maximum value for the scale type pehkui:explosions"
+	"pehkui.configgui.scale_limits.explosions.maximum": "Maximum value for the scale type pehkui:explosions",
+	"pehkui.configgui.applyVanillaScale": "Whether the vanilla scale attribute should be folded into pehkui:base",
+	"pehkui.configgui.vanillaScaleAffectsGameplay": "Whether the vanilla scale attribute should also affect gameplay scale types (motion, reach, drops, projectiles, explosions)",
+	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute"
 }

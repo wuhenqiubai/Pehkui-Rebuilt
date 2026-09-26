@@ -22,6 +22,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.phys.Vec3;
@@ -350,6 +351,14 @@ public class ScaleUtils
 		}
 		
 		return -offset;
+	}
+	
+	/**
+	 * 原版 minecraft:scale 属性值（非 LivingEntity 恒为 1）。
+	 */
+	public static float getVanillaScale(Entity entity)
+	{
+		return entity instanceof LivingEntity living ? living.getScale() : 1.0F;
 	}
 	
 	public static float getEyeHeightScale(Entity entity)

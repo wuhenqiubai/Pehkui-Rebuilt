@@ -5,7 +5,6 @@
 	"argument.pehkui.modifier.invalid": "未知的缩放修饰符 \"%s\"",
 	"argument.pehkui.type.invalid": "未知的缩放类型 \"%s\"",
 	"argument.pehkui.easing.invalid": "未知的缓动 \"%s\"",
-
 	"commands.pehkui.debug.audit.end": "Mixin 环境审计完成！",
 	"commands.pehkui.debug.audit.end.client": "Mixin 环境审计（客户端）完成！",
 	"commands.pehkui.debug.audit.start": "正在开始 Mixin 环境审计...",
@@ -16,7 +15,6 @@
 	"commands.pehkui.debug.config.changed.value": "配置 \"%s\" 已从 \"%s\" 更改为 \"%s\"",
 	"commands.pehkui.debug.config.reset.value": "配置 \"%s\" 已从 \"%s\" 重置为默认值 \"%s\"",
 	"commands.pehkui.debug.config.reset": "%s 个配置项已重置为默认值",
-
 	"commands.pehkui.scale.delay.get.message": "延迟：%s 刻",
 	"commands.pehkui.scale.get.message": "缩放：%s",
 	"commands.pehkui.scale.get.fraction.message": "缩放：%s（1/%s）",
@@ -29,7 +27,6 @@
 	"commands.pehkui.scale.persist.true": "持久化：true",
 	"commands.pehkui.scale.easing.default": "缓动：默认（%s）",
 	"commands.pehkui.scale.easing": "缓动：%s",
-
 	"pehkui.configgui.minimumCameraDepth": "投影矩阵相机深度最小值。默认0.05",
 	"pehkui.configgui.scaledFallDamage": "根据移动缩放来缩放摔落伤害",
 	"pehkui.configgui.scaledMotion": "启用移动缩放",
@@ -49,7 +46,6 @@
 	"pehkui.configgui.scaleRuleCheckInterval": "实体多少tick检查一次数据包缩放规则",
 	"pehkui.configgui.scaleRuleMaxScale": "数据包缩放规则最大缩放值",
 	"pehkui.configgui.scaleRulesAffectPlayers": "数据包缩放规则影响玩家",
-
 	"pehkui.configgui.scale_limits.base.minimum": "pehkui:base 最小值",
 	"pehkui.configgui.scale_limits.base.maximum": "pehkui:base 最大值",
 	"pehkui.configgui.scale_limits.width.minimum": "pehkui:width 最小值",
@@ -111,5 +107,8 @@
 	"pehkui.configgui.scale_limits.projectiles.minimum": "pehkui:projectiles 最小值",
 	"pehkui.configgui.scale_limits.projectiles.maximum": "pehkui:projectiles 最大值",
 	"pehkui.configgui.scale_limits.explosions.minimum": "pehkui:explosions 最小值",
-	"pehkui.configgui.scale_limits.explosions.maximum": "pehkui:explosions 最大值"
+	"pehkui.configgui.scale_limits.explosions.maximum": "pehkui:explosions 最大值",
+	"pehkui.configgui.applyVanillaScale": "是否将原版 scale 属性折入 pehkui:base",
+	"pehkui.configgui.vanillaScaleAffectsGameplay": "是否让原版 scale 属性也影响移动/触及/掉落/投射物等效果类缩放",
+	"pehkui.configgui.vanillaScaleSyncBack": "是否将 pehkui:base 写回原版 scale 属性（双向镜像）"
 }

@@ -18,6 +18,7 @@ import virtuoel.pehkui.util.GravityChangerCompatibility;
 import virtuoel.pehkui.util.ImmersivePortalsCompatibility;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.Platform;
+import virtuoel.pehkui.util.VanillaScaleSyncBack;
 
 /**
  * NeoForge 入口。common 的 {@link Pehkui} 只承载常量与 id 辅助，本类负责加载器侧装配。
@@ -47,6 +48,8 @@ public class PehkuiNeoForge
 		GravityChangerCompatibility.INSTANCE.getClass();
 		ImmersivePortalsCompatibility.INSTANCE.getClass();
 		MulticonnectCompatibility.INSTANCE.getClass();
+		
+		VanillaScaleSyncBack.register();
 	}
 
 	@SubscribeEvent
