@@ -14,10 +14,20 @@ public class PehkuiMixinConfigPlugin implements IMixinConfigPlugin
 {
 	private static final String MIXIN_PACKAGE = "virtuoel.pehkui.mixin";
 
+	/**
+	 * 放宽包校验：Architectury 化后 neoforge 侧 mixin 位于
+	 * {@code virtuoel.pehkui.neoforge.mixin}，fabric / common 侧位于 {@code virtuoel.pehkui.mixin}。
+	 */
+	private static boolean isInMixinPackage(final String value)
+	{
+		return value.startsWith("virtuoel.pehkui.")
+			&& (value.endsWith(".mixin") || value.contains(".mixin."));
+	}
+
 	@Override
 	public void onLoad(String mixinPackage)
 	{
-		if (!mixinPackage.startsWith(MIXIN_PACKAGE))
+		if (!isInMixinPackage(mixinPackage))
 		{
 			throw new IllegalArgumentException(
 				String.format("Invalid package: Expected \"%s\", but found \"%s\".", MIXIN_PACKAGE, mixinPackage)
@@ -37,7 +47,7 @@ public class PehkuiMixinConfigPlugin implements IMixinConfigPlugin
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName)
 	{
-		if (!mixinClassName.startsWith(MIXIN_PACKAGE))
+		if (!isInMixinPackage(mixinClassName))
 		{
 			throw new IllegalArgumentException(
 				String.format("Invalid package for class \"%s\": Expected \"%s\", but found \"%s\".", targetClassName, MIXIN_PACKAGE, mixinClassName)

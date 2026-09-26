@@ -76,7 +76,7 @@ public final class ReflectionUtils
 				f.setAccessible(true);
 				return f;
 			}
-			catch (SecurityException | NoSuchFieldException e)
+			catch (SecurityException | NoSuchFieldException ignored)
 			{
 
 			}
@@ -92,7 +92,7 @@ public final class ReflectionUtils
 			{
 				f.set(object, value);
 			}
-			catch (IllegalArgumentException | IllegalAccessException e)
+			catch (IllegalArgumentException | IllegalAccessException ignored)
 			{
 
 			}
@@ -109,7 +109,7 @@ public final class ReflectionUtils
 				m.setAccessible(true);
 				return m;
 			}
-			catch (SecurityException | NoSuchMethodException e)
+			catch (SecurityException | NoSuchMethodException ignored)
 			{
 
 			}
@@ -155,7 +155,7 @@ public final class ReflectionUtils
 		{
 			return Optional.of(Class.forName(className));
 		}
-		catch (ClassNotFoundException e)
+		catch (ClassNotFoundException ignored)
 		{
 
 		}
