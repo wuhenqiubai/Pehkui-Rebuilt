@@ -2,10 +2,10 @@ package virtuoel.pehkui.mixin.client;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,8 +16,10 @@ import virtuoel.pehkui.util.ScaleUtils;
 @Mixin(EntityRenderer.class)
 public class EntityRendererMixin<T extends Entity>
 {
-	@Inject(method = "renderLeash", at = @At(value = "HEAD"))
-	private <E extends Entity> void pehkui$renderLeash$head(T entity, float tickDelta, PoseStack matrices, MultiBufferSource provider, E leashHolder, CallbackInfo info)
+	// 包住整个 renderLeash，而不是原来的 HEAD push / RETURN pop 配对 —— 后者在方法抛异常时
+	// 会漏掉 pop，把 LevelRenderer.renderLevel 的局部 PoseStack 撑成非空（Pose stack not empty）。
+	@WrapMethod(method = "renderLeash(Lnet/minecraft/world/entity/Entity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/Entity;)V")
+	private <E extends Entity> void pehkui$renderLeash(T entity, float tickDelta, PoseStack matrices, MultiBufferSource provider, E leashHolder, Operation<Void> original)
 	{
 		final float widthScale = ScaleUtils.getModelWidthScale(entity, tickDelta);
 		final float heightScale = ScaleUtils.getModelHeightScale(entity, tickDelta);
@@ -26,15 +28,19 @@ public class EntityRendererMixin<T extends Entity>
 		final float inverseHeightScale = 1.0F / heightScale;
 		
 		matrices.pushPose();
-		matrices.scale(inverseWidthScale, inverseHeightScale, inverseWidthScale);
-		matrices.pushPose();
-	}
-	
-	@Inject(method = "renderLeash", at = @At(value = "RETURN"))
-	private <E extends Entity> void pehkui$renderLeash$return(T entity, float tickDelta, PoseStack matrices, MultiBufferSource provider, E leashHolder, CallbackInfo info)
-	{
-		matrices.popPose();
-		matrices.popPose();
+		
+		try
+		{
+			matrices.scale(inverseWidthScale, inverseHeightScale, inverseWidthScale);
+			matrices.pushPose();
+			
+			original.call(entity, tickDelta, matrices, provider, leashHolder);
+		}
+		finally
+		{
+			matrices.popPose();
+			matrices.popPose();
+		}
 	}
 	
 	@ModifyExpressionValue(method = "renderNameTag", at = @At(value = "CONSTANT", args = "doubleValue=0.5D"))
