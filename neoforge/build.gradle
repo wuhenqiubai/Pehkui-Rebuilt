@@ -22,8 +22,6 @@ dependencies {
 	common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
 	shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 
-	// KanosConfig：shadowJar 经 thirdparty 打进 neoforge jar（与其他 Architectury 分支对齐）；
-	// 排除其 POM 声明的 fabric-loader 传递依赖，否则 shadow 会把旧版 loader 类打进 jar 遮蔽真 loader。
 	// KanosConfig 已 vendor 进 common/src/main/java/virtuoel/kanos_config/（MIT，见同目录 LICENSE），
 	// 不再依赖 JitPack 产物 —— 那个 jar 带 fabric.mod.json，NeoForge 会判为 Fabric mod 而拒绝加载。
 }
