@@ -1,0 +1,11 @@
+architectury {
+	common(rootProject.enabled_platforms.split(','))
+}
+
+dependencies {
+	// 仅用于 @Environment 等跨平台标记注解，不依赖 Fabric API
+	modImplementation "net.fabricmc:fabric-loader:$rootProject.loader_version"
+
+	// KanosConfig：纯 Java 配置库。common 仅编译期引用；打包在平台模块（include / jarJar）
+	implementation "com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag"
+}

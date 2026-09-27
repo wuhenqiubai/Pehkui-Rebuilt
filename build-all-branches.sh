@@ -23,7 +23,8 @@ case "$MODE" in
   publish) GRADLE_TASK="publishToMavenLocal" ;;
 esac
 
-JAVA_HOME_DEFAULT="D:/Java/jdk-25.0.3"
+# 1.21.1 / 1.21.11 世代需要 JDK 21（`D:/Java` 下只有 25，21 由 IDEA 装在 .jdks）
+JAVA_HOME_DEFAULT="C:/Users/DELL/.jdks/ms-21.0.12.1"
 LOG_DIR="build-all-logs"
 mkdir -p "$LOG_DIR"
 
