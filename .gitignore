@@ -46,3 +46,7 @@ changelog*.txt
 /docs/
 /build-all-logs/
 /.claude/
+
+# 构建日志
+/build-all-logs/
+*.log
