@@ -1,4 +1,4 @@
-# Pehkui Rebuilt
+# Pehkui Rebuilt [![JitPack](https://jitpack.io/v/wuhenqiubai/Pehkui-Rebuilt.svg)](https://jitpack.io/#wuhenqiubai/Pehkui-Rebuilt)
 
 Pehkui Rebuilt is an independent rebuild of Pehkui, a library mod that allows mods and commands to change the size of entities and scale-related behavior.
 
