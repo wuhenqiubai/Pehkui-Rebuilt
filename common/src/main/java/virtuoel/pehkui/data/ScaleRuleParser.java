@@ -37,7 +37,7 @@ public final class ScaleRuleParser
 	 * {@code operation} / {@code value} and the optional {@code delay} / {@code easing} /
 	 * {@code persist} adjustments.
 	 */
-	public static Map<ScaleType, List<ScaleRuleOp>> parseScales(JsonObject json, Identifier fileId)
+	public static Map<ScaleType, List<ScaleRuleOp>> parseScales(JsonObject json, String label)
 	{
 		final Map<ScaleType, List<ScaleRuleOp>> scales = new LinkedHashMap<>();
 
@@ -45,14 +45,14 @@ public final class ScaleRuleParser
 		{
 			for (final Map.Entry<String, JsonElement> entry : json.getAsJsonObject("scales").entrySet())
 			{
-				final ScaleType scaleType = parseScaleType(entry.getKey(), "scales", fileId);
+				final ScaleType scaleType = parseScaleType(entry.getKey(), "scales", label);
 
 				if (scaleType == null)
 				{
 					continue;
 				}
 
-				final ScaleRuleOp op = parseOp(entry.getValue(), "scales." + entry.getKey(), fileId);
+				final ScaleRuleOp op = parseOp(entry.getValue(), "scales." + entry.getKey(), label);
 
 				if (op != null)
 				{
@@ -63,13 +63,13 @@ public final class ScaleRuleParser
 		else if (json.has("scale_type") && json.has("value"))
 		{
 			final String typeId = json.get("scale_type").getAsString();
-			final ScaleType scaleType = parseScaleType(typeId, "scale_type", fileId);
+			final ScaleType scaleType = parseScaleType(typeId, "scale_type", label);
 
 			if (scaleType != null)
 			{
 				// The legacy form keeps the operand at the top level; it may be a plain number or
 				// the same object shape used inside "scales".
-				final ScaleRuleOp op = parseOp(json.get("value"), "value", fileId);
+				final ScaleRuleOp op = parseOp(json.get("value"), "value", label);
 
 				if (op != null)
 				{
@@ -78,7 +78,7 @@ public final class ScaleRuleParser
 			}
 		}
 
-		warnOnUnusableFold(scales, fileId);
+		warnOnUnusableFold(scales, label, readDescription(json));
 
 		return scales;
 	}
@@ -93,7 +93,7 @@ public final class ScaleRuleParser
 	 * looks fine here can still fail for a differently-sized one. The authoritative check is the one
 	 * in {@link ScaleRuleApplier}, which runs against the real baseline.
 	 */
-	private static void warnOnUnusableFold(Map<ScaleType, List<ScaleRuleOp>> scales, Identifier fileId)
+	private static void warnOnUnusableFold(Map<ScaleType, List<ScaleRuleOp>> scales, String label, @Nullable String description)
 	{
 		for (final Map.Entry<ScaleType, List<ScaleRuleOp>> entry : scales.entrySet())
 		{
@@ -106,9 +106,11 @@ public final class ScaleRuleParser
 
 			if (!Float.isFinite(probe) || probe <= 0.0F)
 			{
+				final String note = description == null || description.isBlank() ? "" : " Rule description: " + description;
+
 				Pehkui.LOGGER.warn(
-					"Rule in '{}' folds to {} for scale type '{}' starting from that type's default scale, which is not a usable scale. Affected entities keep their existing value for that type.",
-					fileId, probe, ScaleRegistries.getId(ScaleRegistries.SCALE_TYPES, entry.getKey())
+					"Rule in '{}' folds to {} for scale type '{}' starting from that type's default scale, which is not a usable scale. Affected entities keep their existing value for that type.{}",
+					label, probe, ScaleRegistries.getId(ScaleRegistries.SCALE_TYPES, entry.getKey()), note
 				);
 			}
 		}
@@ -118,7 +120,7 @@ public final class ScaleRuleParser
 	 * Parses the optional {@code modifiers} map: scale type id to an array of registered
 	 * {@code SCALE_MODIFIERS} ids.
 	 */
-	public static Map<ScaleType, List<ScaleModifier>> parseModifiers(JsonObject json, Identifier fileId)
+	public static Map<ScaleType, List<ScaleModifier>> parseModifiers(JsonObject json, String label)
 	{
 		final Map<ScaleType, List<ScaleModifier>> modifiers = new LinkedHashMap<>();
 
@@ -129,7 +131,7 @@ public final class ScaleRuleParser
 
 		for (final Map.Entry<String, JsonElement> entry : json.getAsJsonObject("modifiers").entrySet())
 		{
-			final ScaleType scaleType = parseScaleType(entry.getKey(), "modifiers", fileId);
+			final ScaleType scaleType = parseScaleType(entry.getKey(), "modifiers", label);
 
 			if (scaleType == null)
 			{
@@ -138,7 +140,7 @@ public final class ScaleRuleParser
 
 			if (!entry.getValue().isJsonArray())
 			{
-				Pehkui.LOGGER.error("Expected an array of modifier ids for 'modifiers.{}' in '{}'.", entry.getKey(), fileId);
+				Pehkui.LOGGER.error("Expected an array of modifier ids for 'modifiers.{}' in '{}'.", entry.getKey(), label);
 				continue;
 			}
 
@@ -154,7 +156,7 @@ public final class ScaleRuleParser
 				{
 					// Must be a registered modifier: ScaleData.toPacket only ships modifier ids, so
 					// an unregistered one would silently vanish on the client and desync its size.
-					Pehkui.LOGGER.error("Unknown scale modifier '{}' for 'modifiers.{}' in '{}'. Expected a registered modifier (e.g. 'pehkui:base_multiplier').", name, entry.getKey(), fileId);
+					Pehkui.LOGGER.error("Unknown scale modifier '{}' for 'modifiers.{}' in '{}'. Expected a registered modifier (e.g. 'pehkui:base_multiplier').", name, entry.getKey(), label);
 					continue;
 				}
 
@@ -171,7 +173,7 @@ public final class ScaleRuleParser
 	}
 
 	@Nullable
-	private static ScaleRuleOp parseOp(JsonElement element, String path, Identifier fileId)
+	private static ScaleRuleOp parseOp(JsonElement element, String path, String label)
 	{
 		DoubleBinaryOperator operation = ScaleOperations.SET;
 		int tickDelay = -1;
@@ -185,7 +187,7 @@ public final class ScaleRuleParser
 
 			if (json.has("operation"))
 			{
-				operation = parseOperation(json.get("operation").getAsString(), path, fileId);
+				operation = parseOperation(json.get("operation").getAsString(), path, label);
 
 				if (operation == null)
 				{
@@ -195,7 +197,7 @@ public final class ScaleRuleParser
 
 			if (!json.has("value"))
 			{
-				Pehkui.LOGGER.error("Missing required 'value' for '{}' in '{}'.", path, fileId);
+				Pehkui.LOGGER.error("Missing required 'value' for '{}' in '{}'.", path, label);
 				return null;
 			}
 
@@ -207,7 +209,7 @@ public final class ScaleRuleParser
 
 				if (tickDelay < 0)
 				{
-					Pehkui.LOGGER.error("Invalid 'delay' {} for '{}' in '{}'. Expected a non-negative tick count.", tickDelay, path, fileId);
+					Pehkui.LOGGER.error("Invalid 'delay' {} for '{}' in '{}'. Expected a non-negative tick count.", tickDelay, path, label);
 					return null;
 				}
 			}
@@ -220,7 +222,7 @@ public final class ScaleRuleParser
 
 				if (easing == null)
 				{
-					Pehkui.LOGGER.error("Unknown easing '{}' for '{}' in '{}'. Expected a registered easing (e.g. 'pehkui:quadratic_out').", name, path, fileId);
+					Pehkui.LOGGER.error("Unknown easing '{}' for '{}' in '{}'. Expected a registered easing (e.g. 'pehkui:quadratic_out').", name, path, label);
 					return null;
 				}
 			}
@@ -239,7 +241,7 @@ public final class ScaleRuleParser
 		// known once every rule has been folded in, so that check lives in ScaleRuleApplier.
 		if (!Float.isFinite(value))
 		{
-			Pehkui.LOGGER.error("Invalid value '{}' for '{}' in '{}'. Expected a finite number.", value, path, fileId);
+			Pehkui.LOGGER.error("Invalid value '{}' for '{}' in '{}'. Expected a finite number.", value, path, label);
 			return null;
 		}
 
@@ -247,13 +249,13 @@ public final class ScaleRuleParser
 	}
 
 	@Nullable
-	private static DoubleBinaryOperator parseOperation(String name, String path, Identifier fileId)
+	private static DoubleBinaryOperator parseOperation(String name, String path, String label)
 	{
 		final Identifier id = parseId(name);
 
 		if (id == null)
 		{
-			Pehkui.LOGGER.error("Invalid operation '{}' for '{}' in '{}'.", name, path, fileId);
+			Pehkui.LOGGER.error("Invalid operation '{}' for '{}' in '{}'.", name, path, label);
 			return null;
 		}
 
@@ -262,7 +264,7 @@ public final class ScaleRuleParser
 		// Mirrors the command's rule: 'noop' is the registry default and not a usable operator.
 		if (operation == null || operation == ScaleOperations.NOOP)
 		{
-			Pehkui.LOGGER.error("Unknown operation '{}' for '{}' in '{}'. Expected a registered operation (e.g. 'set', 'multiply', 'pehkui:add').", name, path, fileId);
+			Pehkui.LOGGER.error("Unknown operation '{}' for '{}' in '{}'. Expected a registered operation (e.g. 'set', 'multiply', 'pehkui:add').", name, path, label);
 			return null;
 		}
 
@@ -270,13 +272,13 @@ public final class ScaleRuleParser
 	}
 
 	@Nullable
-	private static ScaleType parseScaleType(String name, String path, Identifier fileId)
+	private static ScaleType parseScaleType(String name, String path, String label)
 	{
 		final ScaleType scaleType = getScaleType(name);
 
 		if (scaleType == null)
 		{
-			Pehkui.LOGGER.error("Unknown scale type '{}' for '{}' in '{}'. Expected a registered type (e.g. 'pehkui:width').", name, path, fileId);
+			Pehkui.LOGGER.error("Unknown scale type '{}' for '{}' in '{}'. Expected a registered type (e.g. 'pehkui:width').", name, path, label);
 		}
 
 		return scaleType;
@@ -337,6 +339,23 @@ public final class ScaleRuleParser
 		{
 			return null;
 		}
+	}
+
+	/**
+	 * The rule's optional {@code description}, used to give the load-time diagnostics the author's own
+	 * note about what the rule was meant to do. Returns null when absent or blank.
+	 */
+	@Nullable
+	private static String readDescription(final JsonObject json)
+	{
+		if (!json.has("description"))
+		{
+			return null;
+		}
+
+		final JsonElement element = json.get("description");
+
+		return element.isJsonPrimitive() ? element.getAsString() : null;
 	}
 
 	private ScaleRuleParser()

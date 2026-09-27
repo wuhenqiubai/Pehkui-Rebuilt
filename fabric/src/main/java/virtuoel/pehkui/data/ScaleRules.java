@@ -43,6 +43,30 @@ public final class ScaleRules
 {
 	private static final Comparator<ScaleRule> BY_ASCENDING_PRIORITY = Comparator.comparingInt(ScaleRule::getPriority);
 
+	/**
+	 * Label used in log messages. Prefers the rule's {@code name} so the messages match what the
+	 * pack author wrote, with the resource id in parentheses so the offending file stays identifiable.
+	 */
+	private static String ruleLabel(final Identifier fileId, final JsonObject json)
+	{
+		if (json.has("name"))
+		{
+			final JsonElement element = json.get("name");
+
+			if (element.isJsonPrimitive())
+			{
+				final String name = element.getAsString();
+
+				if (!name.isBlank())
+				{
+					return name + " (" + fileId + ")";
+				}
+			}
+		}
+
+		return fileId.toString();
+	}
+
 	private static volatile HolderLookup.Provider registryLookup = null;
 	private static Map<EntityType<?>, List<ScaleRule>> typeIndex = Map.of();
 	private static List<ScaleRule> generalRules = List.of();
@@ -89,6 +113,8 @@ public final class ScaleRules
 		{
 			final Identifier fileId = raw.getKey();
 			final JsonElement element = raw.getValue();
+			// 声明在 try 之外：catch 里也要用它标识出错的规则
+			String label = fileId.toString();
 
 			try
 			{
@@ -99,27 +125,28 @@ public final class ScaleRules
 				}
 
 				final JsonObject json = element.getAsJsonObject();
+				label = ruleLabel(fileId, json);
 				final JsonElement conditionsElement = json.get("conditions");
 
 				if (conditionsElement == null)
 				{
-					Pehkui.LOGGER.error("Missing required 'conditions' field in '{}'. Expected an EntityPredicate object (e.g. {{\"entity_type\": [\"minecraft:zombie\"]}}).", fileId);
+					Pehkui.LOGGER.error("Missing required 'conditions' field in '{}'. Expected an EntityPredicate object (e.g. {\"entity_type\": [\"minecraft:zombie\"]}).", label);
 					continue;
 				}
 
 				if (!resourceConditionsMatch(json, ops))
 				{
-					Pehkui.LOGGER.info("Skipping '{}' due to fabric:load_conditions.", fileId);
+					Pehkui.LOGGER.info("Skipping '{}' due to fabric:load_conditions.", label);
 					continue;
 				}
 
 				final EntityPredicate predicate = EntityPredicate.CODEC.parse(ops, conditionsElement).getOrThrow();
-				final Map<ScaleType, List<ScaleRuleOp>> scales = ScaleRuleParser.parseScales(json, fileId);
-				final Map<ScaleType, List<ScaleModifier>> modifiers = ScaleRuleParser.parseModifiers(json, fileId);
+				final Map<ScaleType, List<ScaleRuleOp>> scales = ScaleRuleParser.parseScales(json, label);
+				final Map<ScaleType, List<ScaleModifier>> modifiers = ScaleRuleParser.parseModifiers(json, label);
 
 				if (scales.isEmpty() && modifiers.isEmpty())
 				{
-					Pehkui.LOGGER.error("No valid scales or modifiers in '{}'. Provide a 'scales' map (e.g. {{\"pehkui:width\": 0.5}}) or the legacy 'scale_type' + 'value' pair.", fileId);
+					Pehkui.LOGGER.error("No valid scales or modifiers in '{}'. Provide a 'scales' map (e.g. {\"pehkui:width\": 0.5}) or the legacy 'scale_type' + 'value' pair.", label);
 					continue;
 				}
 
@@ -132,7 +159,7 @@ public final class ScaleRules
 			}
 			catch (Exception e)
 			{
-				Pehkui.LOGGER.error("Failed to parse pehkui scale rule '{}': {}", fileId, element, e);
+				Pehkui.LOGGER.error("Failed to parse pehkui scale rule '{}': {}", label, element, e);
 			}
 		}
 
