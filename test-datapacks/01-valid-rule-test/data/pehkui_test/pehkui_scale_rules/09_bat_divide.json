@@ -1,0 +1,15 @@
+{
+	"name": "除法-蝙蝠",
+	"description": "width = 1 / 2",
+	"conditions": {
+		"type": [
+			"minecraft:bat"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:divide",
+			"value": 2.0
+		}
+	}
+}

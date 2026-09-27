@@ -1,0 +1,13 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:rabbit"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:noop",
+			"value": 2.0
+		}
+	}
+}

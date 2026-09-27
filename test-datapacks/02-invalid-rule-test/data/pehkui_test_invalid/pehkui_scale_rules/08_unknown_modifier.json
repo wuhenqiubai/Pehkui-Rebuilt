@@ -1,0 +1,15 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:fox"
+		]
+	},
+	"scales": {
+		"pehkui:width": 1.0
+	},
+	"modifiers": {
+		"pehkui:width": [
+			"pehkui:not_a_modifier"
+		]
+	}
+}

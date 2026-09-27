@@ -1,0 +1,4 @@
+{
+	"conditions": { "type": ["minecraft:zombie"] },
+	"scales": { "pehkui:width": 0.5 },
+}

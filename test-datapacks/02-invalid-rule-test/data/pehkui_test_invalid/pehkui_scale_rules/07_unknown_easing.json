@@ -1,0 +1,13 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:cat"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"value": 2.0,
+			"easing": "pehkui:not_an_easing"
+		}
+	}
+}

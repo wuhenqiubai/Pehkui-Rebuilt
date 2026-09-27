@@ -1,0 +1,13 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:bat"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:divide",
+			"value": 0.0
+		}
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:blaze"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:multiply"
+		}
+	}
+}

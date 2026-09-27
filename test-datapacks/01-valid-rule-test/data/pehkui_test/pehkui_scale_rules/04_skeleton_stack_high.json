@@ -1,0 +1,16 @@
+{
+	"name": "骷髅叠加-高",
+	"description": "priority 10，同类型再 ×1.5；与 03 叠加后 width 应为 2.25",
+	"conditions": {
+		"type": [
+			"minecraft:skeleton"
+		]
+	},
+	"priority": 10,
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:multiply",
+			"value": 1.5
+		}
+	}
+}

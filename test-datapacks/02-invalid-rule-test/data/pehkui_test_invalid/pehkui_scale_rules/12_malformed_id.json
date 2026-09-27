@@ -1,0 +1,13 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:witch"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "not a valid id",
+			"value": 2.0
+		}
+	}
+}

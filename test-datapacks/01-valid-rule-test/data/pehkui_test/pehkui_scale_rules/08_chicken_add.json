@@ -1,0 +1,15 @@
+{
+	"name": "加法-鸡",
+	"description": "width = 1 + 0.5",
+	"conditions": {
+		"type": [
+			"minecraft:chicken"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:add",
+			"value": 0.5
+		}
+	}
+}

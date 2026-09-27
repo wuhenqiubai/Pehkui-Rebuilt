@@ -1,0 +1,10 @@
+{
+	"name": "标签条件-节肢动物",
+	"description": "conditions 用实体标签 #minecraft:arthropod（1.21.1 是单数）",
+	"conditions": {
+		"type": "#minecraft:arthropod"
+	},
+	"scales": {
+		"pehkui:width": 1.4
+	}
+}

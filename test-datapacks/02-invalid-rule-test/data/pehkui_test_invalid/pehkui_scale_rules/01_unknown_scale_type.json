@@ -1,0 +1,10 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:piglin"
+		]
+	},
+	"scales": {
+		"pehkui:not_a_scale": 0.5
+	}
+}

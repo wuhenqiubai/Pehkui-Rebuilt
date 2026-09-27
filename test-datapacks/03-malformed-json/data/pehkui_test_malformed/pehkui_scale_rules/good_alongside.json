@@ -1,0 +1,11 @@
+{
+	"description": "同目录下的正常规则 —— 用来判断坏文件是否会让整包规则一起失效",
+	"conditions": {
+		"type": [
+			"minecraft:pig"
+		]
+	},
+	"scales": {
+		"pehkui:width": 0.5
+	}
+}

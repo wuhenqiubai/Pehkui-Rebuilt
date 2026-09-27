@@ -1,0 +1,10 @@
+{
+	"pack": {
+		"pack_format": 48,
+		"description": "Pehkui 缩放规则 - JSON 语法错误",
+		"supported_formats": [
+			48,
+			48
+		]
+	}
+}

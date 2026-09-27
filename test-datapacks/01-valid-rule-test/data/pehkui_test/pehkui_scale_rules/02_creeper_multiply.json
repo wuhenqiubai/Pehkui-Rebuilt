@@ -1,0 +1,19 @@
+{
+	"name": "大苦力怕",
+	"description": "宽高乘 1.5",
+	"conditions": {
+		"type": [
+			"minecraft:creeper"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:multiply",
+			"value": 1.5
+		},
+		"pehkui:height": {
+			"operation": "pehkui:multiply",
+			"value": 1.5
+		}
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"pack": {
+		"pack_format": 48,
+		"description": "Pehkui 缩放规则 - 正经用例",
+		"supported_formats": [
+			48,
+			48
+		]
+	}
+}

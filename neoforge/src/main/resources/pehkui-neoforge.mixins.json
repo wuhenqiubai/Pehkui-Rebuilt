@@ -1,0 +1,31 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "virtuoel.pehkui.neoforge.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"plugin": "virtuoel.pehkui.mixin.PehkuiMixinConfigPlugin",
+	"mixins": [
+		"BoatEntityMixin",
+		"EntityMixin",
+		"EntitySelectorMixin",
+		"EntitySelectorOptionsMixin",
+		"PreEntityTickMixin",
+		"ThreadSafeScaledEntityMixin",
+		"ThreadUnsafeScaledEntityMixin",
+		"ChestBoatEntityMixin",
+		"PlayerEntityMixin"
+	],
+	"client": [
+		"client.InGameOverlayRendererMixin",
+		"client.ClientPlayNetworkHandlerMixin",
+		"client.InGameHudMixin",
+		"client.CameraMixin",
+		"client.InventoryScreenMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

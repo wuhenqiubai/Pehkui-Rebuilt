@@ -1,0 +1,17 @@
+{
+	"name": "牛-挂 modifier",
+	"description": "modifiers 段：给 width 挂 base_multiplier",
+	"conditions": {
+		"type": [
+			"minecraft:cow"
+		]
+	},
+	"scales": {
+		"pehkui:width": 1.0
+	},
+	"modifiers": {
+		"pehkui:width": [
+			"pehkui:base_multiplier"
+		]
+	}
+}

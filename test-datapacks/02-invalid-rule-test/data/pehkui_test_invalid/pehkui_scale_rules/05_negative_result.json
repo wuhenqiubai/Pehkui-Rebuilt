@@ -1,0 +1,13 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:chicken"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:subtract",
+			"value": 5.0
+		}
+	}
+}

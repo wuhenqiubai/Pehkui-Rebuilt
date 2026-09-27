@@ -1,0 +1,16 @@
+{
+	"name": "persist-卫道士",
+	"description": "persist:true，缩放应写入 NBT 并在重载后保留",
+	"conditions": {
+		"type": [
+			"minecraft:vindicator"
+		]
+	},
+	"scales": {
+		"pehkui:height": {
+			"operation": "pehkui:set",
+			"value": 1.6,
+			"persist": true
+		}
+	}
+}

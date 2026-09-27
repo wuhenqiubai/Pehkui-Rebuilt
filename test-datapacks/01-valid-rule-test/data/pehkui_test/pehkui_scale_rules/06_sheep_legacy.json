@@ -1,0 +1,11 @@
+{
+	"name": "旧式单值-羊",
+	"description": "旧式 scale_type + value 顶层形式",
+	"conditions": {
+		"type": [
+			"minecraft:sheep"
+		]
+	},
+	"scale_type": "pehkui:width",
+	"value": 0.75
+}

@@ -1,0 +1,13 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:hoglin"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:frobnicate",
+			"value": 2.0
+		}
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"name": "队伍条件-尸壳",
+	"description": "需先 /team add boss 再 /team join boss @e[type=husk]",
+	"conditions": {
+		"type": [
+			"minecraft:husk"
+		],
+		"team": "boss"
+	},
+	"scales": {
+		"pehkui:width": 1.25
+	}
+}

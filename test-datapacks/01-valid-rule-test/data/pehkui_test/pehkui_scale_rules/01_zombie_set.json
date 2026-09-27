@@ -1,0 +1,13 @@
+{
+	"name": "小僵尸",
+	"description": "整体缩到 50%（纯数字 = set）",
+	"conditions": {
+		"type": [
+			"minecraft:zombie"
+		]
+	},
+	"scales": {
+		"pehkui:width": 0.5,
+		"pehkui:height": 0.5
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"description": "conditions 不是合法 EntityPredicate —— 应按「无条件匹配」或整体跳过处理，不应崩服",
+	"conditions": {
+		"type": [
+			"minecraft:does_not_exist"
+		]
+	},
+	"scales": {
+		"pehkui:width": 2.0
+	}
+}

@@ -1,0 +1,13 @@
+{
+	"conditions": {
+		"type": [
+			"minecraft:slime"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:set",
+			"value": Infinity
+		}
+	}
+}

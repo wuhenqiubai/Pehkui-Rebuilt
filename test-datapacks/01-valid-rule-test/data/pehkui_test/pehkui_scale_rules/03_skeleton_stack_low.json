@@ -1,0 +1,16 @@
+{
+	"name": "骷髅叠加-低",
+	"description": "priority 0，width ×1.5",
+	"conditions": {
+		"type": [
+			"minecraft:skeleton"
+		]
+	},
+	"priority": 0,
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:multiply",
+			"value": 1.5
+		}
+	}
+}

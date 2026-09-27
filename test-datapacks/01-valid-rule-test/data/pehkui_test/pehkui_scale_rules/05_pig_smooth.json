@@ -1,0 +1,17 @@
+{
+	"name": "渐变猪",
+	"description": "width 1→2，delay 40 tick（约 2 秒）缓动过渡，验证不是瞬变",
+	"conditions": {
+		"type": [
+			"minecraft:pig"
+		]
+	},
+	"scales": {
+		"pehkui:width": {
+			"operation": "pehkui:set",
+			"value": 2.0,
+			"delay": 40,
+			"easing": "pehkui:quadratic_out"
+		}
+	}
+}
