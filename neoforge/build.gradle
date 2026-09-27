@@ -24,30 +24,8 @@ dependencies {
 
 	// KanosConfig：shadowJar 经 thirdparty 打进 neoforge jar（与其他 Architectury 分支对齐）；
 	// 排除其 POM 声明的 fabric-loader 传递依赖，否则 shadow 会把旧版 loader 类打进 jar 遮蔽真 loader。
-	// KanosConfig：shadowJar 经 thirdparty 打进 neoforge jar（与其他 Architectury 分支保持一致）。
-	// 必须排除其 POM 声明的 fabric-loader 传递依赖，否则 shadow 会把旧版 loader 类打进 jar 遮蔽真 loader。
-	//
-	// ⚠️ 已知问题：`:neoforge:runClient` / `runServer` 在 dev 环境下会抛
-	// NoClassDefFoundError: virtuoel/kanos_config/api/JsonConfigBuilder。
-	// 原因：JitPack 的 KanosConfig-0.4.1.jar 内含 fabric.mod.json，是个 Fabric mod jar，
-	// NeoForge 的 ModDiscoverer 一律判「is a Fabric mod and cannot be loaded」并跳过，
-	// 而 jar-in-jar（include）只对最终 jar 生效、不进 dev 运行时。生产 jar 不受影响。
-	//
-	// 已试过、均无效（记录以免重复踩）：
-	//   implementation / localRuntime / runtimeOnly + 原始 jar        → 被判 Fabric mod 跳过
-	//   implementation + include                                      → 生产出对的 META-INF/jarjar/，dev 仍读不到
-	//   compileOnly + include                                         → 同上
-	//   localRuntime files(剥掉 fabric.mod.json 的副本)                → 该 files 依赖没进运行时类路径
-	//   runtimeClasspath 挂 jar / 挂解包目录 / sourceSets.main.output.dir → ModuleClassLoader 读不到
-	//   jarJar(...)  / additionalRuntimeClasspath(...)                → Architectury Loom 无这两个配置
-	// 可行方向：把 KanosConfig 的 ~11 个类 vendor 进 common（同 SSC 并入 apoli/calio 的做法）。
-	// 同一问题存在于 26.1.2 / 26.2 / 26.3 / 1.21.11 —— 它们配置逐字相同，应是未跑过 neoforge dev 才没暴露。
-	implementation("com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag") {
-		exclude group: 'net.fabricmc', module: 'fabric-loader'
-	}
-	thirdparty("com.github.Virtuoel:KanosConfig:$rootProject.kanos_config_tag") {
-		exclude group: 'net.fabricmc', module: 'fabric-loader'
-	}
+	// KanosConfig 已 vendor 进 common/src/main/java/virtuoel/kanos_config/（MIT，见同目录 LICENSE），
+	// 不再依赖 JitPack 产物 —— 那个 jar 带 fabric.mod.json，NeoForge 会判为 Fabric mod 而拒绝加载。
 }
 
 processResources {
