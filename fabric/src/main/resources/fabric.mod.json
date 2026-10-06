@@ -1,6 +1,7 @@
 {
 	"schemaVersion": 1,
-	"id": "pehkui",
+	"id": "pehkui-rebuilt",
+	"provides": ["pehkui"],
 	"name": "Pehkui Rebuilt",
 	"version": "${version}",
 	"description": "Allows resizing of most entities. Pehkui Rebuilt is an independent rebuild of Pehkui.",
