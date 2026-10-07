@@ -1,0 +1,4 @@
+# 本仓库在 Windows 上检出，全局 core.autocrlf=true —— Java / 资源文件用 CRLF 无妨，
+# 但 shell 脚本必须是 LF：否则 shebang 会变成 "#!/usr/bin/env bash\r"，
+# bash 会以「bad interpreter」直接拒绝执行。
+*.sh text eol=lf
