@@ -14,6 +14,7 @@ import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ReflectionUtils;
 import virtuoel.pehkui.util.ScaleUtils;
 
+// ==== PLATFORM-SPECIFIC BEGIN（class javadoc）====
 /**
  * 注意：本类是 <b>common 侧的平台中性版本</b>，<b>不会被打进任何产物</b>
  * （{@code common/build.gradle} 的 {@code jar} 任务把它排除掉了）。
@@ -29,6 +30,7 @@ import virtuoel.pehkui.util.ScaleUtils;
  * {@code neoforge/src/main/java/virtuoel/pehkui/api/ScaleType.java}（上游 NeoForge 原样）。
  * 三份之间只允许「事件成员那一段」不同，其余必须逐字一致（见仓库校验脚本）。
  */
+// ==== PLATFORM-SPECIFIC END ====
 public class ScaleType
 {
 	/**
@@ -248,9 +250,11 @@ public class ScaleType
 		{
 			final ScaleType type = new ScaleType(this);
 
+			// ==== PLATFORM-SPECIFIC BEGIN（事件注册）====
 			// 两份平台实现在这里注册 dependentModifiers 的回调（Fabric 用 .register(...)、
 			// NeoForge 用 .add(...)）；本文件是编译占位、从不发货，不触碰事件类型，故此处留空。
 			// 这不影响运行 —— 发货的是平台模块里那份完整实现。
+			// ==== PLATFORM-SPECIFIC END ====
 
 			return type;
 		}

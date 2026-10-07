@@ -16,6 +16,7 @@ import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ReflectionUtils;
 import virtuoel.pehkui.util.ScaleUtils;
 
+// ==== PLATFORM-SPECIFIC BEGIN（class javadoc）====
 /**
  * <b>Fabric 侧的完整实现</b>（上游 Fabric 的形态）。
  *
@@ -32,6 +33,7 @@ import virtuoel.pehkui.util.ScaleUtils;
  * <p>⚠️ 三份之间<b>只允许「事件成员那一段」与 {@code Builder.build()} 里的注册那一行不同</b>，
  * 其余必须逐字一致。
  */
+// ==== PLATFORM-SPECIFIC END ====
 public class ScaleType
 {
 	/**
@@ -251,10 +253,12 @@ public class ScaleType
 		{
 			final ScaleType type = new ScaleType(this);
 
+			// ==== PLATFORM-SPECIFIC BEGIN（事件注册）====
 			if (this.affectsDimensions || !this.dependentModifiers.isEmpty())
 			{
 				type.getScaleChangedEvent().register(createScaleChangedEvent(this.dependentModifiers));
 			}
+			// ==== PLATFORM-SPECIFIC END ====
 
 			return type;
 		}
@@ -299,6 +303,7 @@ public class ScaleType
 		}
 	}
 
+	// ==== PLATFORM-SPECIFIC BEGIN（三个事件成员 + 工厂）====
 	private final Event<ScaleEventCallback> scaleChangedEvent = createScaleEvent();
 
 	public Event<ScaleEventCallback> getScaleChangedEvent()
@@ -334,5 +339,6 @@ public class ScaleType
 			}
 		);
 	}
+	// ==== PLATFORM-SPECIFIC END ====
 
 }
