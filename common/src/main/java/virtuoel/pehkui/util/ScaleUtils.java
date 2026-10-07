@@ -39,9 +39,13 @@ public class ScaleUtils
 	{
 		final ScaleType type = data.getScaleType();
 		
-		type.getPreTickEvent().invoker().onEvent(data);
+		// 事件类型按平台而异（Fabric 为 Event、NeoForge 为 Collection），经 Platform 转发。
+		// 取到局部变量：这是每 tick 每 scale type 的热路径，避免反复读 volatile 的 INSTANCE。
+		final Platform platform = Platform.INSTANCE;
+
+		platform.invokePreTick(type, data);
 		data.tick();
-		type.getPostTickEvent().invoker().onEvent(data);
+		platform.invokePostTick(type, data);
 	}
 	
 	public static void loadAverageScales(Entity target, Entity source, Entity... sources)

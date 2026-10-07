@@ -4,6 +4,9 @@ import java.nio.file.Path;
 
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import virtuoel.pehkui.api.ScaleData;
+import virtuoel.pehkui.api.ScaleEventCallback;
+import virtuoel.pehkui.api.ScaleType;
 
 /**
  * 平台抽象：把 fabric / neoforge 的平台差异隔离于此，使 {@code common} 模块不直接引用任何
@@ -41,6 +44,30 @@ public abstract class Platform
 	 */
 	public abstract Packet<?> createClientboundPacket(CustomPacketPayload payload);
 
+	/**
+	 * 触发某 scale type 的 scaleChanged 事件。
+	 *
+	 * <p>之所以要这一层：{@code ScaleType} 的三个事件成员在两个平台上<b>类型不同</b> ——
+	 * Fabric 是 {@code net.fabricmc.fabric.api.event.Event<ScaleEventCallback>}（用
+	 * {@code .invoker().onEvent(...)}），NeoForge 是 {@code java.util.Collection<ScaleEventCallback>}
+	 * （用 {@code .forEach(...)}）。{@code common} 不能引用任一平台类型，只能经此转发。
+	 */
+	public abstract void invokeScaleChanged(ScaleType type, ScaleData data);
+
+	/** @see #invokeScaleChanged(ScaleType, ScaleData) */
+	public abstract void invokePreTick(ScaleType type, ScaleData data);
+
+	/** @see #invokeScaleChanged(ScaleType, ScaleData) */
+	public abstract void invokePostTick(ScaleType type, ScaleData data);
+
+	/**
+	 * 向某 scale type 的 scaleChanged 事件注册回调。
+	 *
+	 * <p>平台差异同 {@link #invokeScaleChanged}：Fabric 用 {@code .register(...)}，
+	 * NeoForge 用 {@code .add(...)}。
+	 */
+	public abstract void registerScaleChanged(ScaleType type, ScaleEventCallback callback);
+
 	public static void setInstance(Platform platform)
 	{
 		INSTANCE = platform;
@@ -77,6 +104,30 @@ public abstract class Platform
 		public Packet<?> createClientboundPacket(CustomPacketPayload payload)
 		{
 			return null;
+		}
+
+		@Override
+		public void invokeScaleChanged(ScaleType type, ScaleData data)
+		{
+
+		}
+
+		@Override
+		public void invokePreTick(ScaleType type, ScaleData data)
+		{
+
+		}
+
+		@Override
+		public void invokePostTick(ScaleType type, ScaleData data)
+		{
+
+		}
+
+		@Override
+		public void registerScaleChanged(ScaleType type, ScaleEventCallback callback)
+		{
+
 		}
 	}
 }

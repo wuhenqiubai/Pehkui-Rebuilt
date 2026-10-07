@@ -29,7 +29,8 @@ public final class VanillaScaleSyncBack
 
 	public static void register()
 	{
-		ScaleTypes.BASE.getScaleChangedEvent().register(VanillaScaleSyncBack::writeBack);
+		// 事件类型按平台而异（Fabric 用 .register(...)、NeoForge 用 .add(...)），经 Platform 转发
+		Platform.INSTANCE.registerScaleChanged(ScaleTypes.BASE, VanillaScaleSyncBack::writeBack);
 	}
 
 	/**

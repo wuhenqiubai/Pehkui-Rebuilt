@@ -9,25 +9,28 @@ import org.jetbrains.annotations.ApiStatus;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
 import virtuoel.pehkui.util.ReflectionUtils;
 import virtuoel.pehkui.util.ScaleUtils;
 
 /**
- * 注意：本类是 <b>common 侧的平台中性版本</b>，<b>不会被打进任何产物</b>
- * （{@code common/build.gradle} 的 {@code jar} 任务把它排除掉了）。
+ * <b>Fabric 侧的完整实现</b>（上游 Fabric 的形态）。
  *
- * <p>上游 Pehkui 的 {@code ScaleType} 三个事件成员在两个平台上类型不同：
- * Fabric 是 {@code net.fabricmc.fabric.api.event.Event<ScaleEventCallback>}，
- * NeoForge 是 {@code java.util.Collection<ScaleEventCallback>}。因此这里
- * <b>不含任何事件成员</b> —— common 内部的调用点一律经
- * {@link virtuoel.pehkui.util.Platform} 间接层转发，不直接触碰事件类型。
+ * <p>为什么这个类按平台各存一份：上游 Pehkui 是「每个 loader 一条分支、各持一份完整源码树」，
+ * 同一套 API 在两个平台上本就不同 —— 本类三个事件成员在 Fabric 是
+ * {@code Event<ScaleEventCallback>}，在 NeoForge 是 {@code Collection<ScaleEventCallback>}。
+ * Architectury 的 {@code common} 塞不进任一形态，故：
+ * <ul>
+ *   <li>Fabric 产物用本文件（与上游 Fabric 一致：{@code ()Lnet/fabricmc/fabric/api/event/Event;}）</li>
+ *   <li>NeoForge 产物用 {@code neoforge/src/main/java/virtuoel/pehkui/api/ScaleType.java}</li>
+ *   <li>{@code common} 侧那份是平台中性的编译占位，已从 common 的产物中排除、不会发货</li>
+ * </ul>
  *
- * <p>真正发货的是两份完整实现：
- * {@code fabric/src/main/java/virtuoel/pehkui/api/ScaleType.java}（上游 Fabric 原样）与
- * {@code neoforge/src/main/java/virtuoel/pehkui/api/ScaleType.java}（上游 NeoForge 原样）。
- * 三份之间只允许「事件成员那一段」不同，其余必须逐字一致（见仓库校验脚本）。
+ * <p>⚠️ 三份之间<b>只允许「事件成员那一段」与 {@code Builder.build()} 里的注册那一行不同</b>，
+ * 其余必须逐字一致。
  */
 public class ScaleType
 {
@@ -248,9 +251,10 @@ public class ScaleType
 		{
 			final ScaleType type = new ScaleType(this);
 
-			// 两份平台实现在这里注册 dependentModifiers 的回调（Fabric 用 .register(...)、
-			// NeoForge 用 .add(...)）；本文件是编译占位、从不发货，不触碰事件类型，故此处留空。
-			// 这不影响运行 —— 发货的是平台模块里那份完整实现。
+			if (this.affectsDimensions || !this.dependentModifiers.isEmpty())
+			{
+				type.getScaleChangedEvent().register(createScaleChangedEvent(this.dependentModifiers));
+			}
 
 			return type;
 		}
@@ -294,4 +298,41 @@ public class ScaleType
 			};
 		}
 	}
+
+	private final Event<ScaleEventCallback> scaleChangedEvent = createScaleEvent();
+
+	public Event<ScaleEventCallback> getScaleChangedEvent()
+	{
+		return scaleChangedEvent;
+	}
+
+	private final Event<ScaleEventCallback> preTickEvent = createScaleEvent();
+
+	public Event<ScaleEventCallback> getPreTickEvent()
+	{
+		return preTickEvent;
+	}
+
+	private final Event<ScaleEventCallback> postTickEvent = createScaleEvent();
+
+	public Event<ScaleEventCallback> getPostTickEvent()
+	{
+		return postTickEvent;
+	}
+
+	private static Event<ScaleEventCallback> createScaleEvent()
+	{
+		return EventFactory.createArrayBacked(
+			ScaleEventCallback.class,
+			data -> {},
+			(callbacks) -> (data) ->
+			{
+				for (ScaleEventCallback callback : callbacks)
+				{
+					callback.onEvent(data);
+				}
+			}
+		);
+	}
+
 }

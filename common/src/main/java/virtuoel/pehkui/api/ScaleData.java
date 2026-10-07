@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
+import virtuoel.pehkui.util.Platform;
 
 public class ScaleData
 {
@@ -427,7 +428,8 @@ public class ScaleData
 	{
 		invalidateCachedScales();
 		markForSync(true);
-		getScaleType().getScaleChangedEvent().invoker().onEvent(this);
+		// 事件类型按平台而异（Fabric 为 Event、NeoForge 为 Collection），经 Platform 转发
+		Platform.INSTANCE.invokeScaleChanged(getScaleType(), this);
 	}
 	
 	private void invalidateCachedModifiers()

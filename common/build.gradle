@@ -2,6 +2,21 @@ architectury {
 	common(rootProject.enabled_platforms.split(','))
 }
 
+// ScaleType 是 common 侧的「平台中性编译占位」：上游同一套 API 在两个平台上本就不一样 ——
+// Fabric 的三个事件成员是 net.fabricmc.fabric.api.event.Event<ScaleEventCallback>，
+// NeoForge 是 java.util.Collection<ScaleEventCallback>。所以真正的实现在平台模块里各存一份
+// （fabric/neoforge 的 .../api/ScaleType.java，各自照抄对应上游），common 这份不含事件成员。
+//
+// 之所以仍留在 common 源码里：common 有约 400 处引用该类型，其中一部分是公开 API 签名
+// （ScaleData.getScaleType()、ScaleRegistries.SCALE_TYPES、ScaleUtils.getTypedScale(...) 等），
+// 必须能在 common 编译期解析到。而它不能做成独立 source set / 子项目 —— ScaleType 自身又引用
+// ScaleData / ScaleRegistries / ScaleEasings / ScaleUtils，会与 common 构成循环编译依赖。
+//
+// 这里把它排除出 common 的产物，避免与平台那份同 FQN 冲突。
+jar {
+	exclude 'virtuoel/pehkui/api/ScaleType.class'
+}
+
 dependencies {
 	// 仅用于 @Environment 等跨平台标记注解，不依赖 Fabric API
 	modImplementation "net.fabricmc:fabric-loader:$rootProject.loader_version"

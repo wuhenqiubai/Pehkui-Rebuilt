@@ -56,6 +56,9 @@ remapJar {
 }
 
 sourcesJar {
+	// common 的源码树里也有 virtuoel/pehkui/api/ScaleType.java（平台中性的编译占位），
+	// 与本平台的完整实现同名。保留本平台那份（先加入者优先），丢弃 common 的占位。
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	def commonSources = project(':common').sourcesJar
 	dependsOn commonSources
 	from commonSources.archiveFile.map { zipTree(it) }
