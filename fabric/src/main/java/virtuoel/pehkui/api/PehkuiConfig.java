@@ -7,12 +7,12 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import virtuoel.pehkui.util.Platform;
 import net.minecraft.resources.Identifier;
 import virtuoel.kanos_config.api.JsonConfigBuilder;
 import virtuoel.kanos_config.api.MutableConfigEntry;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.util.ClampingScaleModifier;
+import virtuoel.pehkui.util.Platform;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.ScaleUtils;
 
@@ -114,7 +114,9 @@ public class PehkuiConfig
 					path = id.getPath();
 					
 					min = builder.doubleConfig(synced(path + ".minimum", "double"), type.getAffectsDimensions() ? ScaleUtils.DEFAULT_MINIMUM_POSITIVE_SCALE : Float.MIN_VALUE);
-					max = builder.doubleConfig(synced(path + ".maximum", "double"), Float.MAX_VALUE);
+					// pehkui:base 的默认上限单列：倍数太大时下游（实体查询、渲染、物理）都会出问题，
+					// 50 倍是实测可用的上限。其余类型仍用 Float.MAX_VALUE。
+					max = builder.doubleConfig(synced(path + ".maximum", "double"), type == ScaleTypes.BASE ? 50.0D : Float.MAX_VALUE);
 					
 					type.getDefaultBaseValueModifiers().add(
 						ScaleRegistries.register(

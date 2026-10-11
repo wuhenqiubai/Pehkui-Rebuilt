@@ -26,7 +26,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.commands.data.EntityDataAccessor;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
-import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleModifier;
 import virtuoel.pehkui.api.ScaleRegistries;
@@ -45,7 +44,7 @@ public class ScaleCommand
 {
 	public static void register(final CommandDispatcher<CommandSourceStack> commandDispatcher)
 	{
-		if (!Platform.INSTANCE.isDevelopmentEnvironment() && !PehkuiConfig.COMMON.enableCommands.get())
+		if (!Platform.INSTANCE.isDevelopmentEnvironment() && !Platform.INSTANCE.getEnableCommands())
 		{
 			return;
 		}

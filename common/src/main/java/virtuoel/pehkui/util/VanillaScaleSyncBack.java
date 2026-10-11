@@ -6,7 +6,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleTypes;
 
@@ -29,7 +28,7 @@ public final class VanillaScaleSyncBack
 
 	public static void register()
 	{
-		ScaleTypes.BASE.getScaleChangedEvent().register(VanillaScaleSyncBack::writeBack);
+		Platform.INSTANCE.registerScaleChanged(ScaleTypes.BASE, VanillaScaleSyncBack::writeBack);
 	}
 
 	/**
@@ -37,7 +36,7 @@ public final class VanillaScaleSyncBack
 	 */
 	public static void tick(final Entity entity)
 	{
-		if (!PehkuiConfig.COMMON.vanillaScaleSyncBack.get() || !(entity instanceof LivingEntity living))
+		if (!Platform.INSTANCE.getVanillaScaleSyncBack() || !(entity instanceof LivingEntity living))
 		{
 			return;
 		}
@@ -66,7 +65,7 @@ public final class VanillaScaleSyncBack
 
 	private static void writeBack(final ScaleData scaleData)
 	{
-		if (!PehkuiConfig.COMMON.vanillaScaleSyncBack.get())
+		if (!Platform.INSTANCE.getVanillaScaleSyncBack())
 		{
 			return;
 		}

@@ -14,12 +14,13 @@ import org.jetbrains.annotations.Nullable;
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.Pehkui;
-import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleModifier;
 import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.api.ScaleType;
 import virtuoel.pehkui.data.RuleApplicationState.Baseline;
+import virtuoel.pehkui.util.Platform;
+
 
 /**
  * Applies the datapack scale rules that match an entity.
@@ -109,7 +110,7 @@ public final class ScaleRuleApplier
 			}
 		}
 
-		final float maxScale = (float) (double) PehkuiConfig.COMMON.scaleRuleMaxScale.get();
+		final float maxScale = (float) (double) Platform.INSTANCE.getScaleRuleMaxScale();
 
 		for (final Map.Entry<ScaleType, List<ScaleRuleOp>> entry : opsByType.entrySet())
 		{
