@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import virtuoel.pehkui.api.PehkuiConfig;
+import virtuoel.pehkui.util.Platform;
 import virtuoel.pehkui.util.ScaleRenderUtils;
 import virtuoel.pehkui.util.ScaleUtils;
 
@@ -42,7 +42,7 @@ public class EntityRenderDispatcherMixin
 		
 		try
 		{
-			if (vanillaScale != 1.0F && PehkuiConfig.COMMON.applyVanillaScale.get())
+			if (vanillaScale != 1.0F && Platform.INSTANCE.getApplyVanillaScale())
 			{
 				// vanilla 在 LivingEntityRenderer.render 里又按 getScale()（= 原版 scale）缩放了一次，
 				// 而 Pehkui 的 MODEL scale 已折入原版 scale，这里抵消避免双重

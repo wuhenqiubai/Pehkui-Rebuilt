@@ -25,7 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ScaffoldingBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import virtuoel.pehkui.api.PehkuiConfig;
+import virtuoel.pehkui.util.Platform;
 import virtuoel.pehkui.util.MulticonnectCompatibility;
 import virtuoel.pehkui.util.PehkuiBlockStateExtensions;
 import virtuoel.pehkui.util.PehkuiEntityExtensions;
@@ -256,7 +256,7 @@ public abstract class LivingEntityMixin
 		final LivingEntity self = (LivingEntity) (Object) this;
 		final float vanillaScale = ScaleUtils.getVanillaScale(self);
 
-		if (vanillaScale != 1.0F && PehkuiConfig.COMMON.applyVanillaScale.get() && self.getPose() != Pose.SLEEPING && !original.fixed())
+		if (vanillaScale != 1.0F && Platform.INSTANCE.getApplyVanillaScale() && self.getPose() != Pose.SLEEPING && !original.fixed())
 		{
 			// vanilla 已把原版 scale 属性应用到 getDimensions（getDefaultDimensions(pose).scale(getScale())），
 			// 而 Pehkui 的 BASE 已折入原版 scale，这里抵消以避免双重叠加

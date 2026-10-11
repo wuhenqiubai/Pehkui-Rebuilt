@@ -2,7 +2,6 @@ package virtuoel.pehkui.util;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleModifier;
 
@@ -21,7 +20,7 @@ public class VanillaScaleModifier extends ScaleModifier
 	@Override
 	public float modifyScale(final ScaleData scaleData, float modifiedScale, final float delta)
 	{
-		if (PehkuiConfig.COMMON.applyVanillaScale.get() && !PehkuiConfig.COMMON.vanillaScaleSyncBack.get())
+		if (Platform.INSTANCE.getApplyVanillaScale() && !Platform.INSTANCE.getVanillaScaleSyncBack())
 		{
 			final Entity entity = scaleData.getEntity();
 
@@ -37,7 +36,7 @@ public class VanillaScaleModifier extends ScaleModifier
 	@Override
 	public float modifyPrevScale(final ScaleData scaleData, float modifiedScale)
 	{
-		if (PehkuiConfig.COMMON.applyVanillaScale.get() && !PehkuiConfig.COMMON.vanillaScaleSyncBack.get())
+		if (Platform.INSTANCE.getApplyVanillaScale() && !Platform.INSTANCE.getVanillaScaleSyncBack())
 		{
 			final Entity entity = scaleData.getEntity();
 

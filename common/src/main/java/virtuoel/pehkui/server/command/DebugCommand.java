@@ -33,7 +33,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import virtuoel.pehkui.Pehkui;
-import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.network.DebugPacket;
 import virtuoel.pehkui.network.DebugPayload;
 import virtuoel.pehkui.util.CommandUtils;
@@ -53,7 +52,7 @@ public class DebugCommand
 			.then(ConfigSyncUtils.registerConfigCommands())
 		);
 		
-		if (Platform.INSTANCE.isDevelopmentEnvironment() || PehkuiConfig.COMMON.enableCommands.get())
+		if (Platform.INSTANCE.isDevelopmentEnvironment() || Platform.INSTANCE.getEnableCommands())
 		{
 			builder
 				.then(Commands.literal("debug")
@@ -104,7 +103,7 @@ public class DebugCommand
 				);
 		}
 		
-		if (Platform.INSTANCE.isDevelopmentEnvironment() || PehkuiConfig.COMMON.enableDebugCommands.get())
+		if (Platform.INSTANCE.isDevelopmentEnvironment() || Platform.INSTANCE.getEnableDebugCommands())
 		{
 			builder
 				.then(Commands.literal("debug")

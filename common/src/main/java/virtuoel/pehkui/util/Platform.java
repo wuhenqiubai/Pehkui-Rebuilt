@@ -1,9 +1,11 @@
 package virtuoel.pehkui.util;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import virtuoel.kanos_config.api.JsonConfigHandler;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleEventCallback;
 import virtuoel.pehkui.api.ScaleType;
@@ -68,6 +70,93 @@ public abstract class Platform
 	 */
 	public abstract void registerScaleChanged(ScaleType type, ScaleEventCallback callback);
 
+	/**
+	 * 配置项访问 {@code PehkuiConfig.COMMON.*}。
+	 *
+	 * <p>之所以要这一层：两份 {@code PehkuiConfig} 的<b>字段描述符不同</b> ——
+	 * Fabric 是 {@code java.util.function.Supplier<Boolean>}（KanosConfig），
+	 * NeoForge 是 {@code net.neoforged.neoforge.common.ModConfigSpec$BooleanValue}。
+	 * JVM 解析 {@code getfield} 要求描述符精确匹配，所以 {@code common} 不能直读任一方的字段，
+	 * 只能经此转发。平台实现里写 {@code PehkuiConfig.COMMON.x.get()} —— 两侧源码逐字相同，
+	 * 各自编译时解析到自己那份字段类型（两者都实现 {@code Supplier}，故 {@code .get()} 均成立）。
+	 */
+	public abstract boolean getKeepAllScalesOnRespawn();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract List<String> getScalesKeptOnRespawn();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getAccurateNetherPortals();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getEnableCommands();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getEnableDebugCommands();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getEnableScaleRules();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract int getScaleRuleCheckInterval();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract double getScaleRuleMaxScale();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaleRulesAffectPlayers();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledFallDamage();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledMotion();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledReach();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledAttack();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledDefense();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledHealth();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledItemDrops();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledProjectiles();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getScaledExplosions();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getApplyVanillaScale();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getVanillaScaleAffectsGameplay();
+
+	/** @see #getKeepAllScalesOnRespawn() */
+	public abstract boolean getVanillaScaleSyncBack();
+
+	/**
+	 * 配置项访问 {@code PehkuiConfig.CLIENT.minimumCameraDepth}。
+	 *
+	 * @see #getKeepAllScalesOnRespawn()
+	 */
+	public abstract double getMinimumCameraDepth();
+
+	/**
+	 * KanosConfig 的 JSON 配置文件句柄（Fabric 用）。
+	 *
+	 * <p>NeoForge 侧配置走原生的 {@code ModConfigSpec}（TOML），<b>没有</b>这个句柄，返回 {@code null}。
+	 * 调用方必须容忍 {@code null}（{@code ConfigSyncUtils} 的 config 命令会据此跳过注册）。
+	 */
+	public abstract JsonConfigHandler getConfigHandler();
+
 	public static void setInstance(Platform platform)
 	{
 		INSTANCE = platform;
@@ -128,6 +217,147 @@ public abstract class Platform
 		public void registerScaleChanged(ScaleType type, ScaleEventCallback callback)
 		{
 
+		}
+
+		// 配置访问：未装配时一律回落到「与配置默认值一致」的取值，
+		// 使未初始化场景（如数据生成）不因读配置而行为异常。
+
+		@Override
+		public boolean getKeepAllScalesOnRespawn()
+		{
+			return false;
+		}
+
+		@Override
+		public List<String> getScalesKeptOnRespawn()
+		{
+			return List.of();
+		}
+
+		@Override
+		public boolean getAccurateNetherPortals()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getEnableCommands()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getEnableDebugCommands()
+		{
+			return false;
+		}
+
+		@Override
+		public boolean getEnableScaleRules()
+		{
+			return true;
+		}
+
+		@Override
+		public int getScaleRuleCheckInterval()
+		{
+			return 10;
+		}
+
+		@Override
+		public double getScaleRuleMaxScale()
+		{
+			return 256;
+		}
+
+		@Override
+		public boolean getScaleRulesAffectPlayers()
+		{
+			return false;
+		}
+
+		@Override
+		public boolean getScaledFallDamage()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getScaledMotion()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getScaledReach()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getScaledAttack()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getScaledDefense()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getScaledHealth()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getScaledItemDrops()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getScaledProjectiles()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getScaledExplosions()
+		{
+			return true;
+		}
+
+		@Override
+		public boolean getApplyVanillaScale()
+		{
+			return false;
+		}
+
+		@Override
+		public boolean getVanillaScaleAffectsGameplay()
+		{
+			return false;
+		}
+
+		@Override
+		public boolean getVanillaScaleSyncBack()
+		{
+			return false;
+		}
+
+		@Override
+		public double getMinimumCameraDepth()
+		{
+			return 1.0D / 32767.0D;
+		}
+
+		@Override
+		public JsonConfigHandler getConfigHandler()
+		{
+			return null;
 		}
 	}
 }

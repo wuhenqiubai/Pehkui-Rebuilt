@@ -35,7 +35,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import virtuoel.kanos_config.api.JsonConfigHandler;
 import virtuoel.kanos_config.api.MutableConfigEntry;
 import virtuoel.pehkui.Pehkui;
-import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.network.ConfigSyncPacket;
 import virtuoel.pehkui.network.ConfigSyncPayload;
 
@@ -297,8 +296,15 @@ public class ConfigSyncUtils
 	
 	public static void registerConfigFileCommands(final ArgumentBuilder<CommandSourceStack, ?> configBuilder)
 	{
-		final JsonConfigHandler config = PehkuiConfig.BUILDER.config;
-		
+		final JsonConfigHandler config = Platform.INSTANCE.getConfigHandler();
+
+		if (config == null)
+		{
+			// 本平台没有 KanosConfig 的 JSON 配置句柄（NeoForge 走原生 ModConfigSpec / TOML），
+			// 这套 file save / load / delete 子命令没有可操作的对象，直接不注册。
+			return;
+		}
+
 		configBuilder
 			.then(Commands.literal("save")
 				.executes(context ->
