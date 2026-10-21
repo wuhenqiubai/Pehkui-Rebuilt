@@ -114,5 +114,6 @@
 	"pehkui.configgui.scale_limits.explosions.maximum": "pehkui:explosions 最大值",
 	"pehkui.configgui.applyVanillaScale": "是否将原版 scale 属性折入 pehkui:base",
 	"pehkui.configgui.vanillaScaleAffectsGameplay": "是否让原版 scale 属性也影响移动/触及/掉落/投射物等效果类缩放",
-	"pehkui.configgui.vanillaScaleSyncBack": "是否将 pehkui:base 写回原版 scale 属性（双向镜像）"
+	"pehkui.configgui.vanillaScaleSyncBack": "是否将 pehkui:base 写回原版 scale 属性（双向镜像）",
+	"pehkui.configgui.dragonMineZCompat": "DragonMine Z 兼容：DragonMine Z 会用固定尺寸替换玩家尺寸，导致碰撞箱与眼高缩放静默失效（仅当安装了 dragonminez 时生效）"
 }

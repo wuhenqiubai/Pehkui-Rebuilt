@@ -114,5 +114,6 @@
 	"pehkui.configgui.scale_limits.explosions.maximum": "Valeur maximale pour le type d'échelle pehkui:explosions",
 	"pehkui.configgui.applyVanillaScale": "Whether the vanilla scale attribute should be folded into pehkui:base",
 	"pehkui.configgui.vanillaScaleAffectsGameplay": "Whether the vanilla scale attribute should also affect gameplay scale types (motion, reach, drops, projectiles, explosions)",
-	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute"
+	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute",
+	"pehkui.configgui.dragonMineZCompat": "DragonMine Z compatibility: DragonMine Z replaces player dimensions with fixed-size ones, which would otherwise silently disable hitbox and eye height scaling (only takes effect when dragonminez is installed)"
 }
