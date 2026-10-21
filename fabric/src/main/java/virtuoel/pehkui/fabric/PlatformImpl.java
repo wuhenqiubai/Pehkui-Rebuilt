@@ -204,6 +204,12 @@ public class PlatformImpl extends Platform
 	}
 
 	@Override
+	public boolean getDragonMineZCompat()
+	{
+		return PehkuiConfig.COMMON.dragonMineZCompat.get();
+	}
+
+	@Override
 	public double getMinimumCameraDepth()
 	{
 		return PehkuiConfig.CLIENT.minimumCameraDepth.get();

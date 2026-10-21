@@ -63,6 +63,8 @@ public class PehkuiConfig
 		public final Supplier<Boolean> applyVanillaScale;
 		public final Supplier<Boolean> vanillaScaleAffectsGameplay;
 		public final Supplier<Boolean> vanillaScaleSyncBack;
+		// DragonMine Z 兼容：它用 EntityDimensions.fixed(...) 覆盖玩家尺寸，使 scale() 失效
+		public final Supplier<Boolean> dragonMineZCompat;
 		
 		private Common(final JsonConfigBuilder builder)
 		{
@@ -92,6 +94,7 @@ public class PehkuiConfig
 			this.applyVanillaScale = builder.booleanConfig("applyVanillaScale", false);
 			this.vanillaScaleAffectsGameplay = builder.booleanConfig("vanillaScaleAffectsGameplay", false);
 			this.vanillaScaleSyncBack = builder.booleanConfig("vanillaScaleSyncBack", false);
+			this.dragonMineZCompat = builder.booleanConfig("dragonMineZCompat", true);
 			
 			ResourceLocation id;
 			String namespace, path;

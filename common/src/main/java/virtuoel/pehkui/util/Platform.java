@@ -143,6 +143,21 @@ public abstract class Platform
 	public abstract boolean getVanillaScaleSyncBack();
 
 	/**
+	 * 配置项访问 {@code PehkuiConfig.COMMON.dragonMineZCompat}。
+	 *
+	 * <p>DragonMine Z 会在 NeoForge 的 {@code EntityEvent.Size} 里把玩家尺寸换成
+	 * {@code EntityDimensions.fixed(...)}，而 vanilla 的 {@code EntityDimensions.scale()}
+	 * 对 fixed 尺寸原样返回 —— Pehkui 的缩放会静默失效。开启此项后
+	 * {@code ScaleUtils.getScaledDimensions} 对 fixed 尺寸改为显式构造。
+	 *
+	 * <p>默认开启，但只在装了 {@code dragonminez} 时才生效（见 ScaleUtils 里的 isModLoaded 判断），
+	 * 以保证未装该 mod 时行为零变化。
+	 *
+	 * @see #getKeepAllScalesOnRespawn()
+	 */
+	public abstract boolean getDragonMineZCompat();
+
+	/**
 	 * 配置项访问 {@code PehkuiConfig.CLIENT.minimumCameraDepth}。
 	 *
 	 * @see #getKeepAllScalesOnRespawn()
@@ -346,6 +361,12 @@ public abstract class Platform
 		public boolean getVanillaScaleSyncBack()
 		{
 			return false;
+		}
+
+		@Override
+		public boolean getDragonMineZCompat()
+		{
+			return true;
 		}
 
 		@Override

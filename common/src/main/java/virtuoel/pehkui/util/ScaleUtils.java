@@ -375,7 +375,24 @@ public class ScaleUtils
 
 		// fixed() 的尺寸按 scale() 的约定完全不参与缩放，眼高同样不动；
 		// 睡眠姿势下原版眼高另有语义，沿用上游 compat1204minus 的处理，不缩放
-		if (original.fixed() || entity.getPose() == Pose.SLEEPING)
+		if (original.fixed())
+		{
+			// DragonMine Z 在 NeoForge 的 EntityEvent.Size 里把玩家尺寸换成
+			// EntityDimensions.fixed(...)，于是上面那句 scale() 变成 no-op —— hitbox 与眼高
+			// 一起失效（两者同在这个对象里）。此处对它显式构造缩放后的尺寸。
+			// 仅在装了 dragonminez 且开关打开时生效，避免改变原版 fixed 的既有语义。
+			if (Platform.INSTANCE.getDragonMineZCompat() && Platform.INSTANCE.isModLoaded("dragonminez"))
+			{
+				return EntityDimensions.fixed(
+					ReflectionUtils.getDimensionsWidth(original) * widthScale,
+					ReflectionUtils.getDimensionsHeight(original) * heightScale
+				).withEyeHeight(original.eyeHeight() * eyeHeightScale);
+			}
+
+			return scaled;
+		}
+
+		if (entity.getPose() == Pose.SLEEPING)
 		{
 			return scaled;
 		}
