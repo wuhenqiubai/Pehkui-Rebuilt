@@ -24,17 +24,18 @@ import virtuoel.pehkui.util.ReflectionUtils;
 
 // 26.4：实体预览的提取逻辑从 InventoryScreen 移到了 EntityPortraitWidget
 // （InventoryScreen / CreativeModeInventoryScreen / AbstractMountInventoryScreen 都改成调用它）。
-// 同时签名变了：旧 (…IIIIIFFF…, LivingEntity) → 新 (…IIIIFFFF…, Entity)，
-// 即 size 由 int 变 float、实体参数由 LivingEntity 放宽为 Entity。
+// 签名一路在变：
+//   1.21.x   (…IIIIIFFF…, LivingEntity)
+//   snapshot-4 (…IIIIFFFF…, Entity)   —— size 由 int 变 float、实体放宽为 Entity
+//   snapshot-5 (…IIIIFF…,   Entity)   —— 又去掉了两个 float
 @Mixin(EntityPortraitWidget.class)
 public abstract class InventoryScreenMixin
 {
 	@Unique private static final ThreadLocal<Map<ScaleType, ScaleData>> pehkui$SCALES = ThreadLocal.withInitial(Object2ObjectLinkedOpenHashMap::new);
 	@Unique private static final ScaleData pehkui$IDENTITY = ScaleData.Builder.create().build();
 
-	// TODO：MoJang叕改坏了
-	@Inject(method = "extractEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIIIFFFFLnet/minecraft/world/entity/Entity;)V", at = @At(value = "HEAD"))
-	private static void pehkui$drawEntity$head(GuiGraphicsExtractor graphics, int i, int j, int k, int l, float f, float g, float h, float m, Entity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
+	@Inject(method = "extractEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIIIFFLnet/minecraft/world/entity/Entity;)V", at = @At(value = "HEAD"))
+	private static void pehkui$drawEntity$head(GuiGraphicsExtractor graphics, int i, int j, int k, int l, float f, float g, Entity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
 	{
 		final Map<ScaleType, ScaleData> scales = pehkui$SCALES.get();
 
@@ -62,9 +63,8 @@ public abstract class InventoryScreenMixin
 		entity.setBoundingBox(box);
 	}
 
-	// TODO:同上
-	@Inject(method = "extractEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIIIFFFFLnet/minecraft/world/entity/Entity;)V", at = @At(value = "RETURN"))
-	private static void pehkui$drawEntity$return(GuiGraphicsExtractor graphics, int i, int j, int k, int l, float f, float g, float h, float m, Entity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
+	@Inject(method = "extractEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIIIFFLnet/minecraft/world/entity/Entity;)V", at = @At(value = "RETURN"))
+	private static void pehkui$drawEntity$return(GuiGraphicsExtractor graphics, int i, int j, int k, int l, float f, float g, Entity entity, CallbackInfo info, @Share("bounds") LocalRef<AABB> bounds)
 	{
 		final Map<ScaleType, ScaleData> scales = pehkui$SCALES.get();
 

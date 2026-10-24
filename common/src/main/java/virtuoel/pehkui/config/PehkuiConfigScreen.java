@@ -77,12 +77,8 @@ public class PehkuiConfigScreen extends Screen
 		addRenderableWidget(Button.builder(Component.literal("Close"), b -> onClose()).size(70, 20).pos(width - 90, height - 30).build());
 	}
 
-	@Override
-	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks)
-	{
-		super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
-	}
-
+	// snapshot-5 起 Screen.extractRenderState 只收 GuiGraphicsExtractor；
+	// 原先那个四参覆写本来也只是原样转发给 super，没有任何逻辑，直接去掉即可。
 	private void setTab(String newTab)
 	{
 		tab = newTab;
