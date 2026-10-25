@@ -116,6 +116,7 @@ public class PehkuiConfig
 		public final ModConfigSpec.BooleanValue applyVanillaScale;
 		public final ModConfigSpec.BooleanValue vanillaScaleAffectsGameplay;
 		public final ModConfigSpec.BooleanValue vanillaScaleSyncBack;
+		public final ModConfigSpec.BooleanValue thirdPartySizeOverrideCompat;
 
 		Common(ModConfigSpec.Builder builder)
 		{
@@ -206,6 +207,9 @@ public class PehkuiConfig
 			this.vanillaScaleSyncBack = builder
 				.translation("pehkui.configgui.vanillaScaleSyncBack")
 				.define("vanillaScaleSyncBack", false);
+			this.thirdPartySizeOverrideCompat = builder
+				.translation("pehkui.configgui.thirdPartySizeOverrideCompat")
+				.define("thirdPartySizeOverrideCompat", true);
 
 			builder.pop();
 		}

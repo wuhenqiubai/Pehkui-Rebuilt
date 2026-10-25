@@ -52,6 +52,7 @@
 	"pehkui.configgui.applyVanillaScale": "Whether the vanilla scale attribute should be folded into pehkui:base",
 	"pehkui.configgui.vanillaScaleAffectsGameplay": "Whether the vanilla scale attribute should also affect gameplay scale types (motion, reach, drops, projectiles, explosions)",
 	"pehkui.configgui.vanillaScaleSyncBack": "Whether pehkui:base should be written back to the vanilla scale attribute",
+	"pehkui.configgui.thirdPartySizeOverrideCompat": "Third-party size override compatibility",
 	
 	"pehkui.configgui.scale_limits.base.minimum": "Valor mínimo para o tipo de escala pehkui:base",
 	"pehkui.configgui.scale_limits.base.maximum": "Valor máximo para o tipo de escala pehkui:base",
