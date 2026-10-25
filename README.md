@@ -11,10 +11,10 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 ## Current Branch Status
 
 - Minecraft target: `1.21.11`
-- Fabric Loader: `0.19.2`
-- Fabric API: `0.141.4+1.21.11`
-- Mod version: `3.8.4`
-- Published loader format: Fabric (loadable by Quilt via its Fabric compatibility)
+- Mod version: `3.9.0+1.21.11`
+- Fabric: Loader `0.19.5`, Fabric API `0.141.4+1.21.11` (loadable by Quilt via its Fabric compatibility)
+- NeoForge: `21.11.45`
+- Project layout: Architectury multi-platform (`common` / `fabric` / `neoforge`)
 
 ## Origin
 
@@ -22,7 +22,12 @@ The `fabric/1.21.11` branch is based on the former **Pehkui-Continuation** proje
 
 ## Branching & Versioning
 
-Each supported Minecraft version lives on its own branch (e.g. `fabric/1.21.11`). Branches are **single-version skeletons**: the mixin layer contains only the injection points that apply to that version — no cross-version `compat*` subpackages, no legacy version-gating infrastructure. All mixins are flattened into `mixin/` (server) and `mixin/client/`.
+Each supported Minecraft version lives on its own branch. Branches are **single-version skeletons**: the mixin layer contains only the injection points that apply to that version — no cross-version `compat*` subpackages, no legacy version-gating infrastructure.
+
+Two branch layouts exist:
+
+- **Multi-platform (Architectury)** — e.g. `26.3`: one branch builds both Fabric and NeoForge from `common` / `fabric` / `neoforge` submodules. `common` holds platform-agnostic code only (no loader imports); platform differences are bridged through `virtuoel.pehkui.util.Platform` and implemented per platform. Platform-specific classes and mixins live under `virtuoel.pehkui.<platform>.*` — required because NeoForge's JPMS rejects two modules exporting the same package.
+- **Single-loader (legacy)** — e.g. `fabric/1.21.4`, `neoforge/1.21.4`: one branch per loader, mixins flattened into `mixin/` (server) and `mixin/client/`.
 
 To port to a new Minecraft version, copy this skeleton to a new branch and adjust the mixin injection-point method descriptors for the new mappings. Version differences are isolated by branches rather than by in-tree compat code.
 
@@ -41,9 +46,9 @@ Minecraft 1.21.11 moved entity/item rendering onto the `EntityRenderState` / `En
 
 ## Installation
 
-1. Install Fabric Loader for the supported Minecraft version.
-2. Install Fabric API as required by your loader and modpack.
-3. Put the Pehkui Rebuilt jar in your `mods` folder.
+1. Install Fabric Loader **or** NeoForge for the supported Minecraft version.
+2. Fabric only: install Fabric API as required by your loader and modpack.
+3. Put the matching Pehkui Rebuilt jar (`fabric` or `neoforge`) in your `mods` folder.
 4. Install any mods that depend on Pehkui.
 5. Launch the game.
 
@@ -70,13 +75,25 @@ Include:
 - steps to reproduce the scale issue
 - `latest.log` or the crash report
 
+## Datapack Scale Rules
+
+Pehkui Rebuilt supports resizing entities through datapacks via `data/<namespace>/pehkui_scale_rules/*.json`. Rules match entities with a vanilla `EntityPredicate` condition and set one or more scale types to configured values, checked periodically on the server.
+
+This feature is experimental and its performance, availability, and stability are not guaranteed.
+
+See [DATAPACK-SCALE-RULES.md](DATAPACK-SCALE-RULES.md) for the full JSON format, conditions, scale types, behavior, and safety limits.
+
 ## Building
 
 ```bash
 ./gradlew build
 ```
 
-Built jars are written to `build/libs`.
+Output jars:
+- Fabric: `fabric/build/libs/pehkui-rebuilt-fabric-<version>.jar`
+- NeoForge: `neoforge/build/libs/pehkui-rebuilt-neoforge-<version>.jar`
+
+`common` is a shared source module — it is not published as a standalone mod jar.
 
 ## Credits
 
