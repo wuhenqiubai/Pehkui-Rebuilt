@@ -27,7 +27,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.AttackRange;
 import net.minecraft.world.phys.Vec3;
-import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleModifier;
 import virtuoel.pehkui.api.ScaleRegistries;
@@ -41,9 +40,13 @@ public class ScaleUtils
 	{
 		final ScaleType type = data.getScaleType();
 		
-		type.getPreTickEvent().invoker().onEvent(data);
+		// 事件类型按平台而异（Fabric 为 Event、NeoForge 为 Collection），经 Platform 转发。
+		// 取到局部变量：这是每 tick 每 scale type 的热路径，避免反复读 volatile 的 INSTANCE。
+		final Platform platform = Platform.INSTANCE;
+
+		platform.invokePreTick(type, data);
 		data.tick();
-		type.getPostTickEvent().invoker().onEvent(data);
+		platform.invokePostTick(type, data);
 	}
 	
 	public static void loadAverageScales(Entity target, Entity source, Entity... sources)
@@ -66,13 +69,13 @@ public class ScaleUtils
 	
 	public static void loadScaleOnRespawn(Entity target, Entity source, boolean alive)
 	{
-		if (alive || PehkuiConfig.COMMON.keepAllScalesOnRespawn.get())
+		if (alive || Platform.INSTANCE.getKeepAllScalesOnRespawn())
 		{
 			loadScale(target, source);
 			return;
 		}
 		
-		final List<? extends String> keptScales = PehkuiConfig.COMMON.scalesKeptOnRespawn.get();
+		final List<? extends String> keptScales = Platform.INSTANCE.getScalesKeptOnRespawn();
 		
 		ScaleType type;
 		ScaleData sourceData;
@@ -514,7 +517,7 @@ public class ScaleUtils
 	
 	public static float getMotionScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.MOTION, PehkuiConfig.COMMON.scaledMotion::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.MOTION, () -> Platform.INSTANCE.getScaledMotion(), tickDelta);
 	}
 	
 	public static float getFlightScale(Entity entity)
@@ -534,7 +537,7 @@ public class ScaleUtils
 	
 	public static float getBlockReachScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.BLOCK_REACH, PehkuiConfig.COMMON.scaledReach::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.BLOCK_REACH, () -> Platform.INSTANCE.getScaledReach(), tickDelta);
 	}
 	
 	public static float getEntityReachScale(Entity entity)
@@ -544,7 +547,7 @@ public class ScaleUtils
 	
 	public static float getEntityReachScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.ENTITY_REACH, PehkuiConfig.COMMON.scaledReach::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.ENTITY_REACH, () -> Platform.INSTANCE.getScaledReach(), tickDelta);
 	}
 	
 	public static float getVanillaScale(Entity entity)
@@ -601,7 +604,7 @@ public class ScaleUtils
 	
 	public static float getAttackScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.ATTACK, PehkuiConfig.COMMON.scaledAttack::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.ATTACK, () -> Platform.INSTANCE.getScaledAttack(), tickDelta);
 	}
 	
 	public static float getDefenseScale(Entity entity)
@@ -611,7 +614,7 @@ public class ScaleUtils
 	
 	public static float getDefenseScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.DEFENSE, PehkuiConfig.COMMON.scaledDefense::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.DEFENSE, () -> Platform.INSTANCE.getScaledDefense(), tickDelta);
 	}
 	
 	public static float getHealthScale(Entity entity)
@@ -621,7 +624,7 @@ public class ScaleUtils
 	
 	public static float getHealthScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.HEALTH, PehkuiConfig.COMMON.scaledHealth::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.HEALTH, () -> Platform.INSTANCE.getScaledHealth(), tickDelta);
 	}
 	
 	public static float getDropScale(Entity entity)
@@ -631,7 +634,7 @@ public class ScaleUtils
 	
 	public static float getDropScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.DROPS, PehkuiConfig.COMMON.scaledItemDrops::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.DROPS, () -> Platform.INSTANCE.getScaledItemDrops(), tickDelta);
 	}
 	
 	public static float getHeldItemScale(Entity entity)
@@ -651,7 +654,7 @@ public class ScaleUtils
 	
 	public static float getProjectileScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.PROJECTILES, PehkuiConfig.COMMON.scaledProjectiles::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.PROJECTILES, () -> Platform.INSTANCE.getScaledProjectiles(), tickDelta);
 	}
 	
 	public static float getExplosionScale(Entity entity)
@@ -661,7 +664,7 @@ public class ScaleUtils
 	
 	public static float getExplosionScale(Entity entity, float tickDelta)
 	{
-		return getConfigurableTypedScale(entity, ScaleTypes.EXPLOSIONS, PehkuiConfig.COMMON.scaledExplosions::get, tickDelta);
+		return getConfigurableTypedScale(entity, ScaleTypes.EXPLOSIONS, () -> Platform.INSTANCE.getScaledExplosions(), tickDelta);
 	}
 	
 	public static float getConfigurableTypedScale(Entity entity, ScaleType type, Supplier<Boolean> config, float tickDelta)
