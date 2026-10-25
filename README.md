@@ -11,7 +11,7 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 ## Current Branch Status
 
 - Minecraft target: `26.3`
-- Mod version: `3.8.7+26.3`
+- Mod version: `3.9.0+26.3`
 - Fabric: Loader `0.19.5`, Fabric API `0.160.7+26.3` (loadable by Quilt via its Fabric compatibility)
 - NeoForge: `26.3.0.16-Beta`
 - Project layout: Architectury multi-platform (`common` / `fabric` / `neoforge`)
@@ -20,14 +20,13 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 | MC version range | Mod version tag | Update conditions        | Version positioning | Support status |
 |------------------|-----------------|--------------------------|---------------------|----------------|
-| 1.21 / 1.21.1    | 3.9.1‑Beta      | Active updates           | Mainstream          | Active         |
-| 1.21.2‑1.21.4    | 3.8.5‑Beta      | Update as needed         | Transitional        | Passive        |
-| 1.21.5-1.21.10   | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
-| 1.21.11          | 3.9.0‑Beta      | Active updates           | Mainstream          | Active         |
-| 26.1.x           | 3.8.5‑Beta-HF   | Active updates           | Mainstream          | Active         |
-| 26.2             | 3.8.6           | Active updates           | Mainstream          | Active         |
-| 26.3             | 3.8.7           | Highest‑priority updates | Primary baseline    | Active         |
-| 26.4-snapshot-5  | -               | Not pushed               | Future Platform     | Active         |
+| 26.3             | 3.9.0           | Highest‑priority updates | Primary baseline    | Active         |
+
+Minecraft 26.4 snapshots are tracked separately on the `26.4-snapshot` branch:
+
+| MC version       | Mod version tag | Update conditions | Version positioning | Support status |
+|------------------|-----------------|-------------------|---------------------|----------------|
+| 26.4-snapshot-5  | 3.9.0           | As snapshots land | Future Platform     | Active         |
 
 ## Origin
 
