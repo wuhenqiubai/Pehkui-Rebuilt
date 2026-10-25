@@ -20,16 +20,14 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 | MC version range | Mod version tag | Update conditions        | Version positioning | Support status |
 |------------------|-----------------|--------------------------|---------------------|----------------|
-| 1.21 / 1.21.1    | 3.8.5‑Beta-HF   | Active updates           | Mainstream          | Active         |
+| 1.21 / 1.21.1    | 3.9.1‑Beta      | Active updates           | Mainstream          | Active         |
 | 1.21.2‑1.21.4    | 3.8.5‑Beta      | Update as needed         | Transitional        | Passive        |
-| 1.21.5           | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
-| 1.21.6‑1.21.8    | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
-| 1.21.9           | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
-| 1.21.10          | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
-| 1.21.11          | 3.8.5‑Beta      | Active updates           | Mainstream          | Active         |
+| 1.21.5-1.21.10   | 3.8.4‑Beta      | Update as needed         | Transitional        | Passive        |
+| 1.21.11          | 3.9.0‑Beta      | Active updates           | Mainstream          | Active         |
 | 26.1.x           | 3.8.5‑Beta-HF   | Active updates           | Mainstream          | Active         |
 | 26.2             | 3.8.6           | Active updates           | Mainstream          | Active         |
-| 26.3             | 3.8.7-Alpha     | Highest‑priority updates | Primary baseline    | Active         |
+| 26.3             | 3.8.7           | Highest‑priority updates | Primary baseline    | Active         |
+| 26.4-snapshot-5  | -               | Not pushed               | Future Platform     | Active         |
 
 ## Origin
 
