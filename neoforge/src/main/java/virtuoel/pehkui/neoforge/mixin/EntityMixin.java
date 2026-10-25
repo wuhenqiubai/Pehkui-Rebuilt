@@ -7,12 +7,14 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.entity.EntityEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -252,6 +254,45 @@ public abstract class EntityMixin implements PehkuiEntityExtensions
 	private EntityDimensions pehkui$getDimensions(EntityDimensions original)
 	{
 		return ScaleUtils.getScaledDimensions(original, (Entity) (Object) this);
+	}
+
+	@WrapOperation(
+		method = "refreshDimensions()V",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/neoforged/neoforge/event/EventHooks;getEntitySizeForge(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Pose;Lnet/minecraft/world/entity/EntityDimensions;Lnet/minecraft/world/entity/EntityDimensions;)Lnet/neoforged/neoforge/event/entity/EntityEvent$Size;"
+		),
+		require = 0,
+		expect = 0
+	)
+	private static EntityEvent.Size pehkui$rescaleOverriddenSize(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, Operation<EntityEvent.Size> original)
+	{
+		final EntityEvent.Size event = original.call(entity, pose, oldSize, newSize);
+		final EntityDimensions overridden = event.getNewSize();
+
+		if (overridden == newSize || !overridden.fixed() || !PehkuiConfig.COMMON.thirdPartySizeOverrideCompat.get())
+		{
+			return event;
+		}
+
+		final float widthScale = ScaleUtils.getBoundingBoxWidthScale(entity);
+		final float heightScale = ScaleUtils.getBoundingBoxHeightScale(entity);
+		final float eyeHeightScale = pose == Pose.SLEEPING ? heightScale : ScaleUtils.getEyeHeightScale(entity);
+
+		if (widthScale == 1.0F && heightScale == 1.0F && eyeHeightScale == 1.0F)
+		{
+			return event;
+		}
+
+		event.setNewSize(new EntityDimensions(
+			overridden.width() * widthScale,
+			overridden.height() * heightScale,
+			overridden.eyeHeight() * eyeHeightScale,
+			overridden.attachments().scale(widthScale, heightScale, widthScale),
+			true
+		));
+
+		return event;
 	}
 
 	@ModifyReturnValue(method = "spawnAtLocation(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At("RETURN"))
