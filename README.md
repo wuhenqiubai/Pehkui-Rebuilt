@@ -25,12 +25,7 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 | 1.21.5-1.21.10   | 3.8.4           | Update as needed         | Transitional        | Passive        |
 | 1.21.11-26.2     | 3.9.0           | Active updates           | Mainstream          | Active         |
 | 26.3             | 3.9.0           | Highest‑priority updates | Primary baseline    | Active         |
-
-Minecraft 26.4 snapshots are tracked separately on the `26.4-snapshot` branch:
-
-| MC version       | Mod version tag | Update conditions | Version positioning | Support status |
-|------------------|-----------------|-------------------|---------------------|----------------|
-| 26.4-snapshot-5  | 3.9.0           | As snapshots land | Future Platform     | Active         |
+| 26.4-snapshot-5  | 3.9.0           | As snapshots land        | Future Platform     | Active         |
 
 ## Origin
 
