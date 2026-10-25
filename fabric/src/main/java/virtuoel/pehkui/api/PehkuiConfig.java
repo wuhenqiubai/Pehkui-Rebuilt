@@ -12,8 +12,8 @@ import virtuoel.kanos_config.api.JsonConfigBuilder;
 import virtuoel.kanos_config.api.MutableConfigEntry;
 import virtuoel.pehkui.Pehkui;
 import virtuoel.pehkui.util.ClampingScaleModifier;
-import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.Platform;
+import virtuoel.pehkui.util.ConfigSyncUtils;
 import virtuoel.pehkui.util.ScaleUtils;
 
 public class PehkuiConfig
@@ -30,29 +30,26 @@ public class PehkuiConfig
 			return ConfigSyncUtils.createConfigEntry(name, defaultValue, supplier, consumer);
 		}
 	};
-
+	
 	public static final Client CLIENT = new Client(BUILDER);
 	public static final Common COMMON = new Common(BUILDER);
 	public static final Server SERVER = new Server(BUILDER);
-
+	
 	public static final class Common
 	{
 		public final Supplier<Boolean> keepAllScalesOnRespawn;
 		public final Supplier<List<String>> scalesKeptOnRespawn;
-
+		
 		public final Supplier<Boolean> accurateNetherPortals;
-
+		
 		public final Supplier<Boolean> enableCommands;
 		public final Supplier<Boolean> enableDebugCommands;
 
-	public final Supplier<Boolean> enableScaleRules;
-	public final Supplier<Integer> scaleRuleCheckInterval;
-	public final Supplier<Double> scaleRuleMaxScale;
-	public final Supplier<Boolean> scaleRulesAffectPlayers;
-	public final Supplier<Boolean> applyVanillaScale;
-	public final Supplier<Boolean> vanillaScaleAffectsGameplay;
-	public final Supplier<Boolean> vanillaScaleSyncBack;
-
+		public final Supplier<Boolean> enableScaleRules;
+		public final Supplier<Integer> scaleRuleCheckInterval;
+		public final Supplier<Double> scaleRuleMaxScale;
+		public final Supplier<Boolean> scaleRulesAffectPlayers;
+		
 		public final Supplier<Boolean> scaledFallDamage;
 		public final Supplier<Boolean> scaledMotion;
 		public final Supplier<Boolean> scaledReach;
@@ -62,26 +59,26 @@ public class PehkuiConfig
 		public final Supplier<Boolean> scaledItemDrops;
 		public final Supplier<Boolean> scaledProjectiles;
 		public final Supplier<Boolean> scaledExplosions;
-
+		// 原版 minecraft:scale 属性兼容
+		public final Supplier<Boolean> applyVanillaScale;
+		public final Supplier<Boolean> vanillaScaleAffectsGameplay;
+		public final Supplier<Boolean> vanillaScaleSyncBack;
+		
 		private Common(final JsonConfigBuilder builder)
 		{
 			this.keepAllScalesOnRespawn = builder.booleanConfig(synced("keepAllScalesOnRespawn", "boolean"), false);
 			this.scalesKeptOnRespawn = builder.stringListConfig(synced("scalesKeptOnRespawn", "string_list"));
-
+			
 			this.accurateNetherPortals = builder.booleanConfig(synced("accurateNetherPortals", "boolean"), true);
-
+			
 			this.enableCommands = builder.booleanConfig("enableCommands", true);
 			this.enableDebugCommands = builder.booleanConfig("enableDebugCommands", false);
 
 			this.enableScaleRules = builder.booleanConfig("enableScaleRules", true);
 			this.scaleRuleCheckInterval = builder.intConfig("scaleRuleCheckInterval", 10);
-
 			this.scaleRuleMaxScale = builder.doubleConfig("scaleRuleMaxScale", 256);
 			this.scaleRulesAffectPlayers = builder.booleanConfig("scaleRulesAffectPlayers", false);
-			this.applyVanillaScale = builder.booleanConfig("applyVanillaScale", false);
-			this.vanillaScaleAffectsGameplay = builder.booleanConfig("vanillaScaleAffectsGameplay", false);
-			this.vanillaScaleSyncBack = builder.booleanConfig("vanillaScaleSyncBack", false);
-
+			
 			this.scaledFallDamage = builder.booleanConfig(synced("scaledFallDamage", "boolean"), true);
 			this.scaledMotion = builder.booleanConfig(synced("scaledMotion", "boolean"), true);
 			this.scaledReach = builder.booleanConfig(synced("scaledReach", "boolean"), true);
@@ -91,7 +88,11 @@ public class PehkuiConfig
 			this.scaledItemDrops = builder.booleanConfig(synced("scaledItemDrops", "boolean"), true);
 			this.scaledProjectiles = builder.booleanConfig(synced("scaledProjectiles", "boolean"), true);
 			this.scaledExplosions = builder.booleanConfig(synced("scaledExplosions", "boolean"), true);
-
+			
+			this.applyVanillaScale = builder.booleanConfig("applyVanillaScale", false);
+			this.vanillaScaleAffectsGameplay = builder.booleanConfig("vanillaScaleAffectsGameplay", false);
+			this.vanillaScaleSyncBack = builder.booleanConfig("vanillaScaleSyncBack", false);
+			
 			Identifier id;
 			String namespace, path;
 			ScaleType type;
@@ -100,21 +101,23 @@ public class PehkuiConfig
 			{
 				id = entry.getKey();
 				namespace = id.getNamespace();
-
+				
 				if (namespace.equals(Pehkui.MOD_ID))
 				{
 					type = entry.getValue();
-
+					
 					if (type == ScaleTypes.INVALID)
 					{
 						continue;
 					}
-
+					
 					path = id.getPath();
-
+					
 					min = builder.doubleConfig(synced(path + ".minimum", "double"), type.getAffectsDimensions() ? ScaleUtils.DEFAULT_MINIMUM_POSITIVE_SCALE : Float.MIN_VALUE);
-					max = builder.doubleConfig(synced(path + ".maximum", "double"), Float.MAX_VALUE);
-
+					// pehkui:base 的默认上限单列：倍数太大时下游（实体查询、渲染、物理）都会出问题，
+					// 50 倍是实测可用的上限。其余类型仍用 Float.MAX_VALUE。
+					max = builder.doubleConfig(synced(path + ".maximum", "double"), type == ScaleTypes.BASE ? 50.0D : Float.MAX_VALUE);
+					
 					type.getDefaultBaseValueModifiers().add(
 						ScaleRegistries.register(
 							ScaleRegistries.SCALE_MODIFIERS,
@@ -126,30 +129,30 @@ public class PehkuiConfig
 			}
 		}
 	}
-
+	
 	public static final class Client
 	{
 		public final Supplier<Double> minimumCameraDepth;
-
+		
 		private Client(final JsonConfigBuilder builder)
 		{
 			this.minimumCameraDepth = builder.doubleConfig("minimumCameraDepth", 1.0D / 32767.0D);
 		}
 	}
-
+	
 	public static final class Server
 	{
 		private Server(final JsonConfigBuilder builder)
 		{
-
+			
 		}
 	}
-
+	
 	private PehkuiConfig()
 	{
-
+		
 	}
-
+	
 	private static String synced(final String name, final String codecKey)
 	{
 		ConfigSyncUtils.setupSyncableConfig(name, codecKey);
