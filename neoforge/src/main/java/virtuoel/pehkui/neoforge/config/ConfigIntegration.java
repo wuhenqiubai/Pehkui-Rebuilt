@@ -1,10 +1,9 @@
 package virtuoel.pehkui.neoforge.config;
 
-import virtuoel.pehkui.config.PehkuiConfigScreen;
-
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import virtuoel.pehkui.Pehkui;
 
@@ -17,7 +16,6 @@ public class ConfigIntegration
 {
 	public ConfigIntegration(final ModContainer container)
 	{
-		container.registerExtensionPoint(IConfigScreenFactory.class,
-			(modContainer, parent) -> new PehkuiConfigScreen(parent));
+		container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 	}
 }

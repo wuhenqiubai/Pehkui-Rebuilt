@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
 import virtuoel.kanos_config.api.MutableConfigEntry;
-import virtuoel.pehkui.api.PehkuiConfig;
+import virtuoel.pehkui.util.Platform;
 import virtuoel.pehkui.util.ConfigSyncUtils;
 
 /**
@@ -107,7 +107,7 @@ public class PehkuiConfigScreen extends Screen
 			}
 		}
 
-		PehkuiConfig.BUILDER.config.save();
+		Platform.INSTANCE.getConfigHandler().save();
 
 		final IntegratedServer server = Minecraft.getInstance().getSingleplayerServer();
 

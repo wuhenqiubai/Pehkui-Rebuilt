@@ -16,7 +16,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import virtuoel.pehkui.Pehkui;
-import virtuoel.pehkui.api.PehkuiConfig;
 
 public class ScaleRenderUtils
 {
@@ -49,7 +48,7 @@ public class ScaleRenderUtils
 	{
 		if (scale < 1.0F)
 		{
-			return Math.max(depth * scale, (float) PehkuiConfig.CLIENT.minimumCameraDepth.get().doubleValue());
+			return Math.max(depth * scale, (float) Platform.INSTANCE.getMinimumCameraDepth());
 		}
 
 		return depth;

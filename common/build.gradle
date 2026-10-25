@@ -2,6 +2,45 @@ architectury {
 	common(rootProject.enabled_platforms.split(','))
 }
 
+// ScaleType 是 common 侧的「平台中性编译占位」：上游同一套 API 在两个平台上本就不一样 ——
+// Fabric 的三个事件成员是 net.fabricmc.fabric.api.event.Event<ScaleEventCallback>，
+// NeoForge 是 java.util.Collection<ScaleEventCallback>。所以真正的实现在平台模块里各存一份
+// （fabric/neoforge 的 .../api/ScaleType.java，各自照抄对应上游），common 这份不含事件成员。
+//
+// 之所以仍留在 common 源码里：common 有约 400 处引用该类型，其中一部分是公开 API 签名
+// （ScaleData.getScaleType()、ScaleRegistries.SCALE_TYPES、ScaleUtils.getTypedScale(...) 等），
+// 必须能在 common 编译期解析到。而它不能做成独立 source set / 子项目 —— ScaleType 自身又引用
+// ScaleData / ScaleRegistries / ScaleEasings / ScaleUtils，会与 common 构成循环编译依赖。
+//
+// ⚠️ 关键：**光排除出 jar 不够**。dev 环境（runClient）由 Architectury 的 namedElements 把
+// common 的 **classes 目录**直接放到运行期 classpath 上，那里的 `ScaleType$Builder.class`
+// 会和平台模块自己那份**撞名**，谁先加载谁赢 —— 实测 **common 的会赢**。
+// 后果：Builder.build() 不注册 scaleChanged 监听器 → refreshDimensions 永不触发 →
+// 放大后 hitbox/眼高停在原地（而模型/移速等照常缩放，因为它们不靠尺寸刷新）。
+//
+// 所以除了排除出 jar，还要把它从 **编译输出** 里删掉（dev classpath 用的是那份）。
+// 注意模式别写成 `ScaleType*.class` —— 那会把 ScaleTypes.class 一起匹配掉。
+def scaleTypePlaceholderPatterns = [
+	'virtuoel/pehkui/api/ScaleType.class',
+	'virtuoel/pehkui/api/ScaleType$*.class',
+]
+
+tasks.named('compileJava') {
+	// ⚠️ 必须关掉增量编译：占位类被从输出目录删掉后，增量编译只会重编「变更的文件」，
+	// 而它们引用 ScaleType（见 ScaleData/ScaleCommand 等），从上一次输出里找不到 → 编译失败。
+	// 全量重编时 javac 会连 ScaleType.java 一起从源码编出来，就能解析得到。
+	// 代价：common 每次都全量编译（百余个文件，可接受）。
+	options.incremental = false
+
+	doLast {
+		delete fileTree(destinationDirectory) { scaleTypePlaceholderPatterns.each { include it } }
+	}
+}
+
+jar {
+	scaleTypePlaceholderPatterns.each { exclude it }
+}
+
 dependencies {
 	// 仅使用 fabric-loader 的 @Environment 等注解做跨平台标记，不依赖 Fabric API
 	implementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
