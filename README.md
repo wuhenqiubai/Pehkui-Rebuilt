@@ -16,18 +16,6 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 - NeoForge: not published for 26.4 snapshots yet
 - Project layout: Architectury multi-platform (`common` / `fabric` / `neoforge`)
 
-## Version support status
-
-| MC version range | Mod version tag | Update conditions        | Version positioning | Support status |
-|------------------|-----------------|--------------------------|---------------------|----------------|
-| 26.3             | 3.9.0           | Highest‑priority updates | Primary baseline    | Active         |
-
-Minecraft 26.4 snapshots are tracked separately on the `26.4-snapshot` branch:
-
-| MC version       | Mod version tag | Update conditions | Version positioning | Support status |
-|------------------|-----------------|-------------------|---------------------|----------------|
-| 26.4-snapshot-5  | 3.9.0           | As snapshots land | Future Platform     | Active         |
-
 ## Origin
 
 The `fabric/1.21.11` branch is based on the former **Pehkui-Continuation** project, rebuilt and maintained independently as **Pehkui-Rebuilt**.
