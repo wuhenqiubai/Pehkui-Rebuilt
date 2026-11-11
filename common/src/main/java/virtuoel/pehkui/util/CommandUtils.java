@@ -7,12 +7,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.minecraft.advancements.predicates.MinMaxBounds;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.SerializableArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import virtuoel.pehkui.Pehkui;
@@ -33,16 +33,16 @@ public class CommandUtils
 
 	public static void registerArgumentTypes(ArgumentTypeConsumer consumer)
 	{
-		consumer.register(Pehkui.id("scale_type"), ScaleTypeArgumentType.class, ScaleTypeArgumentType::scaleType);
-		consumer.register(Pehkui.id("scale_modifier"), ScaleModifierArgumentType.class, ScaleModifierArgumentType::scaleModifier);
-		consumer.register(Pehkui.id("scale_operation"), ScaleOperationArgumentType.class, ScaleOperationArgumentType::operation);
-		consumer.register(Pehkui.id("scale_easing"), ScaleEasingArgumentType.class, ScaleEasingArgumentType::scaleEasing);
+		consumer.register(Pehkui.id("scale_type"), ScaleTypeArgumentType.INSTANCE);
+		consumer.register(Pehkui.id("scale_modifier"), ScaleModifierArgumentType.INSTANCE);
+		consumer.register(Pehkui.id("scale_operation"), ScaleOperationArgumentType.INSTANCE);
+		consumer.register(Pehkui.id("scale_easing"), ScaleEasingArgumentType.INSTANCE);
 	}
 
 	@FunctionalInterface
 	public interface ArgumentTypeConsumer
 	{
-		<T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier);
+		void register(Identifier id, SerializableArgument<?> argument);
 	}
 
 	public static void sendFeedback(CommandSourceStack source, Supplier<Component> text, boolean broadcastToOps)

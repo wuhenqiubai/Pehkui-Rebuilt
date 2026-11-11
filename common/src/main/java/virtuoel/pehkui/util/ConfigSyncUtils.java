@@ -17,14 +17,14 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.BooleanArgument;
+import net.minecraft.commands.arguments.DoubleArgument;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,8 +51,8 @@ public class ConfigSyncUtils
 
 				return () -> e.setSyncedValue(v);
 			},
-			DoubleArgumentType::doubleArg,
-			DoubleArgumentType::getDouble
+			DoubleArgument::doubleArg,
+			DoubleArgument::getDouble
 		));
 		CODECS.put("boolean", new ConfigEntryCodec<>(
 			(b, e) -> ((ByteBuf) b).writeBoolean(e.getValue()),
@@ -62,8 +62,8 @@ public class ConfigSyncUtils
 
 				return () -> e.setSyncedValue(v);
 			},
-			BoolArgumentType::bool,
-			BoolArgumentType::getBool
+			BooleanArgument::bool,
+			BooleanArgument::getBool
 		));
 		CODECS.put("string_list", new ConfigEntryCodec<List<String>>(
 			(b, e) ->

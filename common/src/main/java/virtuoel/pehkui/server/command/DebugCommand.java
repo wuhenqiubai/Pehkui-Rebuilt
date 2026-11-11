@@ -11,19 +11,19 @@ import java.util.UUID;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.commands.CommandPermissionLevels;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.StringArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
@@ -44,7 +44,7 @@ public class DebugCommand
 	{
 		final LiteralArgumentBuilder<CommandSourceStack> builder =
 			Commands.literal("scale")
-			.requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER));
+			.requires(Commands.hasPermission(CommandPermissionLevels.LEVEL_GAMEMASTERS));
 		
 		builder.then(Commands.literal("debug")
 			.then(ConfigSyncUtils.registerConfigCommands())
@@ -56,10 +56,10 @@ public class DebugCommand
 				.then(Commands.literal("debug")
 					.then(Commands.literal("delete_scale_data")
 						.then(Commands.literal("uuid")
-							.then(Commands.argument("uuid", StringArgumentType.string())
+							.then(Commands.argument("uuid", StringArgument.string())
 								.executes(context ->
 								{
-									final String uuidString = StringArgumentType.getString(context, "uuid");
+									final String uuidString = StringArgument.getString(context, "uuid");
 									
 									try
 									{
@@ -76,10 +76,10 @@ public class DebugCommand
 							)
 						)
 						.then(Commands.literal("username")
-							.then(Commands.argument("username", StringArgumentType.string())
+							.then(Commands.argument("username", StringArgument.string())
 								.executes(context ->
 								{
-									MARKED_USERNAMES.add(StringArgumentType.getString(context, "username").toLowerCase(Locale.ROOT));
+									MARKED_USERNAMES.add(StringArgument.getString(context, "username").toLowerCase(Locale.ROOT));
 									
 									return 1;
 								})

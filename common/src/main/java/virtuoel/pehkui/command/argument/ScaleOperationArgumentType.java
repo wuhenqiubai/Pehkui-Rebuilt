@@ -5,7 +5,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Collectors;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.SerializableArgument;
+import net.minecraft.commands.suggestions.SuggestionContext;
 import net.minecraft.resources.Identifier;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -20,15 +21,23 @@ import virtuoel.pehkui.api.ScaleRegistries;
 import virtuoel.pehkui.mixin.OperationArgumentTypeAccessor;
 import virtuoel.pehkui.util.ReflectionUtils;
 
-public class ScaleOperationArgumentType implements ArgumentType<ScaleOperationArgumentType.Operation>
+public class ScaleOperationArgumentType implements SerializableArgument.ContextFree<ScaleOperationArgumentType.Operation>
 {
 	private static final Collection<String> EXAMPLES = ScaleRegistries.SCALE_OPERATIONS.keySet().stream().map(Identifier::toString).collect(Collectors.toList());
+	public static final ScaleOperationArgumentType INSTANCE = new ScaleOperationArgumentType();
+	public static final SerializableArgument.Type<ScaleOperationArgumentType> TYPE = SerializableArgument.singletonType(INSTANCE);
 	private static final SimpleCommandExceptionType INVALID_OPERATION = OperationArgumentTypeAccessor.getInvalidOperationException();
 	private static final SimpleCommandExceptionType DIVISION_ZERO_EXCEPTION = OperationArgumentTypeAccessor.getDivisionZeroException();
-	
-	public static ScaleOperationArgumentType operation()
+
+	@Override
+	public SerializableArgument.Type<? extends SerializableArgument.ContextFree<Operation>> type()
 	{
-		return new ScaleOperationArgumentType();
+		return TYPE;
+	}
+
+	public static ArgumentType<Operation> operation()
+	{
+		return INSTANCE.toBrigadier();
 	}
 	
 	public static Operation getOperation(CommandContext<CommandSourceStack> commandContext, String string) throws CommandSyntaxException
@@ -57,9 +66,9 @@ public class ScaleOperationArgumentType implements ArgumentType<ScaleOperationAr
 	}
 	
 	@Override
-	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
+	public CompletableFuture<Suggestions> listSuggestions(CommandContext<? extends SuggestionContext> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
-		return SharedSuggestionProvider.suggest(
+		return SuggestionContext.suggest(
 			ScaleRegistries.SCALE_OPERATIONS.keySet().stream().filter(id ->
 			{
 				return !id.equals(ScaleRegistries.getDefaultId(ScaleRegistries.SCALE_OPERATIONS));

@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.SerializableArgument;
+import net.minecraft.commands.suggestions.SuggestionContext;
 import net.minecraft.resources.Identifier;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -19,14 +21,22 @@ import virtuoel.pehkui.api.ScaleType;
 import virtuoel.pehkui.util.CommandUtils;
 import virtuoel.pehkui.util.I18nUtils;
 
-public class ScaleTypeArgumentType implements ArgumentType<ScaleType>
+public class ScaleTypeArgumentType implements SerializableArgument.ContextFree<ScaleType>
 {
 	private static final Collection<String> EXAMPLES = Arrays.asList("base", Pehkui.MOD_ID + ":base");
+	public static final ScaleTypeArgumentType INSTANCE = new ScaleTypeArgumentType();
+	public static final SerializableArgument.Type<ScaleTypeArgumentType> TYPE = SerializableArgument.singletonType(INSTANCE);
 	public static final DynamicCommandExceptionType INVALID_ENTRY_EXCEPTION = new DynamicCommandExceptionType(arg ->
 	{
 		return I18nUtils.translate("argument.pehkui.type.invalid", "Unknown scale type '%s'", arg);
 	});
-	
+
+	@Override
+	public SerializableArgument.Type<? extends SerializableArgument.ContextFree<ScaleType>> type()
+	{
+		return TYPE;
+	}
+
 	@Override
 	public ScaleType parse(StringReader stringReader) throws CommandSyntaxException
 	{
@@ -35,7 +45,7 @@ public class ScaleTypeArgumentType implements ArgumentType<ScaleType>
 	}
 	
 	@Override
-	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder)
+	public CompletableFuture<Suggestions> listSuggestions(CommandContext<? extends SuggestionContext> context, SuggestionsBuilder builder) throws CommandSyntaxException
 	{
 		return CommandUtils.suggestIdentifiersIgnoringNamespace(Pehkui.MOD_ID, ScaleRegistries.SCALE_TYPES.keySet(), builder);
 	}
@@ -46,9 +56,9 @@ public class ScaleTypeArgumentType implements ArgumentType<ScaleType>
 		return EXAMPLES;
 	}
 	
-	public static ScaleTypeArgumentType scaleType()
+	public static ArgumentType<ScaleType> scaleType()
 	{
-		return new ScaleTypeArgumentType();
+		return INSTANCE.toBrigadier();
 	}
 	
 	public static ScaleType getScaleTypeArgument(CommandContext<CommandSourceStack> context, String name)

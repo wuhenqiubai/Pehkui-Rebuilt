@@ -1,18 +1,13 @@
 package virtuoel.pehkui.fabric;
 
-import java.util.function.Supplier;
-
-import com.mojang.brigadier.arguments.ArgumentType;
-
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.commands.synchronization.SingletonArgumentInfo;
-import net.minecraft.resources.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.packs.PackType;
 import virtuoel.pehkui.api.PehkuiConfig;
 import virtuoel.pehkui.api.ScaleOperations;
@@ -46,14 +41,8 @@ public class PehkuiFabric implements ModInitializer
 	@Override
 	public void onInitialize()
 	{
-		CommandUtils.registerArgumentTypes(new CommandUtils.ArgumentTypeConsumer()
-		{
-			@Override
-			public <T extends ArgumentType<?>> void register(Identifier id, Class<T> argClass, Supplier<T> supplier)
-			{
-				ArgumentTypeRegistry.registerArgumentType(id, argClass, SingletonArgumentInfo.contextFree(supplier));
-			}
-		});
+		CommandUtils.registerArgumentTypes((id, argument) ->
+			Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, id, argument.type()));
 
 		PehkuiEntitySelectorOptions.register();
 

@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,12 +13,9 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.advancements.predicates.entity.EntityPredicate;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -206,11 +202,10 @@ public final class ScaleRules
 		try
 		{
 			final List<ResourceCondition> conditions = ResourceCondition.LIST_CODEC.parse(ops, json.get(ResourceConditions.CONDITIONS_KEY)).getOrThrow();
-			final RegistryOps.RegistryInfoLookup lookup = createRegistryInfoLookup(registryLookup);
 
 			for (final ResourceCondition condition : conditions)
 			{
-				if (!condition.test(lookup))
+				if (!condition.test(registryLookup))
 				{
 					return false;
 				}
@@ -223,22 +218,6 @@ public final class ScaleRules
 			Pehkui.LOGGER.error("Failed to parse fabric:load_conditions in {}", json, e);
 			return false;
 		}
-	}
-
-	private static RegistryOps.RegistryInfoLookup createRegistryInfoLookup(HolderLookup.Provider provider)
-	{
-		return new RegistryOps.RegistryInfoLookup()
-		{
-			@SuppressWarnings("unchecked")
-			@Override
-			public <T> Optional<HolderGetter<T>> lookup(ResourceKey<? extends Registry<? extends T>> key)
-			{
-				// 26.3 起 RegistryOps.RegistryInfo 被移除，lookup 直接返回 HolderGetter
-				// （HolderLookup.RegistryLookup 传递继承自 HolderGetter）
-				return provider.lookup((ResourceKey<? extends Registry<T>>) (ResourceKey<?>) key)
-					.<HolderGetter<T>>map(registryLookup -> registryLookup);
-			}
-		};
 	}
 
 	/**

@@ -9,22 +9,22 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.FloatArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
+import net.minecraft.commands.CommandPermissionLevels;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.BooleanArgument;
+import net.minecraft.commands.arguments.DoubleArgument;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.FloatArgument;
+import net.minecraft.commands.arguments.IntegerArgument;
 import net.minecraft.commands.arguments.NbtPathArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.commands.data.EntityDataAccessor;
-import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
 import virtuoel.pehkui.api.ScaleData;
 import virtuoel.pehkui.api.ScaleModifier;
@@ -51,7 +51,7 @@ public class ScaleCommand
 		
 		final LiteralArgumentBuilder<CommandSourceStack> builder =
 			Commands.literal("scale")
-			.requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER));
+			.requires(Commands.hasPermission(CommandPermissionLevels.LEVEL_GAMEMASTERS));
 		
 		registerOperation(builder);
 		registerRandomize(builder);
@@ -72,11 +72,11 @@ public class ScaleCommand
 		builder
 			.then(Commands.argument("operation", ScaleOperationArgumentType.operation())
 				.then(Commands.argument("scale_type", ScaleTypeArgumentType.scaleType())
-					.then(Commands.argument("value", FloatArgumentType.floatArg())
+					.then(Commands.argument("value", FloatArgument.floatArg())
 						.then(Commands.argument("targets", EntityArgument.entities())
 							.executes(context ->
 							{
-								final float scale = FloatArgumentType.getFloat(context, "value");
+								final float scale = FloatArgument.getFloat(context, "value");
 								final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 								
 								for (final Entity e : EntityArgument.getEntities(context, "targets"))
@@ -92,7 +92,7 @@ public class ScaleCommand
 						)
 						.executes(context ->
 						{
-							final float scale = FloatArgumentType.getFloat(context, "value");
+							final float scale = FloatArgument.getFloat(context, "value");
 							final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 							
 							final ScaleData data = type.getScaleData(context.getSource().getEntityOrException());
@@ -104,11 +104,11 @@ public class ScaleCommand
 						})
 					)
 				)
-				.then(Commands.argument("value", FloatArgumentType.floatArg())
+				.then(Commands.argument("value", FloatArgument.floatArg())
 					.then(Commands.argument("targets", EntityArgument.entities())
 						.executes(context ->
 						{
-							final float scale = FloatArgumentType.getFloat(context, "value");
+							final float scale = FloatArgument.getFloat(context, "value");
 							
 							for (final Entity e : EntityArgument.getEntities(context, "targets"))
 							{
@@ -123,7 +123,7 @@ public class ScaleCommand
 					)
 					.executes(context ->
 					{
-						final float scale = FloatArgumentType.getFloat(context, "value");
+						final float scale = FloatArgument.getFloat(context, "value");
 						
 						final ScaleData data = ScaleTypes.BASE.getScaleData(context.getSource().getEntityOrException());
 						final ScaleOperationArgumentType.Operation operation = ScaleOperationArgumentType.getOperation(context, "operation");
@@ -144,14 +144,14 @@ public class ScaleCommand
 			.then(Commands.literal("randomize")
 				.then(Commands.argument("scale_type", ScaleTypeArgumentType.scaleType())
 					.then(Commands.argument("minOperation", ScaleOperationArgumentType.operation())
-						.then(Commands.argument("minValue", FloatArgumentType.floatArg())
+						.then(Commands.argument("minValue", FloatArgument.floatArg())
 							.then(Commands.argument("maxOperation", ScaleOperationArgumentType.operation())
-								.then(Commands.argument("maxValue", FloatArgumentType.floatArg())
+								.then(Commands.argument("maxValue", FloatArgument.floatArg())
 									.then(Commands.argument("targets", EntityArgument.entities())
 										.executes(context ->
 										{
-											final float minValue = FloatArgumentType.getFloat(context, "minValue");
-											final float maxValue = FloatArgumentType.getFloat(context, "maxValue");
+											final float minValue = FloatArgument.getFloat(context, "minValue");
+											final float maxValue = FloatArgument.getFloat(context, "maxValue");
 											
 											final ScaleOperationArgumentType.Operation minOperation = ScaleOperationArgumentType.getOperation(context, "minOperation");
 											final ScaleOperationArgumentType.Operation maxOperation = ScaleOperationArgumentType.getOperation(context, "maxOperation");
@@ -182,8 +182,8 @@ public class ScaleCommand
 									)
 									.executes(context ->
 									{
-										final float minValue = FloatArgumentType.getFloat(context, "minValue");
-										final float maxValue = FloatArgumentType.getFloat(context, "maxValue");
+										final float minValue = FloatArgument.getFloat(context, "minValue");
+										final float maxValue = FloatArgument.getFloat(context, "maxValue");
 										
 										final ScaleOperationArgumentType.Operation minOperation = ScaleOperationArgumentType.getOperation(context, "minOperation");
 										final ScaleOperationArgumentType.Operation maxOperation = ScaleOperationArgumentType.getOperation(context, "maxOperation");
@@ -223,12 +223,12 @@ public class ScaleCommand
 			.then(Commands.literal("get")
 				.then(Commands.argument("scale_type", ScaleTypeArgumentType.scaleType())
 					.then(Commands.argument("entity", EntityArgument.entity())
-						.then(Commands.argument("scalingFactor", FloatArgumentType.floatArg())
+						.then(Commands.argument("scalingFactor", FloatArgument.floatArg())
 							.executes(context ->
 							{
 								final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 								final float scale = type.getScaleData(EntityArgument.getEntity(context, "entity")).getBaseScale();
-								final int scaled = (int) (scale * FloatArgumentType.getFloat(context, "scalingFactor"));
+								final int scaled = (int) (scale * FloatArgument.getFloat(context, "scalingFactor"));
 								CommandUtils.sendFeedback(context.getSource(), () -> scaleText(scale, scaled), false);
 								
 								return scaled;
@@ -243,12 +243,12 @@ public class ScaleCommand
 							return (int) scale;
 						})
 					)
-					.then(Commands.argument("scalingFactor", FloatArgumentType.floatArg())
+					.then(Commands.argument("scalingFactor", FloatArgument.floatArg())
 						.executes(context ->
 						{
 							final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 							final float scale = type.getScaleData(context.getSource().getEntityOrException()).getBaseScale();
-							final int scaled = (int) (scale * FloatArgumentType.getFloat(context, "scalingFactor"));
+							final int scaled = (int) (scale * FloatArgument.getFloat(context, "scalingFactor"));
 							CommandUtils.sendFeedback(context.getSource(), () -> scaleText(scale, scaled), false);
 							
 							return scaled;
@@ -263,22 +263,22 @@ public class ScaleCommand
 						return (int) scale;
 					})
 				)
-				.then(Commands.argument("scalingFactor", FloatArgumentType.floatArg())
+				.then(Commands.argument("scalingFactor", FloatArgument.floatArg())
 					.executes(context ->
 					{
 						final float scale = ScaleTypes.BASE.getScaleData(context.getSource().getEntityOrException()).getBaseScale();
-						final int scaled = (int) (scale * FloatArgumentType.getFloat(context, "scalingFactor"));
+						final int scaled = (int) (scale * FloatArgument.getFloat(context, "scalingFactor"));
 						CommandUtils.sendFeedback(context.getSource(), () -> scaleText(scale, scaled), false);
 						
 						return scaled;
 					})
 				)
 				.then(Commands.argument("entity", EntityArgument.entity())
-					.then(Commands.argument("scalingFactor", FloatArgumentType.floatArg())
+					.then(Commands.argument("scalingFactor", FloatArgument.floatArg())
 						.executes(context ->
 						{
 							final float scale = ScaleTypes.BASE.getScaleData(EntityArgument.getEntity(context, "entity")).getBaseScale();
-							final int scaled = (int) (scale * FloatArgumentType.getFloat(context, "scalingFactor"));
+							final int scaled = (int) (scale * FloatArgument.getFloat(context, "scalingFactor"));
 							CommandUtils.sendFeedback(context.getSource(), () -> scaleText(scale, scaled), false);
 							
 							return scaled;
@@ -310,12 +310,12 @@ public class ScaleCommand
 			.then(Commands.literal("compute")
 				.then(Commands.argument("scale_type", ScaleTypeArgumentType.scaleType())
 					.then(Commands.argument("entity", EntityArgument.entity())
-						.then(Commands.argument("scalingFactor", FloatArgumentType.floatArg())
+						.then(Commands.argument("scalingFactor", FloatArgument.floatArg())
 							.executes(context ->
 							{
 								final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 								final float scale = type.getScaleData(EntityArgument.getEntity(context, "entity")).getScale();
-								final int scaled = (int) (scale * FloatArgumentType.getFloat(context, "scalingFactor"));
+								final int scaled = (int) (scale * FloatArgument.getFloat(context, "scalingFactor"));
 								CommandUtils.sendFeedback(context.getSource(), () -> scaleText(scale, scaled), false);
 								
 								return scaled;
@@ -330,12 +330,12 @@ public class ScaleCommand
 							return (int) scale;
 						})
 					)
-					.then(Commands.argument("scalingFactor", FloatArgumentType.floatArg())
+					.then(Commands.argument("scalingFactor", FloatArgument.floatArg())
 						.executes(context ->
 						{
 							final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 							final float scale = type.getScaleData(context.getSource().getEntityOrException()).getScale();
-							final int scaled = (int) (scale * FloatArgumentType.getFloat(context, "scalingFactor"));
+							final int scaled = (int) (scale * FloatArgument.getFloat(context, "scalingFactor"));
 							CommandUtils.sendFeedback(context.getSource(), () -> scaleText(scale, scaled), false);
 							
 							return scaled;
@@ -553,11 +553,11 @@ public class ScaleCommand
 			.then(Commands.literal("delay")
 				.then(Commands.literal("set")
 					.then(Commands.argument("scale_type", ScaleTypeArgumentType.scaleType())
-						.then(Commands.argument("ticks", IntegerArgumentType.integer())
+						.then(Commands.argument("ticks", IntegerArgument.integer())
 							.then(Commands.argument("targets", EntityArgument.entities())
 								.executes(context ->
 								{
-									final int ticks = IntegerArgumentType.getInteger(context, "ticks");
+									final int ticks = IntegerArgument.getInteger(context, "ticks");
 									final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 									
 									for (final Entity e : EntityArgument.getEntities(context, "targets"))
@@ -572,7 +572,7 @@ public class ScaleCommand
 							)
 							.executes(context ->
 							{
-								final int ticks = IntegerArgumentType.getInteger(context, "ticks");
+								final int ticks = IntegerArgument.getInteger(context, "ticks");
 								final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 								
 								final ScaleData data = type.getScaleData(context.getSource().getEntityOrException());
@@ -583,11 +583,11 @@ public class ScaleCommand
 							})
 						)
 					)
-					.then(Commands.argument("ticks", IntegerArgumentType.integer())
+					.then(Commands.argument("ticks", IntegerArgument.integer())
 						.then(Commands.argument("targets", EntityArgument.entities())
 							.executes(context ->
 							{
-								final int ticks = IntegerArgumentType.getInteger(context, "ticks");
+								final int ticks = IntegerArgument.getInteger(context, "ticks");
 								
 								for (final Entity e : EntityArgument.getEntities(context, "targets"))
 								{
@@ -601,7 +601,7 @@ public class ScaleCommand
 						)
 						.executes(context ->
 						{
-							final int ticks = IntegerArgumentType.getInteger(context, "ticks");
+							final int ticks = IntegerArgument.getInteger(context, "ticks");
 							
 							final ScaleData data = ScaleTypes.BASE.getScaleData(context.getSource().getEntityOrException());
 							
@@ -854,11 +854,11 @@ public class ScaleCommand
 			.then(Commands.literal("persist")
 				.then(Commands.literal("set")
 					.then(Commands.argument("scale_type", ScaleTypeArgumentType.scaleType())
-						.then(Commands.argument("enabled", BoolArgumentType.bool())
+						.then(Commands.argument("enabled", BooleanArgument.bool())
 							.then(Commands.argument("targets", EntityArgument.entities())
 								.executes(context ->
 								{
-									final boolean persist = BoolArgumentType.getBool(context, "enabled");
+									final boolean persist = BooleanArgument.getBool(context, "enabled");
 									final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 									
 									for (final Entity e : EntityArgument.getEntities(context, "targets"))
@@ -873,7 +873,7 @@ public class ScaleCommand
 							)
 							.executes(context ->
 							{
-								final boolean persist = BoolArgumentType.getBool(context, "enabled");
+								final boolean persist = BooleanArgument.getBool(context, "enabled");
 								final ScaleType type = ScaleTypeArgumentType.getScaleTypeArgument(context, "scale_type");
 								
 								final ScaleData data = type.getScaleData(context.getSource().getEntityOrException());
@@ -884,11 +884,11 @@ public class ScaleCommand
 							})
 						)
 					)
-					.then(Commands.argument("enabled", BoolArgumentType.bool())
+					.then(Commands.argument("enabled", BooleanArgument.bool())
 						.then(Commands.argument("targets", EntityArgument.entities())
 							.executes(context ->
 							{
-								final boolean persist = BoolArgumentType.getBool(context, "enabled");
+								final boolean persist = BooleanArgument.getBool(context, "enabled");
 								
 								for (final Entity e : EntityArgument.getEntities(context, "targets"))
 								{
@@ -904,7 +904,7 @@ public class ScaleCommand
 						)
 						.executes(context ->
 						{
-							final boolean persist = BoolArgumentType.getBool(context, "enabled");
+							final boolean persist = BooleanArgument.getBool(context, "enabled");
 							
 							for (final ScaleType type : ScaleRegistries.SCALE_TYPES.values())
 							{
@@ -1009,13 +1009,13 @@ public class ScaleCommand
 									NbtPathArgument.getPath(context, "path")
 								)
 							)
-							.then(Commands.argument("scale", DoubleArgumentType.doubleArg())
+							.then(Commands.argument("scale", DoubleArgument.doubleArg())
 								.executes(context ->
 									DataCommandInvoker.Scaled.callGetNumeric(
 										context.getSource(),
 										new EntityScaleDataObject(EntityArgument.getEntity(context, "entity")),
 										NbtPathArgument.getPath(context, "path"),
-										DoubleArgumentType.getDouble(context, "scale")
+										DoubleArgument.getDouble(context, "scale")
 									)
 								)
 							)

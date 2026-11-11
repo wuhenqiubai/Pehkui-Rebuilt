@@ -1,4 +1,4 @@
-# Pehkui Rebuilt [![JitPack](https://jitpack.io/v/wuhenqiubai/Pehkui-Rebuilt.svg)](https://jitpack.io/#wuhenqiubai/Pehkui-Rebuilt)
+# Pehkui Rebuilt
 
 Pehkui Rebuilt is an independent rebuild of Pehkui, a library mod that allows mods and commands to change the size of entities and scale-related behavior.
 
@@ -10,9 +10,9 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 ## Current Branch Status
 
-- Minecraft target: `26.4-snapshot-5`
-- Mod version: `3.9.0+26.4-snapshot-5`
-- Fabric: Loader `0.19.3`, Fabric API `0.164.1+26.4` (loadable by Quilt via its Fabric compatibility)
+- Minecraft target: `26.4-snapshot-8`
+- Mod version: `3.9.0+26.4-snapshot-8`
+- Fabric: Loader `0.20.1`, Fabric API `0.166.2+26.4` (loadable by Quilt via its Fabric compatibility)
 - NeoForge: not published for 26.4 snapshots yet
 - Project layout: Architectury multi-platform (`common` / `fabric` / `neoforge`)
 
