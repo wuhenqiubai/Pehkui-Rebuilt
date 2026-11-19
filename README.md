@@ -10,9 +10,9 @@ Most players install Pehkui because another mod requires it. Mod developers can 
 
 ## Current Branch Status
 
-- Minecraft target: `26.4-snapshot-8`
-- Mod version: `3.9.0+26.4-snapshot-8`
-- Fabric: Loader `0.20.1`, Fabric API `0.166.2+26.4` (loadable by Quilt via its Fabric compatibility)
+- Minecraft target: `26.4-snapshot-10`
+- Mod version: `3.9.0+26.4-snapshot-10`
+- Fabric: Loader `0.20.1`, Fabric API `0.166.3+26.4` (loadable by Quilt via its Fabric compatibility)
 - NeoForge: not published for 26.4 snapshots yet
 - Project layout: Architectury multi-platform (`common` / `fabric` / `neoforge`)
 
